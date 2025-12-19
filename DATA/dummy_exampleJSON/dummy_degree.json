@@ -1,0 +1,218 @@
+{
+  "faculty": {
+    "name": "Electrical & Computer Engineering"
+  },
+  "degree": {
+    "id": "CSW",
+    "name": "Computer & Software Engineering",
+    "level": "BSc"
+  },
+  "must": {
+    "type_of_bucket": "mandatory",
+    "id": "MANDATORY",
+    "name": "Mandatory Courses",
+    "allowed_course_ids": [
+      "044101", "044102", "044105", "044114", "044127", "044131", "044137", "044157",
+      "044166", "044167", "044252", "044268", "044334",
+      "045002",
+      "046002", "0460071", "0460075", "046209", "046210", "046267",
+      "1030015",
+      "104012", "104013", "104016", "1040013", "1040016", "1040031", "1040034", "1040035", "1040221", "1040223", "104034", "104038", "104064", "104134", "104136",
+      "104214", "104215", "104220",
+      "1130013", "1130014",
+      "114071", "114075",
+      "1230015",
+      "2340117", "234117",
+      "2750112",
+      "3240033", "3240053", "324033",
+      "3250000",
+      "394901"
+    ],
+    "mandatory_knowledge_ids": [],
+    "min_courses_count": null,
+    "min_points_count": 106.5
+  },
+  "core": {
+    "type_of_bucket": "core",
+    "id": "CORE_POOL",
+    "name": "Core Courses Pool",
+    "allowed_course_ids": [
+      "044140", "044191", "044198", "044202", "046195", "046237", "046266"
+    ],
+    "mandatory_knowledge_ids": [],
+    "min_courses_count": 4,
+    "min_points_count": null
+  },
+  "possible_specialties": [
+    {
+      "type_of_bucket": "specialty",
+      "id": "SPECIALTY_GROUP_1",
+      "name": "Computer networks",
+      "allowed_course_ids": [
+        "046005", "046237", "046203", "046195", "046205", "046265", "046268", "046272",
+        "046273", "046275", "046278", "046279", "046733"
+      ],
+      "mandatory_knowledge_ids": ["046005 or 046237"],
+      "min_courses_count": 3,
+      "min_points_count": null
+    },
+    {
+      "type_of_bucket": "specialty",
+      "id": "SPECIALTY_GROUP_2",
+      "name": "Communication",
+      "allowed_course_ids": [
+        "044202", "046204", "046206", "044148", "044198", "044214", "046201", "046205",
+        "046208", "046005", "046733", "046734", "046743", "046868", "236309"
+      ],
+      "mandatory_knowledge_ids": [],
+      "min_courses_count": null,
+      "min_points_count": null
+    },
+    {
+      "type_of_bucket": "specialty",
+      "id": "SPECIALTY_GROUP_3",
+      "name": "Specialization Group 3",
+      "allowed_course_ids": [
+        "044198", "044202", "046200", "046010", "046195", "046345", "046197", "046201",
+        "046332", "046733", "046743", "046745", "046746", "236873", "046747", "046831",
+        "046868"
+      ],
+      "mandatory_knowledge_ids": ["044198 and (044202 or 046200)"],
+      "min_courses_count": 4,
+      "min_points_count": null
+    },
+    {
+      "type_of_bucket": "specialty",
+      "id": "SPECIALTY_GROUP_4",
+      "name": "Specialization Group 4",
+      "allowed_course_ids": [
+        "046237", "044139", "044231", "046129", "044140", "044148", "046187", "046903"
+      ],
+      "mandatory_knowledge_ids": ["046237"],
+      "min_courses_count": null,
+      "min_points_count": null
+    },
+    {
+      "type_of_bucket": "specialty",
+      "id": "SPECIALTY_GROUP_5",
+      "name": "Specialization Group 5",
+      "allowed_course_ids": [
+        "044191", "046192", "044139", "046042", "044198", "046195", "044202", "046203",
+        "046189", "046196", "046197", "046212", "046213", "046868"
+      ],
+      "mandatory_knowledge_ids": ["044191 and (046192 or 046212)"],
+      "min_courses_count": null,
+      "min_points_count": null
+    },
+    {
+      "type_of_bucket": "specialty",
+      "id": "SPECIALTY_GROUP_6",
+      "name": "Specialization Group 6",
+      "allowed_course_ids": [
+        "046195", "046197", "046205", "046272", "046280", "046345", "046880", "236990"
+      ],
+      "mandatory_knowledge_ids": [],
+      "min_courses_count": null,
+      "min_points_count": null
+    },
+    {
+      "type_of_bucket": "specialty",
+      "id": "SPECIALTY_GROUP_7",
+      "name": "Specialization Group 7",
+      "allowed_course_ids": [
+        "046005", "046266", "046271", "046272", "046273", "046275", "046277", "046278",
+        "046279", "046280", "236350", "236370", "236496"
+      ],
+      "mandatory_knowledge_ids": [],
+      "min_courses_count": null,
+      "min_points_count": null
+    },
+    {
+      "type_of_bucket": "specialty",
+      "id": "SPECIALTY_GROUP_8",
+      "name": "Specialization Group 8",
+      "allowed_course_ids": [
+        "046195", "046202", "046203", "046211", "046010", "044191", "046197", "046201",
+        "046733", "046041", "046200", "046212", "046213", "046746", "046747", "046853"
+      ],
+      "mandatory_knowledge_ids": ["046195 and (046202 or 046203 or 046211)"],
+      "min_courses_count": null,
+      "min_points_count": null
+    },
+    {
+      "type_of_bucket": "specialty",
+      "id": "SPECIALTY_GROUP_9",
+      "name": "Specialization Group 9",
+      "allowed_course_ids": [
+        "114073", "046243", "126604", "126605", "236990", "116031", "046240", "046241",
+        "046052", "046232", "046734", "116037"
+      ],
+      "mandatory_knowledge_ids": ["046243 and (236990 or 116031)"],
+      "min_courses_count": null,
+      "min_points_count": null
+    },
+    {
+      "type_of_bucket": "specialty",
+      "id": "SPECIALTY_GROUP_10",
+      "name": "Specialization Group 10",
+      "allowed_course_ids": [
+        "046042", "044139", "034034", "044191", "044198", "046044", "046045", "046197",
+        "034035"
+      ],
+      "mandatory_knowledge_ids": ["046042 and (044139 or 034034)"],
+      "min_courses_count": null,
+      "min_points_count": null
+    },
+    {
+      "type_of_bucket": "specialty",
+      "id": "SPECIALTY_GROUP_11",
+      "name": "Specialization Group 11",
+      "allowed_course_ids": [
+        "104142", "104158", "104165", "104291", "104144", "104177", "104279", "104280",
+        "106349"
+      ],
+      "mandatory_knowledge_ids": ["104142 and (104158 or 104165 or 104291)"],
+      "min_courses_count": null,
+      "min_points_count": null
+    }
+  ],
+  "malag": {
+    "type_of_bucket": "malag",
+    "id": "MALAG",
+    "name": "Malag Courses",
+    "allowed_course_ids": [
+      "3240453", "3240463", "3240527", "3240879"
+    ],
+    "mandatory_knowledge_ids": [],
+    "min_courses_count": null,
+    "min_points_count": null
+  },
+  "sportsandfun": {
+    "type_of_bucket": "sports and fun",
+    "id": "SPORTSANDFUN",
+    "name": "Sports and Fun Courses",
+    "allowed_course_ids": [
+      "1140010", "2750112", "3940800", "3940803", "3940805", "3940820"
+    ],
+    "mandatory_knowledge_ids": [],
+    "min_courses_count": null,
+    "min_points_count": null
+  },
+  "freechoice": {
+    "type_of_bucket": "faculty chice",
+    "id": "FREECHOICE",
+    "name": "Faculty Choice Courses",
+    "allowed_course_ids": [
+      "045104", "045109", "3250005"
+    ],
+    "mandatory_knowledge_ids": [],
+    "min_courses_count": null,
+    "min_points_count": null
+  },
+  "substitutions": [
+    {
+      "course": "046197",
+      "alternatives": ["236330", "104193"]
+    }
+  ]
+}

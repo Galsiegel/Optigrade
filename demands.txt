@@ -1,0 +1,93 @@
+# This file is intended to define the architecture of this project.
+
+Super Admin: Gal
+Faculty Admin:Danit
+User: Students
+
+Relationships:
+ - Faculty → Degrees
+ - Degree → Curriculum versions
+ - Curriculum → Requirements for mandatory courses
+
+Bucket → course list + mandatory subset + min selection + counting policy
+Each faculty should hold:
+- The existing degrees it offers (O(1))
+- A "list" of courses it offers - with points
+- A "List" of archived courses - with points.
+
+
+Each degree should hold:
+- The mandatory courses in that degree
+- The "Free choice" courses (usually faculty will hold same free choices for the different degrees)
+- The "core" curses (if exists)
+- The specialties (shrsheraot) - How many the students needs to do
+- How many Mandatory points im expected to do
+- How many Total points I need to do (not including sports or MALAG)
+- How many MALAG / Sports points need to do
+
+
+
+
+Each bucket should hold:
+- "List" of the available courses
+- For specialty buckets - What courses are mandatory knowledge (A student must learn, even if not as part of this bucket)
+- min courses / points that need to be choosed as part of this bucket
+
+- Mandatory is a bucket where all courses must be done and counted as part of the bucket therefore without mandatory knowledge field
+- Core is a bucket without mandatory knowledge
+
+User:
+
+Student info (received as input from user)
+
+- faculty
+- degree
+- Start semester (so we can assume the catalog version for the mandatory) , the smartest way to implement this semester change needs to be tested
+- Chosen Specialties (Sharsherot) - if Chosen
+- courses already done
+        *support parsing of English transcript
+        * Manual Adding of courses
+
+- Exeptions:
+        * At this point the student needs to see what are the exact requirements in his degree and allow him to add exeptions,
+exception types:
+    
+    course_counts_as(course -> bucket/category)
+    overrides/waivers (Reduce number of points needed to complete in specific buckets)
+    exclude_course(course)
+    force_include_course(course)
+
+- Planned courses (in the sense that student will want to do them, will be marked as x=1 in optimization, but remember to return in the remaining courses list)
+- Courses To avoid
+
+
+Output:
+- If satisfied all requirements, with courses already done, output document, with all the details. What courses were taken (and under which catagory), if there were exeptions and so on.
+- If not satisfied, output courses left to do (best 2 options)
+
+- After this stage, when the student gets the options, he can edit, ie, ask to avoid certain courses, and get an updated option.
+
+
+Admin
+
+- can edit the available courses.
+- can archive courses
+
+
+
+
+Optimization problem:
+
+- Archived courses should not be offered in the "To do" , but should be counted as x=1 in case a student did it 
+- A course can be counted only in one bucket
+- When all requirements are met, except the min points, choose from the "free choice"
+(optimization should acvheive this without extra effort)
+- Define properly the constraints of mandatory knowledge (some times involves bot "or" and "and" conditions)
+
+
+-   Variables only for currently offered + eligible courses
+    Satisfaction can come from:
+    passed courses (including historical ones)
+    equivalencies/substitutions
+    overrides/waivers
+    selected new courses (decision variables)
