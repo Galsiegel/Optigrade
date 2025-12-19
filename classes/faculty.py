@@ -10,7 +10,10 @@ Super admin (me) has control on everything.
 """
 
 from dataclasses import dataclass, field
-from typing import Optional, Set, List
+from typing import Optional, Set, List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .degree import Degree
 
 
 @dataclass(frozen=True)
@@ -23,9 +26,11 @@ class Faculty:
         degrees: List of degrees available in this faculty
         faculty_courses: Set of course IDs that belong to the faculty 
                          (not specific to any degree)
+        faculty_archived_courses: Set of archived course IDs that belong to the faculty
+                         
     """
     name: str
-    
+    degrees: List['Degree'] = field(default_factory=list)
     faculty_courses: Optional[Set[str]] = None
     faculty_archived_courses: Optional[Set[str]] = None
 
