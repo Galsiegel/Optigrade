@@ -1,59 +1,368 @@
 {
-  "passed_course_ids": [
-    "044101",
-    "044102",
-    "044105",
-    "044114",
-    "044127",
-    "044131",
-    "044137",
-    "044140",
-    "044157",
-    "044167",
-    "044202",
-    "044252",
-    "044268",
-    "044334",
-    "045002",
-    "045104",
-    "045109",
-    "046002",
-    "046005",
-    "046007",
-    "046195",
-    "046200",
-    "046209",
-    "046210",
-    "046267",
-    "1030015",
-    "1040013",
-    "1040016",
-    "1040031",
-    "1040034",
-    "1040035",
-    "1040134",
-    "1040221",
-    "1040223",
-    "1130013",
-    "1130014",
-    "1140010",
-    "1140071",
-    "1140075",
-    "1230015",
-    "2340117",
-    "2750112",
-    "3240033",
-    "3240053",
-    "3240453",
-    "3240463",
-    "3240527",
-    "3240879",
-    "3250000",
-    "3250005",
-    "3940800",
-    "3940803",
-    "3940805",
-    "3940820"
-  ],
-  "waived_course_ids": []
+  "student_name": "GAL SIEGEL",
+  "student_id": "3673",
+  "degree_name": "BACHELOR OF SCIENCE IN COMPUTER AND SOFTWARE ENGINEERING",
+  "faculty_name": "Electrical and Computer Engineering",
+  "accumulated_credits": 130.0,
+  "required_credits": 159.5,
+  "gpa": 88.3,
+  "courses": [
+    {
+      "course_id": "044101",
+      "name": "Introduction to Software Systems",
+      "credits": 3.0,
+      "grade": "88",
+      "semester": "2022-2023 Spring"
+    },
+    {
+      "course_id": "044102",
+      "name": "Safety in Ee Labs.",
+      "credits": 0.0,
+      "grade": "Pass",
+      "semester": "2021-2022 Winter"
+    },
+    {
+      "course_id": "044105",
+      "name": "Theory of Electronic Circuits",
+      "credits": 4.0,
+      "grade": "92",
+      "semester": "2022-2023 Winter"
+    },
+    {
+      "course_id": "044114",
+      "name": "Discrete Mathematics Ee",
+      "credits": 3.0,
+      "grade": "92",
+      "semester": "2024-2025 Winter"
+    },
+    {
+      "course_id": "044127",
+      "name": "Basics of Semiconductor Devices",
+      "credits": 3.5,
+      "grade": "92",
+      "semester": "2022-2023 Spring"
+    },
+    {
+      "course_id": "044131",
+      "name": "Signals and Systems",
+      "credits": 5.0,
+      "grade": "97",
+      "semester": "2022-2023 Spring"
+    },
+    {
+      "course_id": "044137",
+      "name": "Electronic Circuits",
+      "credits": 5.0,
+      "grade": "80",
+      "semester": "2023-2024 Spring"
+    },
+    {
+      "course_id": "044140",
+      "name": "Electromagnetic Fields",
+      "credits": 3.5,
+      "grade": "Pass",
+      "semester": "2022-2023 Spring"
+    },
+    {
+      "course_id": "044157",
+      "name": "Electrical Engineering Lab 1a",
+      "credits": 2.0,
+      "grade": "99",
+      "semester": "2022-2023 Summer"
+    },
+    {
+      "course_id": "044167",
+      "name": "Lab. Project a",
+      "credits": 4.0,
+      "grade": "98",
+      "semester": "2023-2024 Spring"
+    },
+    {
+      "course_id": "044202",
+      "name": "Random Signals",
+      "credits": 3.0,
+      "grade": "76",
+      "semester": "2023-2024 Spring"
+    },
+    {
+      "course_id": "044252",
+      "name": "Digital Systems and Computer Structure",
+      "credits": 5.0,
+      "grade": "80",
+      "semester": "2021-2022 Spring"
+    },
+    {
+      "course_id": "044268",
+      "name": "Int. to Data Structur and Algorithms",
+      "credits": 3.0,
+      "grade": "89",
+      "semester": "2022-2023 Winter"
+    },
+    {
+      "course_id": "044334",
+      "name": "Computer Networks and Internet 1",
+      "credits": 3.0,
+      "grade": "86",
+      "semester": "2023-2024 Winter"
+    },
+    {
+      "course_id": "045002",
+      "name": "An Overview of Electrical and Comp.Eng.",
+      "credits": 1.0,
+      "grade": "Pass",
+      "semester": "2021-2022 Winter"
+    },
+    {
+      "course_id": "045104",
+      "name": "HIGH SPEED DIGITAL SYSTEMS LAB",
+      "credits": 1.0,
+      "grade": "97",
+      "semester": "2024-2025 Winter"
+    },
+    {
+      "course_id": "045109",
+      "name": "SIGNAL PROCESSING LAB",
+      "credits": 1.0,
+      "grade": "97",
+      "semester": "2023-2024 Winter"
+    },
+    {
+      "course_id": "046005",
+      "name": "Computer Networks and Internet 2",
+      "credits": 3.0,
+      "grade": "94",
+      "semester": "2024-2025 Winter"
+    },
+    {
+      "course_id": "046195",
+      "name": "Machine Learning",
+      "credits": 3.5,
+      "grade": "84",
+      "semester": "2023-2024 Winter"
+    },
+    {
+      "course_id": "046209",
+      "name": "Structure of Operating Systems",
+      "credits": 3.5,
+      "grade": "86",
+      "semester": "2023-2024 Winter"
+    },
+    {
+      "course_id": "046210",
+      "name": "Laboratory in Operating Systems",
+      "credits": 1.0,
+      "grade": "97",
+      "semester": "2023-2024 Spring"
+    },
+    {
+      "course_id": "046267",
+      "name": "Computer Architecture",
+      "credits": 3.0,
+      "grade": "91",
+      "semester": "2023-2024 Winter"
+    },
+    {
+      "course_id": "1030015",
+      "name": "Introductory Mathematics",
+      "credits": null,
+      "grade": "Exemption without points",
+      "semester": "2021-2022 Winter"
+    },
+    {
+      "course_id": "1040013",
+      "name": "Differential and Integral Calculus 2T",
+      "credits": 5.5,
+      "grade": "80",
+      "semester": "2021-2022 Spring"
+    },
+    {
+      "course_id": "1040016",
+      "name": "Algebra 1/Extended",
+      "credits": 5.0,
+      "grade": "84",
+      "semester": "2021-2022 Winter"
+    },
+    {
+      "course_id": "1040031",
+      "name": "Calculus 1M",
+      "credits": 5.5,
+      "grade": "69",
+      "semester": "2021-2022 Winter"
+    },
+    {
+      "course_id": "1040034",
+      "name": "Introduction to Probability H",
+      "credits": 3.5,
+      "grade": "Pass",
+      "semester": "2022-2023 Spring"
+    },
+    {
+      "course_id": "1040035",
+      "name": "Ordinary Dif.Equations and Calculus 2H",
+      "credits": 5.0,
+      "grade": "73",
+      "semester": "2021-2022 Spring"
+    },
+    {
+      "course_id": "1040221",
+      "name": "Complex Functions and Integral Transform",
+      "credits": 4.0,
+      "grade": "92",
+      "semester": "2022-2023 Winter"
+    },
+    {
+      "course_id": "1040223",
+      "name": "Partial Differen.Equa.and Fourier Series",
+      "credits": 4.0,
+      "grade": "73",
+      "semester": "2022-2023 Winter"
+    },
+    {
+      "course_id": "1130013",
+      "name": "Introductory Physics 1",
+      "credits": null,
+      "grade": "Exemption without points",
+      "semester": "2021-2022 Winter"
+    },
+    {
+      "course_id": "1130014",
+      "name": "Introductory Physics 2",
+      "credits": null,
+      "grade": "Exemption without points",
+      "semester": "2021-2022 Winter"
+    },
+    {
+      "course_id": "1140010",
+      "name": "Scientific Discoveries 1",
+      "credits": 1.0,
+      "grade": "100",
+      "semester": "2021-2022 Spring"
+    },
+    {
+      "course_id": "1140071",
+      "name": "Physics 1M",
+      "credits": 3.5,
+      "grade": "100",
+      "semester": "2021-2022 Winter"
+    },
+    {
+      "course_id": "1140075",
+      "name": "Physics 2Mm",
+      "credits": 5.0,
+      "grade": "97",
+      "semester": "2021-2022 Spring"
+    },
+    {
+      "course_id": "1230015",
+      "name": "Introductory Chemistry",
+      "credits": null,
+      "grade": "Exemption without points",
+      "semester": "2021-2022 Winter"
+    },
+    {
+      "course_id": "2340117",
+      "name": "Introduction to Computer Science H",
+      "credits": 4.0,
+      "grade": "90",
+      "semester": "2021-2022 Winter"
+    },
+    {
+      "course_id": "2750112",
+      "name": "HUMAN EVOLUTION",
+      "credits": 2.0,
+      "grade": "98",
+      "semester": "2023-2024 Spring"
+    },
+    {
+      "course_id": "3240033",
+      "name": "Technical English-Advanced B",
+      "credits": 3.0,
+      "grade": "Exemption with points",
+      "semester": "2021-2022 Winter"
+    },
+    {
+      "course_id": "3240053",
+      "name": "Hebrew 3",
+      "credits": null,
+      "grade": "Exemption without points",
+      "semester": "2021-2022 Winter"
+    },
+    {
+      "course_id": "3240453",
+      "name": "Love and Law in the Age of Tech.",
+      "credits": 2.0,
+      "grade": "100",
+      "semester": "2022-2023 Winter"
+    },
+    {
+      "course_id": "3240463",
+      "name": "History of the Middle-East",
+      "credits": 2.0,
+      "grade": "100",
+      "semester": "2024-2025 Spring"
+    },
+    {
+      "course_id": "3240527",
+      "name": "Innovation Masterclass",
+      "credits": 2.0,
+      "grade": "98",
+      "semester": "2022-2023 Spring"
+    },
+    {
+      "course_id": "3240879",
+      "name": "Issues in Contemporary Israeli Society",
+      "credits": 2.0,
+      "grade": "97",
+      "semester": "2024-2025 Winter"
+    },
+    {
+      "course_id": "3250000",
+      "name": "SEXUAL HARASSMENT PREVENTION",
+      "credits": null,
+      "grade": "Pass",
+      "semester": "2024-2025 Spring"
+    },
+    {
+      "course_id": "3250005",
+      "name": "ENTREPRENEURSHIP BY ENTREPRENEURS",
+      "credits": 2.0,
+      "grade": "89",
+      "semester": "2023-2024 Winter"
+    },
+    {
+      "course_id": "3940800",
+      "name": "Physical education-fitness men",
+      "credits": 1.0,
+      "grade": "98",
+      "semester": "2021-2022 Spring"
+    },
+    {
+      "course_id": "3940803",
+      "name": "Physical education - ball games",
+      "credits": 1.0,
+      "grade": "96",
+      "semester": "2022-2023 Winter"
+    },
+    {
+      "course_id": "3940805",
+      "name": "Physical Education - Athletics",
+      "credits": 1.0,
+      "grade": "98",
+      "semester": "2024-2025 Winter"
+    },
+    {
+      "course_id": "3940820",
+      "name": "Physical education - movement and dance",
+      "credits": 1.0,
+      "grade": "98",
+      "semester": "2022-2023 Spring"
+    },
+    {
+      "course_id": "3940820",
+      "name": "Physical education - movement and dance",
+      "credits": 1.0,
+      "grade": "98",
+      "semester": "2023-2024 Winter"
+    }
+  ]
 }
