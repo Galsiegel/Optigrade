@@ -1,6 +1,7 @@
 """
 Test the parser on all PDFs in data/dummy_exampleJSON/grades/
 and validate against the degree JSON.
+The degree JSON isnt currently available
 
 Usage:
     python tests/test_parser_all_pdfs.py

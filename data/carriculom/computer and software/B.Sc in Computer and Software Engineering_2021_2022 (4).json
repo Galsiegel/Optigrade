@@ -1,0 +1,2384 @@
+{
+  "academicYear": "2021/2022",
+  "programName": "B.Sc in Computer and Software Engineering",
+  "generalRules": {
+    "totalCredits": 159,
+    "mandatoryCredits": 105.5,
+    "electiveInPathMin": 27.5,
+    "electiveInPathMax": 29.5,
+    "freeElective": 4,
+    "enrichment": 6,
+    "physicalEducation": 2,
+    "mustChooseCoreGroups": 4,
+    "mustTakeSpecialities": 2,
+    "numberOfCoreGroups": 7,
+    "numberOfSpecialities": 10,
+    "coreCreditsRange": "12-14"
+  },
+  "mandatory": [
+    {
+      "code": "044102",
+      "nameEn": "SAFETY IN EE LABS",
+      "nameHe": "בטיחות במעבדות חשמל",
+      "credits": 0,
+      "metadata": {
+        "lecture": 4,
+        "tutorial": 0,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "104031",
+      "nameEn": "CALCULUS 1M",
+      "nameHe": "אינפי 1 מ'",
+      "credits": 5.5,
+      "metadata": {
+        "lecture": 4,
+        "tutorial": 3,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "104016",
+      "nameEn": "ALGEBRA 1/EXTENDED",
+      "nameHe": "אלגברה 1 מורחב",
+      "credits": 5,
+      "metadata": {
+        "lecture": 4,
+        "tutorial": 2,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "114071",
+      "nameEn": "PHYSICS 1M",
+      "nameHe": "פיזיקה 1 מ'",
+      "credits": 3.5,
+      "metadata": {
+        "lecture": 3,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "234117",
+      "nameEn": "INTRODUCTION TO COMPUTER SCIENCE H",
+      "nameHe": "מבוא למדעי המחשב ח'",
+      "credits": 4,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 2,
+        "lab": 2,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "324033",
+      "nameEn": "TECHNICAL ENGLISH-ADVANCED B",
+      "nameHe": "אנגלית טכנית- מתקדמים ב'",
+      "credits": 3,
+      "metadata": {
+        "lecture": 4,
+        "tutorial": 0,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044252",
+      "nameEn": "DIGITAL SYSTEMS AND COMPUTER STRUCTURE",
+      "nameHe": "מערכות ספרתיות ומבנה המחשב",
+      "credits": 5,
+      "metadata": {
+        "lecture": 4,
+        "tutorial": 2,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "104013",
+      "nameEn": "DIFFERENTIAL AND INTEGRAL CALCULUS 2T",
+      "nameHe": "חדו\"א 2 ת'",
+      "credits": 5.5,
+      "metadata": {
+        "lecture": 4,
+        "tutorial": 3,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "104035",
+      "nameEn": "ORDINARY DIF.EQUATIONS AND CALCULUS 2H",
+      "nameHe": "מד\"ר ואינפי 2 ח'",
+      "credits": 5,
+      "metadata": {
+        "lecture": 4,
+        "tutorial": 2,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "114075",
+      "nameEn": "PHYSICS 2MM",
+      "nameHe": "פיזיקה 2 ממ'",
+      "credits": 5,
+      "metadata": {
+        "lecture": 4,
+        "tutorial": 2,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044105",
+      "nameEn": "THEORY OF ELECTRONIC CIRCUITS",
+      "nameHe": "תורת המעגלים החשמליים",
+      "credits": 4,
+      "metadata": {
+        "lecture": 3,
+        "tutorial": 2,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044114",
+      "nameEn": "DISCRETE MATHEMATICS EE",
+      "nameHe": "מתמטיקה דיסקרטית ח'",
+      "credits": 3,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044268",
+      "nameEn": "INT. TO DATA STRUCTUR AND ALGORITHMS",
+      "nameHe": "מבוא למבני נתונים ואלגוריתמים",
+      "credits": 3,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "104134",
+      "nameEn": "MODERN ALGEBRA H",
+      "nameHe": "אלגברה מודרנית ח'",
+      "credits": 2.5,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "104221",
+      "nameEn": "COMPLEX FUNCTIONS AND INTEGRAL TRANSFORM",
+      "nameHe": "פונ' מרוכבות והתמרות אינטגרליות",
+      "credits": 4,
+      "metadata": {
+        "lecture": 3,
+        "tutorial": 2,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "104223",
+      "nameEn": "PARTIAL DIFFEREN.EQUA.AND FOURIER SERIES",
+      "nameHe": "משוואות דיפ' חלקיות וטורי פוריה",
+      "credits": 4,
+      "metadata": {
+        "lecture": 3,
+        "tutorial": 2,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044101",
+      "nameEn": "INTRODUCTION TO SOFTWARE SYSTEMS",
+      "nameHe": "מבוא למערכות תוכנה",
+      "credits": 3,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044127",
+      "nameEn": "BASICS OF SEMICONDUCTOR DEVICES",
+      "nameHe": "יסודות התקני מוליכים למחצה",
+      "credits": 3.5,
+      "metadata": {
+        "lecture": 3,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044131",
+      "nameEn": "SIGNALS AND SYSTEMS",
+      "nameHe": "אותות ומערכות",
+      "credits": 5,
+      "metadata": {
+        "lecture": 4,
+        "tutorial": 2,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044157",
+      "nameEn": "ELECTRICAL ENGINEERING LAB 1A",
+      "nameHe": "מעבדה בהנדסת חשמל 1א",
+      "credits": 2,
+      "metadata": {
+        "lecture": 0,
+        "tutorial": 0,
+        "lab": 3,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "046002",
+      "nameEn": "DESIGN AND ANALYSIS OF ALGORITHMS",
+      "nameHe": "תכן וניתוח אלגוריתמים",
+      "credits": 3,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "104034",
+      "nameEn": "INTRODUCTION TO PROBABILITY H",
+      "nameHe": "מבוא להסתברות ח'",
+      "credits": 3.5,
+      "metadata": {
+        "lecture": 3,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044137",
+      "nameEn": "ELECTRONIC CIRCUITS",
+      "nameHe": "מעגלים אלקטרוניים",
+      "credits": 5,
+      "metadata": {
+        "lecture": 4,
+        "tutorial": 2,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "046209",
+      "nameEn": "STRUCTURE OF OPERATING SYSTEMS",
+      "nameHe": "מבנה מערכות הפעלה",
+      "credits": 3.5,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 2,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "046210",
+      "nameEn": "LABORATORY IN OPERATING SYSTEMS",
+      "nameHe": "מעבדה במערכות הפעלה",
+      "credits": 1,
+      "metadata": {
+        "lecture": 0,
+        "tutorial": 0,
+        "lab": 3,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044334",
+      "nameEn": "COMPUTER NETWORKS AND INTERNET 1",
+      "nameHe": "רשתות מחשבים ואינטרנט 1",
+      "credits": 3,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "046267",
+      "nameEn": "COMPUTER ARCHITECTURE",
+      "nameHe": "מבנה מחשבים",
+      "credits": 3,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044167",
+      "nameEn": "LAB. PROJECT A",
+      "nameHe": "פרויקט א'",
+      "credits": 4,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 0,
+        "lab": 4,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044169",
+      "nameEn": "LAB. PROJECT B",
+      "nameHe": "פרויקט ב'",
+      "credits": 4,
+      "metadata": {
+        "lecture": 0,
+        "tutorial": 0,
+        "lab": 4,
+        "replaces": ""
+      }
+    }
+  ],
+  "core": [
+    {
+      "code": "044140",
+      "nameEn": "ELECTROMAGNETIC FIELDS",
+      "nameHe": "שדות אלקטרומגנטיים",
+      "credits": 3.5,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 2,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044191",
+      "nameEn": "CONTROL SYSTEMS 1",
+      "nameHe": "מערכות בקרה 1",
+      "credits": 4,
+      "metadata": {
+        "lecture": 3,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044198",
+      "nameEn": "INTRO. TO DIGITAL SIGNAL PROCESSING",
+      "nameHe": "מבוא לעיבוד ספרתי של אותות",
+      "credits": 3,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "044202",
+      "nameEn": "RANDOM SIGNALS",
+      "nameHe": "אותות אקראיים",
+      "credits": 3,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "046195",
+      "nameEn": "MACHINE LEARNING",
+      "nameHe": "מערכות לומדות",
+      "credits": 3.5,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 2,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "046237",
+      "nameEn": "INTEGRATED CIRCUITS-INTRODUCTION TO VLSI",
+      "nameHe": "מעגלים משולבים- מבוא ל-VLSI",
+      "credits": 3,
+      "metadata": {
+        "lecture": 2,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    },
+    {
+      "code": "046266",
+      "nameEn": "FORMAL LANGUAGES AND COMPILATION",
+      "nameHe": "שיטות הידור (קומפילציה)",
+      "credits": 3,
+      "metadata": {
+        "lecture": 3,
+        "tutorial": 1,
+        "lab": 0,
+        "replaces": ""
+      }
+    }
+  ],
+  "specialties": [
+    {
+      "trackId": "specialty_1",
+      "nameEn": "COMPUTER NETWORKS, DISTRIBUTED SYSTEMS AND COMPUTER ARCHITECTURE",
+      "nameHe": "רשתות מחשבים, מערכות מבוזרות ומבנה מחשבים",
+      "trackRulesEn": "Mandatory 046005 or 046237",
+      "trackRulesHe": "המקצועות המחייבים הם: 046005 או 046237",
+      "requirements": {
+        "mandatoryCourses": [],
+        "chooseOneOfGroups": [
+          [
+            "046005",
+            "046237"
+          ]
+        ],
+        "minimumTotalCourses": 3
+      },
+      "courses": [
+        {
+          "code": "046005",
+          "nameEn": "COMPUTER NETWORKS AND INTERNET 2",
+          "nameHe": "רשתות מחשבים ואינטרנט 2",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046237",
+          "nameEn": "INTEGRATED CIRCUITS-INTRODUCTION TO VLSI",
+          "nameHe": "מעגלים משולבים- מבוא ל- VLSI",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046203",
+          "nameEn": "PLANNING AND REINFORCEMET LEARNING",
+          "nameHe": "תכנון ולמידה מחיזוקים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046195",
+          "nameEn": "MACHINE LEARNING",
+          "nameHe": "מערכות לומדות",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046205",
+          "nameEn": "INTRODUCTION TO CODING THEORY",
+          "nameHe": "מבוא לתורת הקידוד בתקשורת",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046265",
+          "nameEn": "ADVANCED CIRCUITS AND ARCHITECTURES",
+          "nameHe": "ארכ'  ומעגלים בשילוב ממריסטורים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046268",
+          "nameEn": "CONSTRUCTIVE COMPUTER ARCHITECTURE",
+          "nameHe": "הנדסת מעבדי מחשב",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046272",
+          "nameEn": "DISTRIBUTED SYSTEM PRINCIPLES",
+          "nameHe": "מערכות מבוזרות: עקרונות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046273",
+          "nameEn": "DISTRIBUTED FUNCTIONAL PROGRAMMING",
+          "nameHe": "תכנות פונקציונלי מבוזר",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046275",
+          "nameEn": "DINAMIC BINARY TRANSLATION OPTIMIZATION",
+          "nameHe": "תרגום ואופטימיזציה של קוד בינארי",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046278",
+          "nameEn": "COMPUTATIONAL ACCELERATORS AND ACCELERA",
+          "nameHe": "מאיצים חישוביים ומערכות מואצות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046279",
+          "nameEn": "HIGH PERFORMANCE PARALLEL COMPUTING",
+          "nameHe": "חישוב מקבילי מואץ",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046733",
+          "nameEn": "INFORMATION THEORY",
+          "nameHe": "תורת האינפורמציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046853",
+          "nameEn": "ADVANCED ARCHITECTURE COMPUTER",
+          "nameHe": "ארכ' מחשבים מתקדמות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236309",
+          "nameEn": "INTRODUCTION TO CODING THEORY",
+          "nameHe": "מבוא לתורת הצפינה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236496",
+          "nameEn": "REVERSE ENGINEERING",
+          "nameHe": "הנדסה לאחור",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046280",
+          "nameEn": "PRINPLES AND TOOLS FOR COMPUTER SECURITY",
+          "nameHe": "עקרונות וכלים באבטחת מחשבים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236350",
+          "nameEn": "NETWORK SECURITY",
+          "nameHe": "הגנה ברשתות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        }
+      ]
+    },
+    {
+      "trackId": "specialty_2",
+      "nameEn": "COMMUNICATION THEORY",
+      "nameHe": "תורת התקשורת",
+      "trackRulesEn": "Mandatory 044202 and one of those 046206 or 046204",
+      "trackRulesHe": "המקצועות המחייבים הם: 044202 ואחד מבין 046206 או 046204",
+      "requirements": {
+        "mandatoryCourses": [
+          "044202"
+        ],
+        "chooseOneOfGroups": [
+          [
+            "046206",
+            "046204"
+          ]
+        ],
+        "minimumTotalCourses": 3
+      },
+      "courses": [
+        {
+          "code": "044202",
+          "nameEn": "RANDOM SIGNALS",
+          "nameHe": "אותות אקראיים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046204",
+          "nameEn": "ANALOG COMMUNICATION",
+          "nameHe": "תקשורת אנלוגית",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046206",
+          "nameEn": "INTRODUCTION TO DIGITAL COMMUNICATION",
+          "nameHe": "מבוא לתקשורת ספרתית",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044148",
+          "nameEn": "WAVES & DISTRIBUTED SYSTEMS",
+          "nameHe": "גלים ומערכות מפולגות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044198",
+          "nameEn": "INTRO. TO DIGITAL SIGNAL PROCESSING",
+          "nameHe": "מבוא לעיבוד ספרתי של אותות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044214",
+          "nameEn": "RECEIVING AND TRANSMITTING TECHNIQUES",
+          "nameHe": "טכניקות קליטה ושידור",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046201",
+          "nameEn": "INTRODUCTION TO RANDOM SIGNAL PROCESSES",
+          "nameHe": "עיבוד אותות אקראיים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046205",
+          "nameEn": "INTRODUCTION TO CODING THEORY",
+          "nameHe": "מבוא לתורת הקידוד בתקשורת",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046208",
+          "nameEn": "MODERN COMMUNICATION TECHNIQUES",
+          "nameHe": "טכניקות תקשורת מודרניות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046005",
+          "nameEn": "COMPUTER NETWORKS AND INTERNET 2",
+          "nameHe": "רשתות מחשבים ואינטרנט 2",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046733",
+          "nameEn": "INFORMATION THEORY",
+          "nameHe": "תורת האינפורמציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046743",
+          "nameEn": "SPATIAL SIGNAL PROCESSING",
+          "nameHe": "עיבוד אותות מרחבי",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046868",
+          "nameEn": "FOUNDATIONS OF STOCHASTIC PROCESSES",
+          "nameHe": "יסודות תהליכים אקראיים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236309",
+          "nameEn": "INTRODUCTION TO CODING THEORY",
+          "nameHe": "מבוא לתורת הצפינה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        }
+      ]
+    },
+    {
+      "trackId": "specialty_3",
+      "nameEn": "Signal and Image Processing",
+      "nameHe": "עיבוד אותות ותמונות",
+      "trackRulesEn": "Mandatory 044198 and one of those 044202 or 046200. You can also take one of 046197, 236330, 104193 as the optimization elective.",
+      "trackRulesHe": "המקצועות המחייבים הם: 044198 ואחד מבין 044202 או 046200. ניתן לקחת גם אחד מבין 046197, 236330, 104193 כמקצוע האופטימיזציה.",
+      "requirements": {
+        "mandatoryCourses": [
+          "044198"
+        ],
+        "chooseOneOfGroups": [
+          {
+            "courses": [
+              "044202",
+              "046200"
+            ],
+            "requiredCount": 1
+          },
+          {
+            "courses": [
+              "046197",
+              "236330",
+              "104193"
+            ],
+            "requiredCount": 0
+          }
+        ],
+        "minimumTotalCourses": 3
+      },
+      "courses": [
+        {
+          "code": "044198",
+          "nameEn": "INTRO. TO DIGITAL SIGNAL PROCESSING",
+          "nameHe": "מבוא לעיבוד ספרתי של אותות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044202",
+          "nameEn": "RANDOM SIGNALS",
+          "nameHe": "אותות אקראיים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046200",
+          "nameEn": "IMAGE PROCESSING AND ANALYSIS",
+          "nameHe": "עיבוד וניתוח תמונות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046195",
+          "nameEn": "MACHINE LEARNING",
+          "nameHe": "מערכות לומדות",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046345",
+          "nameEn": "COMPUTER GRAPHICS",
+          "nameHe": "גרפיקה ממוחשבת",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046197",
+          "nameEn": "COMPUTATIONAL METHODS",
+          "nameHe": "שיטות חישוביות באופטימיזציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236330",
+          "nameEn": "INTRODUCTION TO OPTIMIZATION",
+          "nameHe": "מבוא לאופטימיזציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "104193",
+          "nameEn": "OPTIMIZATION THEORY",
+          "nameHe": "תורת האופטימיזציה",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046201",
+          "nameEn": "INTRODUCTION TO RANDOM SIGNAL PROCESSES",
+          "nameHe": "עיבוד אותות אקראיים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046332",
+          "nameEn": "VISUAL AND AUDITORY SYSTEMS",
+          "nameHe": "מערכות ראיה ושמיעה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046733",
+          "nameEn": "INFORMATION THEORY",
+          "nameHe": "תורת האינפורמציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046743",
+          "nameEn": "SPATIAL SIGNAL PROCESSING",
+          "nameHe": "עיבוד אותות מרחבי",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046745",
+          "nameEn": "DIGITAL SIGNAL PROCESSING",
+          "nameHe": "עיבוד ספרתי של אותות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046746",
+          "nameEn": "ALGORITHMS AND APPLICATION",
+          "nameHe": "אלגוריתמים ויישומים בראייה ממוחשבת",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236873",
+          "nameEn": "COMPUTER VISION",
+          "nameHe": "ראיה ממוחשבת",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046831",
+          "nameEn": "INTRODUCTION TO MEDICAL IMAGING",
+          "nameHe": "דימות רפואי",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046868",
+          "nameEn": "FOUNDATIONS OF STOCHASTIC PROCESSES",
+          "nameHe": "יסודות תהליכים אקראיים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "234125",
+          "nameEn": "NUMERICAL ALGORITHMS",
+          "nameHe": "אלגוריתמים נומריים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        }
+      ]
+    },
+    {
+      "trackId": "specialty_4",
+      "nameEn": "INTEGRATED ELECTRONIC CIRCUITS",
+      "nameHe": "מעגלים אלקטרוניים משולבים",
+      "trackRulesEn": "Mandatory 046237",
+      "trackRulesHe": "המקצוע המחייב הוא: 046237",
+      "requirements": {
+        "mandatoryCourses": [
+          "046237"
+        ],
+        "chooseOneOfGroups": [],
+        "minimumTotalCourses": 3
+      },
+      "courses": [
+        {
+          "code": "046237",
+          "nameEn": "INTEGRATED CIRCUITS-INTRODUCTION TO VLSI",
+          "nameHe": "מעגלים משולבים - מבוא ל-VLSI",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044139",
+          "nameEn": "DC-DC CONVERTERS",
+          "nameHe": "ממירי מתח ממותגים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044231",
+          "nameEn": "ELECTRON DEVICES 1 (MOS)",
+          "nameHe": "התקנים אלקטרוניים 1 (MOS)",
+          "credits": 4,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046129",
+          "nameEn": "SOLID STATE PHYSICS EE",
+          "nameHe": "פיזיקה של מצב מוצק ח'",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044140",
+          "nameEn": "ELECTROMAGNETIC FIELDS",
+          "nameHe": "שדות אלקטרומגנטיים",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044148",
+          "nameEn": "WAVES & DISTRIBUTED SYSTEMS",
+          "nameHe": "גלים ומערכות מפולגות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046187",
+          "nameEn": "ANALOG CIRCUIT DESIGN",
+          "nameHe": "תכן מעגלים אנלוגיים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046188",
+          "nameEn": "MIXED SIGNAL ELECTRONIC CIRCUITS",
+          "nameHe": "מעגלים אלקטרוניים לאותות מעורבים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046189",
+          "nameEn": "DESIGN OF ANALOG  FILTERS",
+          "nameHe": "תכן מסננים אקטיביים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046265",
+          "nameEn": "ADVANCED CIRCUITS AND ARCHITECTURES",
+          "nameHe": "ארכ' מתקדמות ומעגלים בשילוב ממריסטורים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046773",
+          "nameEn": "ELECTROOPT SEMICONDUC DEVICES-DETECTORS",
+          "nameHe": "התקני מוליכים למחצה אלקטרואופטיים לגילוי",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046851",
+          "nameEn": "SEMICON LASERS AND INTEG PHOTONIC DEVICE",
+          "nameHe": "לייזרים של מוליכים למחצה והתקנים פוטוניים משולבים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046864",
+          "nameEn": "DESIGN OF HIGH SPEED DIGITAL SYSTEMS",
+          "nameHe": "תכן מערכות ספרתיות מהירות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046880",
+          "nameEn": "COMPUTER LOGIC DESIGN OF CHIPS",
+          "nameHe": "תכן לוגי ממוחשב של שבבים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046903",
+          "nameEn": "RF CMOS INTEGRATED CIRCUITS",
+          "nameHe": "מעגלים משולבים CMOS בתדר רדיו",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        }
+      ]
+    },
+    {
+      "trackId": "specialty_5",
+      "nameEn": "Control Systems and Robotics",
+      "nameHe": "בקרה ורובוטיקה",
+      "trackRulesEn": "Mandatory 044191 and 046192. You can also take one of 046197, 236330, 104193 as the optimization elective.",
+      "trackRulesHe": "המקצועות המחייבים הם: 044191 ו-046192. ניתן לקחת גם אחד מבין 046197, 236330, 104193 כמקצוע האופטימיזציה.",
+      "requirements": {
+        "mandatoryCourses": [
+          "044191",
+          "046192"
+        ],
+        "chooseOneOfGroups": [
+          {
+            "courses": [
+              "046197",
+              "236330",
+              "104193"
+            ],
+            "requiredCount": 0
+          }
+        ],
+        "minimumTotalCourses": 3
+      },
+      "courses": [
+        {
+          "code": "044191",
+          "nameEn": "CONTROL SYSTEMS 1",
+          "nameHe": "מערכות בקרה 1",
+          "credits": 4,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046192",
+          "nameEn": "CONTROL SYSTEMS 2",
+          "nameHe": "מערכות בקרה 2",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044139",
+          "nameEn": "DC-DC CONVERTERS",
+          "nameHe": "ממירי מתח ממותגים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044193",
+          "nameEn": "LINEAR CONTROL LABORATORY",
+          "nameHe": "מעבדה לבקרה לינארית",
+          "credits": 2,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046042",
+          "nameEn": "INT. TO POWER SYSTEMS SMART GRIDS",
+          "nameHe": "מבוא למערכות הספק ורשת חכמה",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044198",
+          "nameEn": "INTRO. TO DIGITAL SIGNAL PROCESSING",
+          "nameHe": "מבוא לעיבוד ספרתי של אותות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046194",
+          "nameEn": "LEARNING AND PLANING IN DYNAMIC PROG.",
+          "nameHe": "למידה ותכנון במערכות דינמיות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046195",
+          "nameEn": "MACHINE LEARNING",
+          "nameHe": "מערכות לומדות",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044202",
+          "nameEn": "RANDOM SIGNALS",
+          "nameHe": "אותות אקראיים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046189",
+          "nameEn": "DESIGN OF ANALOG  FILTERS",
+          "nameHe": "תכן מסננים אקטיביים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046196",
+          "nameEn": "NONLINEAR CONTROL SYSTEMS",
+          "nameHe": "בקרה לא לינארית",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046197",
+          "nameEn": "COMPUTATIONAL METHODS",
+          "nameHe": "שיטות חישוביות באופטימיזציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236330",
+          "nameEn": "INTRODUCTION TO OPTIMIZATION",
+          "nameHe": "מבוא לאופטימיזציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "104193",
+          "nameEn": "OPTIMIZATION THEORY",
+          "nameHe": "תורת האופטימיזציה",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046212",
+          "nameEn": "INTRODUCTION TO ROBOTICS H",
+          "nameHe": "מבוא לרובוטיקה ח'",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046868",
+          "nameEn": "FOUNDATIONS OF STOCHASTIC PROCESSES",
+          "nameHe": "יסודות תהליכים אקראיים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236752",
+          "nameEn": "INTRO. TO CONTROL OF DISCRETE-EVENT SYST",
+          "nameHe": "מבוא לבקרת מערכות ארועים בדידים",
+          "credits": 2,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        }
+      ]
+    },
+    {
+      "trackId": "specialty_6",
+      "nameEn": "ALGORITHMS AND BASICS OF CALCULATION",
+      "nameHe": "אלגוריתמים ויסודות החישוב",
+      "trackRulesEn": "3 courses are required to complete the speciality. You can also take one of 046197, 236330, 104193 as the optimization elective.",
+      "trackRulesHe": "נדרשים 3 מקצועות להשלמת הקבוצה. ניתן לקחת גם אחד מבין 046197, 236330, 104193 כמקצוע האופטימיזציה.",
+      "requirements": {
+        "mandatoryCourses": [],
+        "chooseOneOfGroups": [
+          {
+            "courses": [
+              "046197",
+              "236330",
+              "104193"
+            ],
+            "requiredCount": 0
+          }
+        ],
+        "minimumTotalCourses": 3
+      },
+      "courses": [
+        {
+          "code": "046195",
+          "nameEn": "MACHINE LEARNING",
+          "nameHe": "מערכות לומדות",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046197",
+          "nameEn": "COMPUTATIONAL METHODS",
+          "nameHe": "שיטות חישוביות באופטימיזציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236330",
+          "nameEn": "INTRODUCTION TO OPTIMIZATION",
+          "nameHe": "מבוא לאופטימיזציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "104193",
+          "nameEn": "OPTIMIZATION THEORY",
+          "nameHe": "תורת האופטימיזציה",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046205",
+          "nameEn": "INTRODUCTION TO CODING THEORY",
+          "nameHe": "מבוא לתורת הקידוד בתקשורת",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046270",
+          "nameEn": "INTRODUCTION TO CRYPTOGRAPHY",
+          "nameHe": "מבוא לקריפטוגרפיה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046272",
+          "nameEn": "DISTRIBUTED SYSTEM PRINCIPLES",
+          "nameHe": "מערכות מבוזרות : עקרונות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046280",
+          "nameEn": "PRINPLES AND TOOLS FOR COMPUTER SECURITY",
+          "nameHe": "עקרונות וכלים באבטחת מחשבים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046345",
+          "nameEn": "COMPUTER GRAPHICS",
+          "nameHe": "גרפיקה ממוחשבת",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046880",
+          "nameEn": "COMPUTER LOGIC DESIGN OF CHIPS",
+          "nameHe": "תכן לוגי של מערכות VLSI",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236990",
+          "nameEn": "INTRODUCTION TO QUANTUM INFORMATION",
+          "nameHe": "מבוא לעיבוד אינפורמציה קוונטית",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        }
+      ]
+    },
+    {
+      "trackId": "specialty_7",
+      "nameEn": "SOFTWARE, ADVANCED PROGRAMMING AND PROGRAMMING LANGUAGES",
+      "nameHe": "מערכות תוכנה, תכנות מתקדם ושפות תכנות",
+      "trackRulesEn": "3 courses are required to complete the speciality",
+      "trackRulesHe": "נדרשים 3 מקצועות להשלמת הקבוצה",
+      "requirements": {
+        "mandatoryCourses": [],
+        "chooseOneOfGroups": [],
+        "minimumTotalCourses": 3
+      },
+      "courses": [
+        {
+          "code": "046005",
+          "nameEn": "COMPUTER NETWORKS AND INTERNET 2",
+          "nameHe": "רשתות מחשבים ואינטרנט 2",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046266",
+          "nameEn": "FORMAL LANGUAGES AND COMPILATION",
+          "nameHe": "שיטות הידור (קומפילציה)",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046271",
+          "nameEn": "OBJECT-ORIENTED PROGRAMMING AND DESIGN",
+          "nameHe": "תכנות ותכן מונחה עצמים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046272",
+          "nameEn": "DISTRIBUTED SYSTEM PRINCIPLES",
+          "nameHe": "מערכות מבוזרות : עקרונות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046273",
+          "nameEn": "DISTRIBUTED FUNCTIONAL PROGRAMMING",
+          "nameHe": "תכנות פונקציונלי מבוזר",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046275",
+          "nameEn": "DINAMIC BINARY TRANSLATION OPTIMIZATION",
+          "nameHe": "תרגום ואופטימיזציה של קוד בינארי",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046277",
+          "nameEn": "CORRECTNESS GUARANTEES FOR SOFTWARE",
+          "nameHe": "הבטחת נכונות של תוכנה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046278",
+          "nameEn": "COMPUTATIONAL ACCELERATORS AND ACCELERA",
+          "nameHe": "מאיצים חישוביים ומערכות מואצות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046279",
+          "nameEn": "HIGH PERFORMANCE PARALLEL COMPUTING",
+          "nameHe": "חישוב מקבילי מואץ",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046280",
+          "nameEn": "PRINPLES AND TOOLS FOR COMPUTER SECURITY",
+          "nameHe": "עקרונות וכלים באבטחת מחשבים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236350",
+          "nameEn": "NETWORK SECURITY",
+          "nameHe": "הגנה ברשתות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236370",
+          "nameEn": "PARALLEL AND DISTRIBUTED PROGRAMMING",
+          "nameHe": "תכנות מקבילי ומבוזר",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236496",
+          "nameEn": "REVERSE ENGINEERING",
+          "nameHe": "הנדסה לאחור",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        }
+      ]
+    },
+    {
+      "trackId": "specialty_8",
+      "nameEn": "Machine Learning and Artificial Intelligence",
+      "nameHe": "למידת מכונה ומערכות נבונות",
+      "trackRulesEn": "Mandatory 046195 and one of those 046202 or 046203. 3 courses are required to complete the speciality. You can also take one of 046197, 236330, 104193 as the optimization elective.",
+      "trackRulesHe": "המקצועות המחייבים הם 046195 ואחד מבין 046202 או 046203. נדרשים 3 מקצועות להשלמת הקבוצה. ניתן לקחת גם אחד מבין 046197, 236330, 104193 כמקצוע האופטימיזציה.",
+      "requirements": {
+        "mandatoryCourses": [
+          "046195"
+        ],
+        "chooseOneOfGroups": [
+          {
+            "courses": [
+              "046202",
+              "046203"
+            ],
+            "requiredCount": 1
+          },
+          {
+            "courses": [
+              "046197",
+              "236330",
+              "104193"
+            ],
+            "requiredCount": 0
+          }
+        ],
+        "minimumTotalCourses": 3
+      },
+      "courses": [
+        {
+          "code": "046195",
+          "nameEn": "MACHINE LEARNING",
+          "nameHe": "מערכות לומדות",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046202",
+          "nameEn": "DATA ANALYSIS",
+          "nameHe": "עיבוד וניתוח מידע",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046203",
+          "nameEn": "PLANNING AND REINFORCEMET LEARNING",
+          "nameHe": "תכנון ולמידה מחיזוקים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044191",
+          "nameEn": "CONTROL SYSTEMS 1",
+          "nameHe": "מערכות בקרה 1",
+          "credits": 4,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046197",
+          "nameEn": "COMPUTATIONAL METHODS",
+          "nameHe": "שיטות חישוביות באופטימיזציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236330",
+          "nameEn": "INTRODUCTION TO OPTIMIZATION",
+          "nameHe": "מבוא לאופטימיזציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "104193",
+          "nameEn": "OPTIMIZATION THEORY",
+          "nameHe": "תורת האופטימיזציה",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046201",
+          "nameEn": "INTRODUCTION TO RANDOM SIGNAL PROCESSES",
+          "nameHe": "עיבוד אותות אקראיים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046211",
+          "nameEn": "DEEP LEARNING",
+          "nameHe": "למידה עמוקה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046733",
+          "nameEn": "INFORMATION THEORY",
+          "nameHe": "תורת האינפורמציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046041",
+          "nameEn": "BIOLOGICAL NEURAL NETWORKS: COMPUTATION",
+          "nameHe": "רשתות עצביות ביולוגיות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046200",
+          "nameEn": "IMAGE PROCESSING AND ANALYSIS",
+          "nameHe": "עיבוד וניתוח תמונות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046212",
+          "nameEn": "INTRODUCTION TO ROBOTICS H",
+          "nameHe": "מבוא לרובוטיקה ח'",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046746",
+          "nameEn": "ALGORITHMS AND APPLICATION",
+          "nameHe": "אלגוריתמים ויישומים בראיה ממוחשבת",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046853",
+          "nameEn": "ADVANCED ARCHITECTURE COMPUTER",
+          "nameHe": "ארכיטקטורות מחשבים מתקדמות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        }
+      ]
+    },
+    {
+      "trackId": "specialty_9",
+      "nameEn": "QUANTUM TECHNOLOGIES",
+      "nameHe": "טכנולוגיות קוונטיות",
+      "trackRulesEn": "Mandatory 046243 and one of those 236990 or 116031. 3 courses are required to complete the speciality. Prerequisite: 114073 Physics 3H.",
+      "trackRulesHe": "המקצועות המחייבים הם 046243 ואחד מבין 236990 או 116031. נדרשים 3 מקצועות להשלמת הקבוצה. מקצוע קדם: 114073 פיזיקה 3ח.",
+      "requirements": {
+        "mandatoryCourses": [
+          "046243"
+        ],
+        "chooseOneOfGroups": [
+          [
+            "236990",
+            "116031"
+          ]
+        ],
+        "minimumTotalCourses": 3
+      },
+      "courses": [
+        {
+          "code": "046243",
+          "nameEn": "QUANTUM TECHNOLOGIES",
+          "nameHe": "טכנולוגיות קוונטיות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "126604",
+          "nameEn": "QUANTUM TECHNOLOGY LAB A",
+          "nameHe": "מעבדה בקוונטים א",
+          "credits": 2,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "126605",
+          "nameEn": "ADVANCED QUANTUM TECHNOLOGY LABORATORY",
+          "nameHe": "מעבדה בקוונטית ב",
+          "credits": 4,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236990",
+          "nameEn": "INTRODUCTION TO QUANTUM INFORMATION",
+          "nameHe": "מבוא לעיבוד אינפורמציה קוונטית",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "116031",
+          "nameEn": "Int. to Quantum Inf. Computation",
+          "nameHe": "תורת האינפורמציה הקוונטית",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046240",
+          "nameEn": "SUPERCONDUCTING QUANTUM DEVICES",
+          "nameHe": "התקנים קוואנטים על מוליכים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046241",
+          "nameEn": "QUANTUM MECHANICS",
+          "nameHe": "מכניקה קוונטית",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046052",
+          "nameEn": "QUANTUM OPTOELECTRONICS",
+          "nameHe": "אופטואלקטרוניקה קוונטית",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046232",
+          "nameEn": "TOPICS IN NANO-ELECTRONICS",
+          "nameHe": "פרקים בננו אלקטרוניקה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "116037",
+          "nameEn": "NOISY QUANTUM COMPUTING",
+          "nameHe": "מיחשוב קוונטי רועש",
+          "credits": 2,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        }
+      ]
+    },
+    {
+      "trackId": "specialty_10",
+      "nameEn": "ENERGY AND POWER SYSTEMS",
+      "nameHe": "אנרגיה ומערכות הספק",
+      "trackRulesEn": "Mandatory 046042 and one of those 044139 or 044196. 3 courses are required to complete the speciality. You can also take one of 046197, 236330, 104193 as the optimization elective.",
+      "trackRulesHe": "המקצועות המחייבים הם 046042 ואחד מבין 044139 או 044196. נדרשים 3 מקצועות להשלמת הקבוצה. ניתן לקחת גם אחד מבין 046197, 236330, 104193 כמקצוע האופטימיזציה.",
+      "requirements": {
+        "mandatoryCourses": [
+          "046042"
+        ],
+        "chooseOneOfGroups": [
+          {
+            "courses": [
+              "044139",
+              "044196"
+            ],
+            "requiredCount": 1
+          },
+          {
+            "courses": [
+              "046197",
+              "236330",
+              "104193"
+            ],
+            "requiredCount": 0
+          }
+        ],
+        "minimumTotalCourses": 3
+      },
+      "courses": [
+        {
+          "code": "046042",
+          "nameEn": "INT. TO POWER SYSTEMS SMART GRIDS",
+          "nameHe": "מבוא למערכות הספק ורשת חכמה",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044139",
+          "nameEn": "DC-DC CONVERTERS",
+          "nameHe": "ממירי מתח ממותגים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044196",
+          "nameEn": "ENERGY CONVERSION AND RENEWABLE SOURCES",
+          "nameHe": "המרת אנרגיה ומקורות מתחדשים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044191",
+          "nameEn": "CONTROL SYSTEMS 1",
+          "nameHe": "מערכות בקר 1",
+          "credits": 4,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "044198",
+          "nameEn": "INTRO. TO DIGITAL SIGNAL PROCESSING",
+          "nameHe": "מבוא לעיבוד ספרתי של אותות",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046197",
+          "nameEn": "COMPUTATIONAL METHODS IN OPTIMIZATION",
+          "nameHe": "שיטות חישוביות באופטימיזציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "236330",
+          "nameEn": "INTRODUCTION TO OPTIMIZATION",
+          "nameHe": "מבוא לאופטימיזציה",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "104193",
+          "nameEn": "OPTIMIZATION THEORY",
+          "nameHe": "תורת האופטימיזציה",
+          "credits": 3.5,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "046235",
+          "nameEn": "INTEGRATED POWER MANAGEMENT DEVICES",
+          "nameHe": "התקני הספק משולבים",
+          "credits": 3,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        },
+        {
+          "code": "034035",
+          "nameEn": "THERMODYNAMICS 1",
+          "nameHe": "תרמודינמיקה 1",
+          "credits": 4,
+          "metadata": {
+            "lecture": 0,
+            "tutorial": 0,
+            "lab": 0,
+            "replaces": ""
+          }
+        }
+      ]
+    }
+  ]
+}

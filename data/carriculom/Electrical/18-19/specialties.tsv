@@ -1,0 +1,256 @@
+קבוצות התמחות									Specialities
+				In electrical eng there are single and double specialities (We use the term cluster (מקבץ)). A double speciality is counted as two.					
+									
+1. רשתות מחשבים								"1. 	Computer Networks"	
+	044334	COMPUTER NETWORKS AND INTERNET 1 	רשתות מחשבים ואינטרנט 1						
+	46001	ENGINEERING OF DISTRIBUTED SOFTWARE SYS 	תכן וניתוח אלגוריתמים						
+	46002	DESIGN AND ANALYSIS OF ALGORITHMS 	רשתות מחשבים ואינטרנט 2						
+	46005	COMPUTER NETWORKS AND INTERNET 2 	למידה ותכנון במערכות דינמיות						
+	46194	LEARNING AND PLANING IN DYNAMIC PROG. 	 שיטות חישוביות באופטימיזציה						
+	או  OR		OR						
+	236330	INTRODUCTION TO OPTIMIZATION 	מבוא לאופטימיזציה						
+	או  OR		OR						
+	104193	OPTIMIZATION THEORY 	תורת האופטימיזציה						
+	046209,234123		מבנה מערכות הפעלה או 234123 מערכות הפעלה						
+	046272	DISTRIBUTED SYSTEM PRINCIPLES 	מערכות מבוזרות : עקרונות						
+	046273	DISTRIBUTED FUNCTIONAL PROGRAMMING 	תכנות פונקציונלי מבוזר						
+	046336     	HIGH-SPEED NETWORK PROCESSORS 	מעבדי רשת מהירים						
+	046925	DESIGN TOOLS FOR COMPUTER SYSTEMS 	כלים לניתוח מערכות מחשבים						
+	046952	DISTRIBUTED ALGORITHMS IN COMM. NETWORKS 	אלגוריתמים מבוזרים ושימושיהם ברשתות תקשורת						
+	046993	HIGH-SPEED NETWORKS 	רשתות מהירות						
+המקצוע המחייב: 044334 								Mandatory  044334	
+נדרשים 3 מקצועות להשלמת הקבוצה.							3 courses are required to complete the speciality		
+									
+2. בקרה ורובוטיקה								2. Control Systems and Robotics	
+	044191	CONTROL SYSTEMS 1 	מערכות בקרה 1						
+	044192	CONTROL SYSTEMS 2 	מערכות בקרה 2						
+	044139	DC-DC CONVERTERS 	ממירי מתח ממותגים						
+	044193	LINEAR CONTROL LABORATORY. 	מעבדה לבקרה לינארית						
+	046042	INT. TO POWER SYSTEMS   SMART GRIDS 	מבוא למערכות הספק ורשת חכמה						
+	044198	INTRO. TO DIGITAL SIGNAL PROCESSING 	מבוא לעיבוד ספרתי של אותות						
+	046194	LEARNING AND PLANING IN DYNAMIC PROG. 	למידה ותכנון במערכות דינמיות						
+	046195	MACHINE LEARNING 	מערכות לומדות						
+	046196	NONLINEAR CONTROL SYSTEMS 	בקרה לא לינארית						
+	046197	COMPUTATIONAL METHODS 	שיטות חישוביות באופטימיזציה						
+			או       OR						
+	236330	INTRODUCTION TO OPTIMIZATION 	מבוא לאופטימיזציה						
+			או       OR						
+	104193	OPTIMIZATION THEORY 	תורת האופטימיזציה						
+	046189	DESIGN OF ACTIVE FILTERS 	תכן מסננים אקטיביים						
+	046868	FOUNDATIONS OF STOCHASTIC PROCESSES 	יסודות תהליכים אקראיים						
+	035001	INTRODUCTION TO ROBOTICS 	 מבוא לרובוטיקה						
+			או       OR						
+	236927	INTRODUCTION TO ROBOTICS 	 מבוא לרובוטיקה						
+	086755	DYNAMICS AND CONTROL OF FLIGHT VEHICLES 	בקרה אוטומטית של כלי טיס						
+									
+									
+המקצועות המחייבים הם: 044191, 044192.							Mandatory  044191, 044192		
+נדרשים 3 מקצועות להשלמת הקבוצה.							3 courses are required to complete the speciality		
+									
+ 3. תקשורת (קבוצה בודדת או כפולה)						3. Communication Systems and Information Theory (Single or double)			
+	046206	INTRODUCTION TO DIGITAL COMMUNICATION 	מבוא לתקשורת ספרתית						
+	046204	ANALOG COMMUNICATION 	תקשורת אנלוגית						
+	046205	INTRODUCTION TO CODING THEORY 	מבוא לתורת הקידוד בתקשורת						
+	046208	MODERN COMMUNICATION TECHNIQUES 	טכניקות תקשורת מודרניות						
+	046733	INFORMATION THEORY 	תורת האינפורמציה						
+	236309	INTRODUCTION TO CODING THEORY 	מבוא לתורת הצפינה						
+	044214	RECEIVING AND TRANSMITTING TECHNIQUES 	טכניקות קליטה ושידור						
+	044198	INTRO. TO DIGITAL SIGNAL PROCESSING 	מבוא לעיבוד ספרתי						
+	044334	COMPUTER NETWORKS AND INTERNET 1 	רשתות מחשבים ואינטרנט 1						
+	046005	COMPUTER NETWORKS AND INTERNET 2 	רשתות מחשבים ואינטרנט 2						
+	046187	ANALOG CIRCUIT DESIGN 	תכן מעגלים אנלוגיים						
+	046201	INTRODUCTION TO RANDOM SIGNAL PROCESSES 	מבוא לעיבוד אותות אקראיים						
+	046216	MICROWAVES 	מיקרוגלים						
+	046242	STAT.PHYSICS FOR ELECTRICAL ENG. 	פיזיקה סטטיסטית להנדסת חשמל 						
+	046256	ANTENNAS AND RADIATION 	אנטנות וקרינה						
+	046743	SPATIAL SIGNAL PROCESSING 	עיבוד אותות מרחבי						
+	046868	FOUNDATIONS OF STOCHASTIC PROCESSES 	יסודות תהליכים אקראיים						
+	046993	HIGH-SPEED NETWORKS 	רשתות מהירות						
+קבוצה זו תחשב כקבוצה בודדת או כקבוצה כפולה.					This speciality can be taken as single or double 				
+המקצועות המחייבים לקבוצה אחת הם:   046206 ואחד מהמקצועות: 046205, 236309, 046204, 046733, 046208.					For single: 3 courses are required. Mandatory: 046206 and 1 of the following 046205, 236309, 046204, 046733, 046208.				
+המקצועות המחייבים לקבוצה כפולה הם: 046206 ושניים מהמקצועות:  046205, 236309, 046204, 046733, 046208.					For double:6 courses are required. Mandatory:  046206 and 2 of the following  046205, 236309, 046204, 046733, 046208.				
+קבוצה בודדת תמנה 3 מקצועות;  קבוצה כפולה תמנה 6 מקצועות.									
+									
+ 4. מיקרואלקטרוניקה וננואלקטרוניקה (קבוצה בודדת או כפולה)					4. Microelectronics and Nanoelectronics (Single or double)				
+	046225	INTRODUCTION TO DIGITAL COMMUNICATION 	עקרונות פיסיקליים של התקני מוליכים למחצה						
+	044231	ANALOG COMMUNICATION 	התקנים אלקטרוניים 1  MOS))						
+	046237	INTRODUCTION TO CODING THEORY 	מעגלים משולבים – מבוא ל-VLSI						
+	046052	MODERN COMMUNICATION TECHNIQUES 	אופטואלקטרוניקה קוונטית						
+	046129	INFORMATION THEORY 	פיזיקה של מצב מוצק ח'						
+	046241	INTRODUCTION TO CODING THEORY 	מכניקה קוונטית						
+		RECEIVING AND TRANSMITTING TECHNIQUES 	או      OR						
+	124408	INTRO. TO DIGITAL SIGNAL PROCESSING 	תורת הקוונטים ויישומיה בכימיה						
+	044239	COMPUTER NETWORKS AND INTERNET 1 	תהליכים במיקרואלקטרוניקה						
+	046012	COMPUTER NETWORKS AND INTERNET 2 	מבוא לחומרים ורכיבים אורגניים						
+	046232	ANALOG CIRCUIT DESIGN 	פרקים בננואלקטרוניקה						
+	046235	INTRODUCTION TO RANDOM SIGNAL PROCESSES 	התקני הספק משולבים						
+	046239	MICROWAVES 	מעבדה בננו-אלקטרוניקה						
+	046242	STAT.PHYSICS FOR ELECTRICAL ENG. 	פיזיקה סטטיסטית להנדסת חשמל						
+	046265	ANTENNAS AND RADIATION 	ארכיטקטורות מתקדמות ומעגלים בשילוב ממריסטורים						
+	046773	SPATIAL SIGNAL PROCESSING 	התקני מוליכים למחצה אלקטרו-אופטיים לגילוי						
+	046851	FOUNDATIONS OF STOCHASTIC PROCESSES 	לייזרים של מוליכים למחצה והתקנים פוטוניים משולבים						
+	046968	HIGH-SPEED NETWORKS 	מיקרו-עיבוד ומיקרו-מערכות אלקטרומכניות						
+קבוצה זו תחשב כקבוצה בודדת או כקבוצה כפולה.					This speciality can be taken as single or double 				
+המקצועות המחייבים לקבוצה אחת הם: 046225, 044231 					For single: 3 courses are required. Mandatory:  046225, 044231  				
+המקצועות המחייבים לקבוצה כפולה הם: 046225, 046129, 044231.					For double: 6 courses are required. Mandatory:  046225, 046129, 044231				
+קבוצה בודדת תמנה 3 מקצועות;  קבוצה כפולה תמנה 6 מקצועות.									
+									
+									
+ 5. גלים, אלקטרואופטיקה ותקשורת אופטית  (קבוצה בודדת או כפולה)				5. Electromagnetics and Photonics(Single or double)					
+	044339 	PHOTONICS AND LASERS 	אלקטרואופטיקה 1						
+	046256 	ANTENNAS AND RADIATION 	אנטנות וקרינה						
+	046052   	QUANTUM OPTOELECTRONICS 	אופטואלקטרוניקה קוונטית						
+	046216 	MICROWAVES 	מיקרוגלים						
+	046241      	QUANTUM MECHANICS 	מכניקה קוונטית      						
+	046242	STAT.PHYSICS FOR ELECTRICAL ENG. 	פיזיקה סטטיסטית להנדסת חשמל						
+	046244	WAVE PHENOMENA 	תופעות גלים						
+	046249	ELECTRO-OPTIC SYSTEMS 	מערכות אלקטרואופטיות						
+	046250	NONLINEARITY AND PERIODIC STRUCTURES 	אלקטרואופטיקה 2						
+	046342	INTRODUCTION TO FIBER OPTICS COMMUNICATI 	מבוא לתקשורת בסיבים אופטיים						
+	046773	ELECTROOPT SEMICONDUC DEVICES-DETECTORS 	התקני מוליכים למחצה אלקטרו-אופטיים לגילוי						
+	046851	SEMICON LASERS AND INTEG PHOTONIC DEVICE 	לייזרים של מוליכים למחצה והתקנים פוטוניים משולבים						
+	114210	OPTICS 	אופטיקה						
+קבוצה זו תחשב כקבוצה בודדת או כקבוצה כפולה.					This speciality can be taken as single or double 				
+המקצוע המחייב לקבוצה אחת הוא:  044339 או 046256				For single: 3 courses are required. Mandatory: 044339 or 046256 044231  					
+המקצועות המחייבים לקבוצה  כפולה הם:  044339 , 046256.				For double: 6 courses are required. Mandatory:  044339,  046256 046129, 044231					
+קבוצה בודדת תמנה 3 מקצועות;  קבוצה כפולה תמנה 6 מקצועות.									
+									
+6. .  מחשבים  (קבוצה בודדת או כפולה)					6. Computers (Single or double)				
+	044262	LOGIC DESIGN AND INTR. TO COMP. 	תכן לוגי ומבוא למחשבים						
+	046209	STRUCTURE OF OPERATING SYSTEMS 	מבנה מערכות הפעלה						
+	046267	COMPUTER ARCHITECTURE 	מבנה מחשבים						
+	046336	HIGH-SPEED NETWORK PROCESSORS 	מעבדי רשת מהירים						
+	046195	MACHINE LEARNING 	מערכות לומדות						
+	046194	LEARNING AND PLANING IN DYNAMIC PROG. 	למידה ותכנון במערכות דינמיות						
+	046197	COMPUTATIONAL METHODS 	שיטות חישוביות באופטימיזציה						
+			או        OR   						
+	104193	OPTIMIZATION THEORY 	תורת האופטימיזציה						
+			או        OR   						
+	236330	INTRODUCTION TO OPTIMIZATION 	מבוא לאופטימיזציה						
+	046237	INTEGRATED CIRCUITS-INTRODUCTION TO VLSI 	מעגלים משולבים מבוא ל-VLSI						
+	046265	ADVANCED CIRCUITS AND ARCHITECTURES 	ארכיטקטורות מתקדמות ומעגלים בשילוב ממריסטורים						
+	046266	FORMAL LANGUAGES AND COMPILATION 	שיטות הידור						
+	046268	CONSTRUCTIVE COMPUTER ARCHITECTURE 	הנדסת מעבדי מחשב						
+	046271	OBJECT-ORIENTED PROGRAMMING AND DESIGN 	תכנות ותכן מונחה עצמים						
+	046272	DISTRIBUTED SYSTEM PRINCIPLES 	מערכות מבוזרות : עקרונות						
+	046273	DISTRIBUTED FUNCTIONAL PROGRAMMING 	תכנות פונקציונלי מבוזר						
+	046275	DINAMIC BINARY TRANSLATION OPTIMIZATION 	תרגום ואופטימיזציה של קוד בינארי						
+	046278	COMPUTATIONAL ACCELERATORS AND ACCELERA 	מאיצים חישוביים ומערכות מואצות						
+	044334	COMPUTER NETWORKS AND INTERNET 1 	רשתות מחשבים ואינטרנט 1						
+	046005	COMPUTER NETWORKS AND INTERNET 2 	רשתות מחשבים ואינטרנט 2						
+	046345	COMPUTER GRAPHICS 	גרפיקה ממוחשבת						
+	046001	ENGINEERING OF DISTRIBUTED SOFTWARE SYS 	הנדסת מערכות תוכנה מבוזרות						
+	046002	DESIGN AND ANALYSIS OF ALGORITHMS 	תכן וניתוח אלגוריתמים						
+	046853	ADVANCED ARCHITECTURE 	ארכיטקטורות מתקדמות של מערכות מיקרו-מעבדים						
+	046864	DESIGN OF HIGH SPEED DIGITAL SYSTEMS 	תכן מערכות ספרתיות מהירות						
+	046880	LOGIC DESIG AUTOMATION OF VLSI 	תכן לוגי של מערכות VLSI						
+	046918	PHYSICAL DESIGN AUTOMATION OF VLSI SYS. 	תכן פיסי של מערכות VLSI						
+	046952	DISTRIBUTED ALGORITHMS IN COMM. NETWORKS 	אלגוריתמים מבוזרים ושימושיהם ברשתות תקשורת						
+	046993	HIGH-SPEED NETWORKS 	רשתות מהירות						
+	234125	NUMERICAL ALGORITHMS 	אלגוריתמים נומריים						
+	236353	AUTOMATA AND FORMAL LANGUAGES 	אוטומטים ושפות פורמליות						
+	236363	DATABASE SYSTEMS 	מערכות מסד נתונים						
+	236370	PARALLEL AND DISTRIBUTED PROGRAMMING 	תכנות מקבילי ומבוזר						
+	236990	INTRODUCTION TO QUANTUM INFORMATION 	מבוא לעיבוד אינפורמציה קוונטית						
+קבוצה זו תחשב כקבוצה בודדת או כקבוצה כפולה.					This speciality can be taken as single or double 				
+המקצועות המחייבים לקבוצה אחת הם: 044262, 046209.				For single: 4 courses are required. Mandatory: 044262,  046209 044231  					
+המקצועות המחייבים לקבוצה כפולה הם: 044262, 046209 ו-046267.				For double:7 courses are required. Mandatory: 044262, 046209 046267.					
+קבוצה בודדת תמנה 4 מקצועות: קבוצה כפולה תמנה 7 מקצועות.									
+									
+7. אותות ומערכות ביולוגיים							7. Biological Signals and Systems		
+46326	046326	INT.TO BIOLOGICAL SIGNALS & SYSTEMS 	מבוא לאותות ומערכות ביולוגיים						
+46332	046332	VISUAL AND AUDITORY SYSTEMS 	מערכות ראיה ושמיעה						
+44191	044191	CONTROL SYSTEMS 1 	מערכות בקרה 1						
+			או        OR						
+336522	336522	INTRODUCTION TO CONTROL IN BIO-MEDICAL 	מבוא לבקרה במערכות ביו-רפואיות						
+46041	046041	BIOLOGICAL NEURAL NETWORKS: COMPUTATION 	רשתות עצביות ביולוגיות						
+46743	046743	SPATIAL SIGNAL PROCESSING 	עיבוד אותות מרחבי						
+46831	046831	INTRODUCTION TO MEDICAL IMAGING 	מבוא לדימות רפואי						
+134058*	134058*		ביולוגיה 1						
+116029	116029	INTRODUCTION TO BIOPHYSICS 	מבוא לביו-פיזיקה						
+336208	336208	ANALYSIS OF BIOLOGICAL SIGNALS 	שיטות באנליזה של אותות ביולוגיים						
+המקצועות המחייבים הם: 046326 ואחד מ: 046332 , 044191 , 336522				3 courses are required. Mandatory: 046326 and 1 of the folloeing: 046332 , 044191 , 336522					
+נדרשים 3 מקצועות להשלמת הקבוצה.									
+מקצוע צמד לו : "כימיה כללית" (125001) או "יסודות הכימיה" (124114).				A duo's course: General Chemistry (125001) or Fundamentals of Chemistry (124114).					
+									
+8.  עיבוד אותות ותמונות							8. Signal and Image Processing		
+	046200	IMAGE PROCESSING AND ANALYSIS 	עיבוד וניתוח תמונות						
+	046745	DIGITAL SIGNAL PROCESSING 	עיבוד ספרתי של אותות						
+	046195	MACHINE LEARNING 	מערכות לומדות						
+	046197	COMPUTATIONAL METHODS 	שיטות חישוביות באופטימיזציה						
+		#N/A	או    OR						
+	104193	OPTIMIZATION THEORY 	תורת האופטימיזציה						
+		#N/A	או    OR						
+	236330	INTRODUCTION TO OPTIMIZATION 	מבוא לאופטימיזציה						
+	046201	INTRODUCTION TO RANDOM SIGNAL PROCESSES 	מבוא לעיבוד אותות אקראיים						
+	046249	ELECTRO-OPTIC SYSTEMS 	מערכות אלקטרואופטיות						
+	046332	VISUAL AND AUDITORY SYSTEMS 	מערכות ראיה ושמיעה						
+	046345	COMPUTER GRAPHICS 	גרפיקה ממוחשבת						
+	046733	INFORMATION THEORY 	תורת האינפורמציה						
+	046743	SPATIAL SIGNAL PROCESSING 	עיבוד אותות מרחבי						
+	046746	ALGORITHMS AND APPLICATION 	אלגוריתמים ויישומים בראייה ממוחשבת						
+	046831	INTRODUCTION TO MEDICAL IMAGING 	דימות רפואי						
+	046868	FOUNDATIONS OF STOCHASTIC PROCESSES 	יסודות תהליכים אקראיים						
+המקצוע המחייב הוא אחד מ: 046200, 046745					3 courses are required. Mandatory: 046200  or  046745				
+נדרשים 3 מקצועות להשלמת הקבוצה.									
+									
+9. מעגלים אלקטרוניים ומערכות VLSI						9. Electronic Circuits and VLSI Systems			
+	046237	INTEGRATED CIRCUITS-INTRODUCTION TO VLSI 	מעגלים משולבים – מבוא ל-VLSI						
+	046187	ANALOG CIRCUIT DESIGN 	תכן מעגלים אנלוגיים						
+	046188	MIXED SIGNAL ELECTRONIC CIRCUITS 	מעגלים אלקטרוניים לאותות מעורבים						
+	046903	RF CMOS INTEGRATED CIRCUITS 	מעגלים משולבים ב- CMOS בתדר רדיו (RF)						
+	044139	DC-DC CONVERTERS 	ממירי מתח ממותגים						
+	044294	ELECTRONIC INSTRUMENTATION 	מיכשור אלקטרוני						
+	046189	DESIGN OF ACTIVE FILTERS 	תכן מסננים אקטיביים						
+	046265	ADVANCED CIRCUITS AND ARCHITECTURES 	ארכיטקטורות מתקדמות ומעגלים בשילוב ממריסטורים						
+	046880	LOGIC DESIG AUTOMATION OF VLSI 	תכן לוגי של מערכות VLSI						
+	044214	RECEIVING AND TRANSMITTING TECHNIQUES 	טכניקות קליטה ושידור						
+	046864	DESIGN OF HIGH SPEED DIGITAL SYSTEMS 	תכן מערכות ספרתיות מהירות						
+	046918	PHYSICAL DESIGN AUTOMATION OF VLSI SYS. 	תכן פיסי של מערכות VLSI						
+המקצוע המחייב: 046237 					3 courses are required. Mandatory: 046237  				
+נדרשים 3 מקצועות להשלמת הקבוצה.									
+									
+10. קבוצת התמחות לסטודנטים מצטיינים						10. Specialization for Honors Students			
+									
+44180	044180		נושא אישי למצטיינים			Mandatory: 044180 + 3 courses to be decided by the advisor			
+שלושה מקצועות מעמיקים נוספים ייקבעו על ידי המנחה.									
+									
+11. למידה ממוחשבת 						11. Machine Learning and Artificial Intelligence			
+	046195	MACHINE LEARNING 	מערכות לומדות						
+	046194	LEARNING AND PLANING IN DYNAMIC PROG. 	למידה ותכנון במערכות דינמיות						
+	046193	DATA ANALYSIS 	עיבוד וניתוח מידע 						
+	044191	CONTROL SYSTEMS 1 	מערכות בקרה 1						
+	046197	COMPUTATIONAL METHODS 	שיטות חישוביות באופטימיזציה						
+	046201	INTRODUCTION TO RANDOM SIGNAL PROCESSES 	מבוא לעיבוד אותות אקראיים						
+	046733	INFORMATION THEORY 	תורת האינפורמציה						
+	046041	BIOLOGICAL NEURAL NETWORKS: COMPUTATION 	רשתות עצביות ביולוגיות						
+	046200	IMAGE PROCESSING AND ANALYSIS 	עיבוד וניתוח תמונות						
+	236501	INTRODUCTION TO ARTIFICIAL INTELLIGENCE 	מבוא לבינה מלאכותית						
+המקצועות המחייבים הם: 046195 ואחד מ: 046194, 046193.				3 courses are required. Mandatory: 046195 and 1 of the folloeing:  046194, 046193					
+נדרשים 3 מקצועות להשלמת הקבוצה.									
+									
+12. אנרגיה ומערכות הספק 							12. Power and Grid Systems		
+	046042	INT. TO POWER SYSTEMS   SMART GRIDS 	מבוא למערכות הספק ורשת חכמה						
+	044139	DC-DC CONVERTERS 	ממירי מתח ממותגים						
+	044196	ENERGY CONVERSION AND RENEWABLE SOURCES 	המרת אנרגיה ומקורות מתחדשים						
+	044191	CONTROL SYSTEMS 1 	מערכות בקרה 1						
+	034035	THERMODYNAMICS 1 	תרמודינמיקה 1						
+	046197	COMPUTATIONAL METHODS 	שיטות חישוביות באופטימיזציה						
+	044198	INTRO. TO DIGITAL SIGNAL PROCESSING 	מבוא לעיבוד ספרתי של אותות						
+המקצועות המחייבים הם: 046042 ואחד מ: 044139, 044196.				3 courses are required. Mandatory: 046042 and 1 of the folloeing:  044196, 044139					
+נדרשים 3 מקצועות להשלמת הקבוצה.									
+									
+רישום בפנקס המהנדסים: מקצועות הליבה של קבוצת ההתמחות יוכרו לצורך הרישום במדור "חשמל – מערכות הספק". 								NOT RELEVANT	
+הרישום מחייב השלמת מקצועות נוספים במוסדות בהם מאושר מסלול מערכות הספק זרם חזק. לפרטים ניתן להתייעץ עם מרכז התחום.								NOT RELEVANT	
+									
+									
+13.טכנולוגיות קוונטיות								13. Quantum Technologies	
+46243	046243	QUANTUM TECHNOLOGIES 	Quantum Technologies 						
+			Quantum Technologies Lab.						
+236990	236990	INTRODUCTION TO QUANTUM INFORMATION 	Introduction to Quantum Information Processing						
+116031	116031	QUANTUM INFORMATION THEORY 	Quantum Information Theory						
+46241	046241	QUANTUM MECHANICS 	Quantum Mechanics						
+46052	046052	QUANTUM OPTOELECTRONICS 	Quantum Optoelectronics						
+46232	046232	TOPICS IN NANO-ELECTRONICS 	Topics in Nano-Electronics						
+116037	116037	NOISY QUANTUM COMPUTING 	Noisy Quantum Computing						
+					3 courses are requiredThe compulsory subjects in this group are: 046243 and one of 236990, 116031				

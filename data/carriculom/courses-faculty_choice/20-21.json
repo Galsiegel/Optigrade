@@ -1,0 +1,1730 @@
+[
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044000",
+    "name": {
+      "he": "פרויקט מחקרי לסטו. מצטיינים",
+      "en": "RESEARCH-ORIENTED PRO.FOR EXCELLENT ST."
+    },
+    "hours": {
+      "lec": null,
+      "exs": null,
+      "lab": 4.0,
+      "proj": null
+    },
+    "cp": 4.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044003",
+    "name": {
+      "he": "קורס בנושא מיוחד",
+      "en": "SPECIAL TOPICS 1"
+    },
+    "hours": {
+      "lec": 1.0,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 1.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044004",
+    "name": {
+      "he": "קורס בנושא מיוחד 2",
+      "en": "SPECIAL TOPICS 2"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 2.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044005",
+    "name": {
+      "he": "קורס בנושא מיוחד 3",
+      "en": "COURSE ON A SPECIAL TOPIC 3"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044101",
+    "name": {
+      "he": "מבוא למערכות תכנה",
+      "en": "INTRODUCTION TO SOFTWARE SYSTEMS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044114",
+    "name": {
+      "he": "מתמטיקה דיסקרטית ח'",
+      "en": "DISCRETE MATHEMATICS EE"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044139",
+    "name": {
+      "he": "ממירי מתח ממותגים",
+      "en": "DC-DC CONVERTERS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044170",
+    "name": {
+      "he": "פרויקט מיוחד",
+      "en": "SPECIAL PROJECT"
+    },
+    "hours": {
+      "lec": null,
+      "exs": null,
+      "lab": 4.0,
+      "proj": null
+    },
+    "cp": 4.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044173",
+    "name": {
+      "he": "פרויקט בתעשיה",
+      "en": "PROJECT IN INDUSTRY"
+    },
+    "hours": {
+      "lec": null,
+      "exs": null,
+      "lab": 16.0,
+      "proj": null
+    },
+    "cp": 8.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044174",
+    "name": {
+      "he": "מעבדה בהנדסת חשמל 4",
+      "en": "EE LAB 4"
+    },
+    "hours": {
+      "lec": null,
+      "exs": null,
+      "lab": 4.0,
+      "proj": null
+    },
+    "cp": 1.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044175",
+    "name": {
+      "he": "פרסום מאמר מדעי",
+      "en": "PUBLICATION OF SCIENTIFIC ARTICLE"
+    },
+    "hours": {
+      "lec": null,
+      "exs": null,
+      "lab": 3.0,
+      "proj": null
+    },
+    "cp": 1.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044180",
+    "name": {
+      "he": "נושא אישי למצטיינים",
+      "en": "INDIVIDUAL TOPICS FOR EXCELLENT STUDENTS"
+    },
+    "hours": {
+      "lec": null,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 4.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044184",
+    "name": {
+      "he": "נושאים מתקדמים למצטיינים",
+      "en": "ADVANCED TOPICS FOR EXCELLENT STUDENTS"
+    },
+    "hours": {
+      "lec": null,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 2.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044185",
+    "name": {
+      "he": "נושא מיוחד למצטיינים",
+      "en": "SPECIAL TOPICS FOR EXCELLENT STUDENTS"
+    },
+    "hours": {
+      "lec": null,
+      "exs": null,
+      "lab": 2.0,
+      "proj": null
+    },
+    "cp": 1.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044191",
+    "name": {
+      "he": "מערכות בקרה 1",
+      "en": "CONTROL SYSTEMS 1"
+    },
+    "hours": {
+      "lec": 3.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 4.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044192",
+    "name": {
+      "he": "מערכות בקרה 2",
+      "en": "CONTROL SYSTEMS 2"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044193",
+    "name": {
+      "he": "מעבדה לבקרה לינארית",
+      "en": "LINEAR CONTROL LABORATORY."
+    },
+    "hours": {
+      "lec": null,
+      "exs": null,
+      "lab": 2.0,
+      "proj": null
+    },
+    "cp": 2.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044196",
+    "name": {
+      "he": "המרת אנרגיה ומקורות אנרגיה מתחדשים",
+      "en": "ENERGY CONVERSION AND RENEWABLE SOURCES"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044198",
+    "name": {
+      "he": "מבוא לעיבוד ספרתי של אותות",
+      "en": "INTRO. TO DIGITAL SIGNAL PROCESSING"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044214",
+    "name": {
+      "he": "טכניקות קליטה ושידור",
+      "en": "RECEIVING AND TRANSMITTING TECHNIQUES"
+    },
+    "hours": {
+      "lec": 3.0,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044231",
+    "name": {
+      "he": "התקנים אלקטרוניים 1 (MOS)",
+      "en": "ELECTRON. DEVICES 1 (MOS)"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": 2.0,
+      "proj": null
+    },
+    "cp": 4.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044239",
+    "name": {
+      "he": "תהליכים במיקרואלקטרוניקה",
+      "en": "MICROELECTRONICS PROCESSING"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": null,
+      "lab": 4.0,
+      "proj": null
+    },
+    "cp": 3.5
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044262",
+    "name": {
+      "he": "תכן לוגי ומבוא למחשבים",
+      "en": "LOGIC DESIGN AND INTR. TO COMP."
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044294",
+    "name": {
+      "he": "מיכשור אלקטרוני",
+      "en": "ELECTRONIC INSTRUMENTATION"
+    },
+    "hours": {
+      "lec": 3.0,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044334",
+    "name": {
+      "he": "רשתות מחשבים ואינטרנט 1",
+      "en": "COMPUTER NETWORKS AND INTERNET 1"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "044339",
+    "name": {
+      "he": "פוטוניקה ולייזרים",
+      "en": "PHOTONICS AND LASERS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "045000",
+    "name": {
+      "he": "יזמות בהיי-טק",
+      "en": "ENTREPRENEURSHIP IN INFO. AND COMM.TECH"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 2.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "045001",
+    "name": {
+      "he": "פרויקט מבוא בהנדסת חשמל",
+      "en": "INTRODUCTORY PROJECT IN ELECT."
+    },
+    "hours": {
+      "lec": null,
+      "exs": null,
+      "lab": 2.0,
+      "proj": null
+    },
+    "cp": 1.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "045002",
+    "name": {
+      "he": "מבט-על להנדסת חשמל",
+      "en": "AN OVERVIEW OF ELECTRICAL ENGINEERING"
+    },
+    "hours": {
+      "lec": 1.0,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 1.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "045003",
+    "name": {
+      "he": "קורס בנושא מיוחד 4",
+      "en": "COURSE ON A SPECIAL TOPIC 4"
+    },
+    "hours": {
+      "lec": 1.0,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 1.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "045004",
+    "name": {
+      "he": "קורס בנושא מיוחד 5",
+      "en": "COURSE ON A SPECIAL TOPIC 5"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 2.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "045005",
+    "name": {
+      "he": "קורס בנושא מיוחד 6",
+      "en": "COURSE ON A SPECIAL TOPIC 6"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046002",
+    "name": {
+      "he": "תכן וניתוח אלגוריתמים",
+      "en": "DESIGN AND ANALYSIS OF ALGORITHMS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046003",
+    "name": {
+      "he": "קורס מתקדם בנושא מיוחד",
+      "en": "ADVANCED TOPICS 1"
+    },
+    "hours": {
+      "lec": 1.0,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 1.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046004",
+    "name": {
+      "he": "קורס מתקדם בנושא מיוחד 2",
+      "en": "ADVANCED TOPICS 2"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 2.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046005",
+    "name": {
+      "he": "רשתות מחשבים ואינטרנט 2",
+      "en": "COMPUTER NETWORKS AND INTERNET 2"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046006",
+    "name": {
+      "he": "קורס מתקדם בנושא מיוחד 3",
+      "en": "ADVANCED TOPICS 3"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046012",
+    "name": {
+      "he": "מבוא לאלקטרוניקה גמישה אורגנית",
+      "en": "INT. TO FLEXIBLE ORGANIC ELECTRONICS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046041",
+    "name": {
+      "he": "רשתות עצביות ביולוגיות",
+      "en": "BIOLOGICAL NEURAL NETWORKS: COMPUTATION"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046042",
+    "name": {
+      "he": "מבוא למערכות הספק ורשת חכמה",
+      "en": "INT. TO POWER SYSTEMS   SMART GRIDS"
+    },
+    "hours": {
+      "lec": 3.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.5
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046052",
+    "name": {
+      "he": "אופטואלקטרוניקה קוונטית",
+      "en": "QUANTUM OPTOELECTRONICS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046055",
+    "name": {
+      "he": "ננו-פוטוניקה",
+      "en": "NANO-PHOTONICS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046129",
+    "name": {
+      "he": "פיזיקה של מצב מוצק ח'",
+      "en": "SOLID STATE PHYSICS EE"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046187",
+    "name": {
+      "he": "תכן מעגלים אנלוגיים",
+      "en": "ANALOG CIRCUIT DESIGN"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046188",
+    "name": {
+      "he": "מעגלים אלקט. לאותות מעורבים",
+      "en": "MIXED SIGNAL ELECTRONIC CIRCUITS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046189",
+    "name": {
+      "he": "תכן מסננים אקטיביים",
+      "en": "DESIGN OF ACTIVE FILTERS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046195",
+    "name": {
+      "he": "מערכות לומדות",
+      "en": "MACHINE LEARNING"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 2.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.5
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046196",
+    "name": {
+      "he": "בקרה לא לינארית",
+      "en": "NONLINEAR CONTROL SYSTEMS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046197",
+    "name": {
+      "he": "שיטות חישוביות באופטימיזציה",
+      "en": "COMPUTATIONAL METHODS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046200",
+    "name": {
+      "he": "עיבוד וניתוח תמונות",
+      "en": "IMAGE PROCESSING AND ANALYSIS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046201",
+    "name": {
+      "he": "עיבוד אותות אקראיים",
+      "en": "RANDOM SIGNAL PROCESSES"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046202",
+    "name": {
+      "he": "עיבוד וניתוח מידע",
+      "en": "DATA ANALYSIS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046203",
+    "name": {
+      "he": "תכנון ולמידה מחיזוקים",
+      "en": "PLANNING AND REINFORCEMET LEARNING"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046204",
+    "name": {
+      "he": "תקשורת אנלוגית",
+      "en": "ANALOG COMMUNICATION"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046205",
+    "name": {
+      "he": "מבוא לתורת הקידוד בתקשורת",
+      "en": "INTRODUCTION TO CODING THEORY"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046206",
+    "name": {
+      "he": "מבוא לתקשורת ספרתית",
+      "en": "INTRODUCTION TO DIGITAL COMMUNICATION"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046208",
+    "name": {
+      "he": "טכניקות תקשורת מודרניות",
+      "en": "MODERN COMMUNICATION TECHNIQUES"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046209",
+    "name": {
+      "he": "מבנה מערכות הפעלה",
+      "en": "STRUCTURE OF OPERATING SYSTEMS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 2.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.5
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046210",
+    "name": {
+      "he": "מעבדה במערכות הפעלה",
+      "en": "LABORATORY IN OPERATING SYSTEMS"
+    },
+    "hours": {
+      "lec": null,
+      "exs": null,
+      "lab": 3.0,
+      "proj": null
+    },
+    "cp": 1.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046212",
+    "name": {
+      "he": "מבוא לרובוטיקה ח'",
+      "en": "INTRODUCTION TO ROBOTICS H"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046216",
+    "name": {
+      "he": "מיקרוגלים",
+      "en": "MICROWAVES"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046225",
+    "name": {
+      "he": "עקרונות פיסיקליים של התקני מלמ",
+      "en": "PHYSICAL PRINCIPLES OF SEMI CONDUCTOR"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046230",
+    "name": {
+      "he": "התקנים אלקטרוניים מתקדמים",
+      "en": "ADVANCED ELECTRON DEVICES"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046232",
+    "name": {
+      "he": "פרקים בננואלקטרוניקה",
+      "en": "TOPICS IN NANO-ELECTRONICS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046235",
+    "name": {
+      "he": "התקני הספק משולבים",
+      "en": "INTEGRATED POWER MANAGEMENT DEVICES"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046237",
+    "name": {
+      "he": "מעגלים משולבים מבוא ל-VLSI",
+      "en": "INTEGRATED CIRCUITS-INTRODUCTION TO VLSI"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046239",
+    "name": {
+      "he": "מעבדה בננו-אלקטרוניקה",
+      "en": "LABORATORY COURSE IN NANO-ELECTRONICS"
+    },
+    "hours": {
+      "lec": null,
+      "exs": null,
+      "lab": 4.0,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046240",
+    "name": {
+      "he": "התקנים קוואנטים על מוליכים",
+      "en": "SUPERCONDUCTING QUANTUM DEVICES"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046241",
+    "name": {
+      "he": "מכניקה קוונטית",
+      "en": "QUANTUM MECHANICS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046242",
+    "name": {
+      "he": "פיזיקה סטטיסטית להנדסת חשמל",
+      "en": "STAT.PHYSICS FOR ELECTRICAL ENG."
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046243",
+    "name": {
+      "he": "טכנולוגיות קוונטיות",
+      "en": "QUANTUM TECHNOLOGIES"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046244",
+    "name": {
+      "he": "תופעות גלים",
+      "en": "WAVE PHENOMENA"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046249",
+    "name": {
+      "he": "מערכות אלקטרו-אופטיות",
+      "en": "ELECTRO-OPTIC SYSTEMS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046250",
+    "name": {
+      "he": "אי ליניאריות ומבנים מחזוריים בפוטוניקה",
+      "en": "NONLINEARITY AND PERIODIC STRUCTURES"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046256",
+    "name": {
+      "he": "אנטנות וקרינה",
+      "en": "ANTENNAS AND RADIATION"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046265",
+    "name": {
+      "he": "ארכיטקטורות  ומעג. בשילוב ממריסטורים",
+      "en": "ADVANCED CIRCUITS AND ARCHITECTURES"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046266",
+    "name": {
+      "he": "שיטות הידור (קומפילציה)",
+      "en": "FORMAL LANGUAGES AND COMPILATION"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046267",
+    "name": {
+      "he": "מבנה מחשבים",
+      "en": "COMPUTER ARCHITECTURE"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046268",
+    "name": {
+      "he": "הנדסת מעבדי מחשב",
+      "en": "CONSTRUCTIVE COMPUTER ARCHITECTURE"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046271",
+    "name": {
+      "he": "תכנות ותכן מונחה עצמים",
+      "en": "OBJECT-ORIENTED PROGRAMMING AND DESIGN"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046272",
+    "name": {
+      "he": "מערכות מבוזרות: עקרונות",
+      "en": "DISTRIBUTED SYSTEM PRINCIPLES"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046273",
+    "name": {
+      "he": "תכנות פונקציונלי מבוזר",
+      "en": "DISTRIBUTED FUNCTIONAL PROGRAMMING"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046275",
+    "name": {
+      "he": "תרגום ואופטימיזציה דינמיים של קוד בינארי",
+      "en": "DYNAMIC BINARY TRANSLATION OPTIMIZATION"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046277",
+    "name": {
+      "he": "הבטחת נכונות של תוכנה",
+      "en": "CORRECTNESS GUARANTEES FOR SOFTWARE"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046278",
+    "name": {
+      "he": "מאיצים חישוביים ומער. מואצות",
+      "en": "COMPUTATIONAL ACCELERATORS AND ACCELERA"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046279",
+    "name": {
+      "he": "חישוב מקבילי מואץ",
+      "en": "HIGH PERFORMANCE PARALLEL COMPUTING"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046280",
+    "name": {
+      "he": "עקרונות וכלים באבטחת מחשבים",
+      "en": "PRINCIPLES AND TOOLS FOR COMPUTER SECURITY"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046326",
+    "name": {
+      "he": "מבוא לאותות ומערכות ביולוגיים",
+      "en": "INT.TO BIOLOGICAL SIGNALS & SYSTEMS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046332",
+    "name": {
+      "he": "מערכות ראיה ושמיעה",
+      "en": "VISUAL AND AUDITORY SYSTEMS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046342",
+    "name": {
+      "he": "מבוא לתקשורת בסיבים אופטיים",
+      "en": "INTRODUCTION TO FIBER OPTICS COMMUNICATION"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046345",
+    "name": {
+      "he": "גרפיקה ממוחשבת",
+      "en": "COMPUTER GRAPHICS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046733",
+    "name": {
+      "he": "תורת האינפורמציה",
+      "en": "INFORMATION THEORY"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046743",
+    "name": {
+      "he": "עיבוד אותות מרחבי",
+      "en": "SPATIAL SIGNAL PROCESSING"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046745",
+    "name": {
+      "he": "עיבוד ספרתי של אותות",
+      "en": "DIGITAL SIGNAL PROCESSING"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046746",
+    "name": {
+      "he": "אלגוריתמים ויישומים בראיה ממוחשבת",
+      "en": "ALGORITHMS AND APPLICATION"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046773",
+    "name": {
+      "he": "התקני מלמ אלקטרואופטיים לגילוי",
+      "en": "ELECTROOPT SEMICONDUC DEVICES-DETECTORS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046831",
+    "name": {
+      "he": "מבוא לדימות רפואי",
+      "en": "INTRODUCTION TO MEDICAL IMAGING"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046851",
+    "name": {
+      "he": "לייזרים של מוליכים למחצה והתקנים פוטוניים משולבים",
+      "en": "SEMICON LASERS AND INTEG PHOTONIC DEVICE"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046853",
+    "name": {
+      "he": "ארכיטקטורות מתקדמות של מערכות מיקרו-מעבדים",
+      "en": "ADVANCED ARCHITECTURE"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046864",
+    "name": {
+      "he": "תכן מערכות ספרתיות מהירות",
+      "en": "DESIGN OF HIGH SPEED DIGITAL SYSTEMS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046868",
+    "name": {
+      "he": "יסודות תהליכים אקראיים",
+      "en": "FOUNDATIONS OF STOCHASTIC PROCESSES"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046880",
+    "name": {
+      "he": "תכן לוגי של מערכות VLSI",
+      "en": "LOGIC DESIG AUTOMATION OF VLSI"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046903",
+    "name": {
+      "he": "מעגלים משולבים ב CMOS בתדר רדיו (RF)",
+      "en": "RF CMOS INTEGRATED CIRCUITS"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046918",
+    "name": {
+      "he": "תכן פיסי של מערכות VLSI",
+      "en": "PHYSICAL DESIGN AUTOMATION OF VLSI SYS."
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "046968",
+    "name": {
+      "he": "מיקרועיבוד ומיקרומערכות אלקטרומכניות",
+      "en": "MICRO MACHINING AND MICRO ELECTROMECHAN"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "047003",
+    "name": {
+      "he": "קורס מתקדם בנושא מיוחד 4",
+      "en": "ADVANCED TOPICS 4"
+    },
+    "hours": {
+      "lec": 1.0,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 1.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "047004",
+    "name": {
+      "he": "קורס מתקדם בנושא מיוחד 5",
+      "en": "ADVANCED TOPICS 5"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": null,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 2.0
+  },
+  {
+    "year": "20-21",
+    "category": "faculty_elective",
+    "number": "047006",
+    "name": {
+      "he": "קורס מתקדם בנושא מיוחד 6",
+      "en": "ADVANCED TOPICS 6"
+    },
+    "hours": {
+      "lec": 2.0,
+      "exs": 1.0,
+      "lab": null,
+      "proj": null
+    },
+    "cp": 3.0
+  }
+]
