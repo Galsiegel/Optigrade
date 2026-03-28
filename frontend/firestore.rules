@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read their own profile
+    // Users can create their own profile on first sign-in
+    // Users can update their own profile; admins can update any user
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update, delete: if request.auth != null && (
+        request.auth.uid == userId ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
+      );
+    }
+
+    // Courses metadata is needed to display processed grades to signed-in users.
+    // For now we only allow reads (no writes) from clients.
+    match /courses/{courseId} {
+      allow read: if request.auth != null;
+    }
+
+    // Catalog list for onboarding (Hebrew year + academic year); client read only.
+    match /catalogs/{catalogId} {
+      allow read: if request.auth != null;
+    }
+  }
+}
