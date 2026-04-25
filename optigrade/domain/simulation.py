@@ -3,8 +3,19 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Literal
 
+from .catalog import DegreeCatalog
 from .course import CourseOffering, normalize_term_id
+from .student import StudentProfile
+
+
+@dataclass(frozen=True)
+class FinishSimulationInput:
+    student_profile: StudentProfile
+    degree_catalog: DegreeCatalog
+    selected_specialty_ids: set[str] | None
+    strategy: Literal["selected_only", "try_all_from_start_to_current"] = "selected_only"
 
 
 @dataclass(frozen=True)
