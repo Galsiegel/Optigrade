@@ -43,12 +43,37 @@ def _select_candidate_subset(
 ) -> set[str]:
     selected_ids: set[str] = set()
     candidate_by_id = {candidate.course_instance_id: candidate for candidate in candidates}
+    instance_id_by_x_var = {x_var: instance_id for instance_id, x_var in model_context.x_vars.items()}
+
+    # Always seed one instance for each mandatory course when present.
+    # This keeps extraction deterministic and avoids dropping mandatory courses
+    # when constraint metadata changes shape.
+    for mandatory_course_id in sorted(simulation_input.degree_catalog.mandatory_course_ids):
+        matching_candidates = [
+            candidate
+            for candidate in candidates
+            if str(candidate.course_id) == mandatory_course_id
+        ]
+        if not matching_candidates:
+            continue
+        selected_ids.add(
+            max(matching_candidates, key=lambda candidate: candidate.credit_units).course_instance_id
+        )
 
     for constraint in model_context.constraints:
         if constraint.type == "mandatory_completion":
-            x_vars = constraint.details.get("x_vars", [])
-            if x_vars:
-                selected_ids.add(str(x_vars[0]).replace("x_", "", 1))
+            x_vars = [
+                str(x_var)
+                for x_var in constraint.details.get("x_vars", [])
+                if str(x_var) in instance_id_by_x_var
+            ]
+            required = int(constraint.details.get("min_selected", 1))
+            selected_for_constraint = sorted(
+                (instance_id_by_x_var[x_var] for x_var in x_vars),
+                key=lambda instance_id: candidate_by_id[instance_id].credit_units,
+                reverse=True,
+            )[: max(0, required)]
+            selected_ids.update(selected_for_constraint)
 
     for constraint in model_context.constraints:
         if constraint.type == "core_count_minimum":

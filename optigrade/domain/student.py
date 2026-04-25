@@ -7,7 +7,7 @@ from decimal import Decimal
 from enum import Enum
 
 from .bucket import normalize_bucket_id
-from .course import CourseId, CreditValue, TermId, normalize_term_id, validate_course_id
+from .course import CourseId, CreditValue, TermId, validate_course_id, validate_term_id
 
 
 class CourseInstanceStatus(str, Enum):
@@ -43,14 +43,14 @@ class StudentCourseInstance:
         if credit_value.credit_units != self.credit_units:
             raise ValueError("credit_units must match scaled credits")
 
-        normalized_term: TermId | None = None
+        validated_term: TermId | None = None
         if self.term is not None:
-            normalized_term = normalize_term_id(self.term)
+            validated_term = validate_term_id(self.term)
 
         normalized_bucket_ids = {normalize_bucket_id(bid) for bid in self.eligible_bucket_ids}
 
         object.__setattr__(self, "course_id", validated_course_id)
-        object.__setattr__(self, "term", normalized_term)
+        object.__setattr__(self, "term", validated_term)
         object.__setattr__(self, "credits", credit_value.credits)
         object.__setattr__(self, "eligible_bucket_ids", normalized_bucket_ids)
 

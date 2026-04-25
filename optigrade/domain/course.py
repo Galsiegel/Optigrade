@@ -34,6 +34,17 @@ def normalize_term_id(raw_term: str) -> TermId:
     return TermId(normalized)
 
 
+def validate_term_id(term: TermId) -> TermId:
+    """Validate an already-normalized term id without re-normalizing."""
+    if not isinstance(term, str):
+        raise TypeError("term must be a string")
+    if not _VALID_TERM_PATTERN.fullmatch(term):
+        raise ValueError(
+            "term must be normalized as <year>_<season>, for example: 2023_spring"
+        )
+    return term
+
+
 @dataclass(frozen=True)
 class CreditValue:
     credits: Decimal

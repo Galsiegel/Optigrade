@@ -4,7 +4,11 @@ from optigrade.domain.catalog import DegreeCatalog
 from optigrade.domain.course import CourseOffering
 from optigrade.domain.simulation import FutureAvailabilityPool, PlanningSimulationInput
 from optigrade.domain.student import CourseInstanceStatus, StudentCourseInstance, StudentProfile
-from optigrade.solver.planning_solver import planning_offering_id, solve_planning_simulation
+from optigrade.solver.planning_solver import (
+    _enumerate_future_subsets_best_first,
+    planning_offering_id,
+    solve_planning_simulation,
+)
 
 
 def _passed_instance(instance_id: str, course_id: str, credits: str = "3.0") -> StudentCourseInstance:
@@ -145,3 +149,17 @@ def test_planning_infeasible_returns_diagnostics() -> None:
     assert result.status == "infeasible"
     assert result.plans == []
     assert any(diagnostic.type == "mandatory_completion" for diagnostic in result.diagnostics)
+
+
+def test_future_subset_enumeration_is_bounded_by_state_limit() -> None:
+    future_by_id = {
+        f"future_{index}": _passed_instance(f"future_{index}", f"046{index:03d}", "1.0")
+        for index in range(30)
+    }
+    subsets, truncated = _enumerate_future_subsets_best_first(
+        future_by_id=future_by_id,
+        locked_ids=set(),
+        max_states=64,
+    )
+    assert truncated is True
+    assert len(subsets) == 64

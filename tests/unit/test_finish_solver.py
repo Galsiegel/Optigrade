@@ -8,7 +8,9 @@ from optigrade.domain.student import (
     StudentCourseInstance,
     StudentProfile,
 )
+from optigrade.solver.model_builder import FinishModelConstraint, FinishModelContext
 from optigrade.solver.finish_solver import solve_finish_simulation
+from optigrade.solver.finish_solver import _select_candidate_subset
 
 
 def _instance(
@@ -445,3 +447,125 @@ def test_finish_solver_includes_rule_statuses() -> None:
     )
     assert result.status == "feasible"
     assert any(status.rule_type == "mandatory_completion" for status in result.rule_statuses)
+
+
+def test_select_candidate_subset_honors_min_selected_for_mandatory_constraint() -> None:
+    candidates = [
+        _instance(instance_id="ci_m1", course_id="046195", eligible_bucket_ids={"mandatory"}, credits="2.0"),
+        _instance(instance_id="ci_m2", course_id="046195", eligible_bucket_ids={"mandatory"}, credits="3.0"),
+        _instance(instance_id="ci_other", course_id="046267", eligible_bucket_ids={"core"}, credits="1.0"),
+    ]
+    context = FinishModelContext(
+        x_vars={
+            "ci_m1": "x_ci_m1",
+            "ci_m2": "x_ci_m2",
+            "ci_other": "x_ci_other",
+        },
+        alloc_vars={},
+        constraints=[
+            FinishModelConstraint(
+                type="mandatory_completion",
+                details={
+                    "course_id": "046195",
+                    "x_vars": ["x_ci_m1", "x_ci_m2"],
+                    "min_selected": 2,
+                },
+            ),
+            FinishModelConstraint(
+                type="total_credit_minimum",
+                details={
+                    "terms": [],
+                    "required_total_credit_units": 0,
+                },
+            ),
+        ],
+    )
+    simulation_input = FinishSimulationInput(
+        student_profile=StudentProfile(
+            student_id="s-multi",
+            degree_start_year=2022,
+            completed_courses=candidates,
+            manual_tags=[],
+        ),
+        degree_catalog=DegreeCatalog(
+            degree_id="tiny",
+            academic_year=2024,
+            program_name="tiny",
+            total_credit_units=0,
+            mandatory_course_ids={"046195"},
+            core_course_ids=set(),
+            required_core_count=0,
+            required_specialty_count=0,
+            specialties={},
+        ),
+        selected_specialty_ids=None,
+    )
+
+    selected_ids = _select_candidate_subset(simulation_input, candidates, context)
+    assert "ci_m1" in selected_ids
+    assert "ci_m2" in selected_ids
+
+
+def test_select_candidate_subset_keeps_all_distinct_mandatory_courses() -> None:
+    candidates = [
+        _instance(instance_id="ci_a1", course_id="046195", eligible_bucket_ids={"mandatory"}, credits="1.0"),
+        _instance(instance_id="ci_a2", course_id="046267", eligible_bucket_ids={"mandatory"}, credits="1.0"),
+        _instance(instance_id="ci_extra", course_id="046000", eligible_bucket_ids={"core"}, credits="8.0"),
+    ]
+    context = FinishModelContext(
+        x_vars={
+            "ci_a1": "x_ci_a1",
+            "ci_a2": "x_ci_a2",
+            "ci_extra": "x_ci_extra",
+        },
+        alloc_vars={},
+        constraints=[
+            FinishModelConstraint(
+                type="mandatory_completion",
+                details={
+                    "course_id": "046195",
+                    "x_vars": ["x_ci_a1"],
+                    "min_selected": 1,
+                },
+            ),
+            FinishModelConstraint(
+                type="mandatory_completion",
+                details={
+                    "course_id": "046267",
+                    "x_vars": ["x_ci_a2"],
+                    "min_selected": 1,
+                },
+            ),
+            FinishModelConstraint(
+                type="total_credit_minimum",
+                details={
+                    "terms": [],
+                    "required_total_credit_units": 0,
+                },
+            ),
+        ],
+    )
+    simulation_input = FinishSimulationInput(
+        student_profile=StudentProfile(
+            student_id="s-mandatory-distinct",
+            degree_start_year=2022,
+            completed_courses=candidates,
+            manual_tags=[],
+        ),
+        degree_catalog=DegreeCatalog(
+            degree_id="tiny",
+            academic_year=2024,
+            program_name="tiny",
+            total_credit_units=0,
+            mandatory_course_ids={"046195", "046267"},
+            core_course_ids=set(),
+            required_core_count=0,
+            required_specialty_count=0,
+            specialties={},
+        ),
+        selected_specialty_ids=None,
+    )
+
+    selected_ids = _select_candidate_subset(simulation_input, candidates, context)
+    assert "ci_a1" in selected_ids
+    assert "ci_a2" in selected_ids
