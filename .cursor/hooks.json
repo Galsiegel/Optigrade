@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "hooks": {
+    "stop": [
+      {
+        "type": "prompt",
+        "timeout": 20,
+        "loop_limit": 50,
+        "prompt": "Continue implementing the next milestone from .cursor/plans/optigrade_backend_implementation_plan_backend_first.md. Before any milestone commit, run pytest tests/unit (or broader if relevant), fix failures, then commit only milestone-related files. Keep milestones small and test-thorough."
+      }
+    ],
+    "afterShellExecution": [
+      {
+        "command": "python .cursor/hooks/milestone_guard.py after_shell",
+        "matcher": "pytest"
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "python .cursor/hooks/milestone_guard.py before_shell",
+        "matcher": "^git commit",
+        "failClosed": true
+      }
+    ]
+  }
+}

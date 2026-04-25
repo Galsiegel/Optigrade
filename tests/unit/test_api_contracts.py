@@ -189,3 +189,62 @@ def test_invalid_catalog_year_returns_404(tmp_path: Path) -> None:
         },
     )
     assert response.status_code == 404
+
+
+def test_transcript_parse_endpoint_returns_classified_courses(tmp_path: Path) -> None:
+    client = _build_client(tmp_path)
+    response = client.post(
+        "/transcripts/parse",
+        json={
+            "student_name": "Jane",
+            "student_id_number": "123",
+            "courses": [
+                {
+                    "course_id": "046195",
+                    "name": "Algorithms",
+                    "term": "2024_winter",
+                    "credits": 3.0,
+                    "status": "recognized_failed",
+                },
+                {
+                    "course_id": "046200",
+                    "name": "Unknown",
+                    "term": "2024_spring",
+                    "credits": 2.0,
+                    "status": "bad-status",
+                },
+            ],
+        },
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["student_name"] == "Jane"
+    assert [course["parser_status"] for course in payload["courses"]] == [
+        "recognized_failed",
+        "unknown_unresolved",
+    ]
+
+
+def test_finish_invalid_catalog_search_strategy_returns_422(tmp_path: Path) -> None:
+    client = _build_client(tmp_path)
+    response = client.post(
+        "/simulations/finish-degree",
+        json={
+            "student_profile_id": "student_123",
+            "degree_id": "software",
+            "catalog_year": 2022,
+            "selected_specialties": [],
+            "catalog_search_strategy": "not_a_strategy",
+        },
+    )
+    assert response.status_code == 422
+
+
+def test_openapi_contains_core_backend_endpoints(tmp_path: Path) -> None:
+    client = _build_client(tmp_path)
+    response = client.get("/openapi.json")
+    assert response.status_code == 200
+    paths = response.json()["paths"]
+    assert "/transcripts/parse" in paths
+    assert "/simulations/finish-degree" in paths
+    assert "/simulations/plan-degree" in paths

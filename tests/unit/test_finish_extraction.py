@@ -128,3 +128,72 @@ def test_finish_extraction_builds_rule_statuses() -> None:
     assert result.rule_statuses
     assert result.rule_statuses[0].rule_type == "mandatory_completion"
     assert result.rule_statuses[0].status == "satisfied"
+
+
+def test_rule_status_choose_group_required_zero_is_not_applicable() -> None:
+    candidates = [_instance("ci_group", "046195")]
+    context = FinishModelContext(
+        x_vars={"ci_group": "x_ci_group"},
+        alloc_vars={("ci_group", "core"): "alloc_ci_group_core"},
+        constraints=[
+            FinishModelConstraint(
+                type="specialty_choose_group",
+                details={
+                    "specialty_id": "ai",
+                    "group_courses": ["046195", "046200"],
+                    "x_vars": [],
+                    "required_count": 0,
+                },
+            )
+        ],
+    )
+    result = extract_finish_result(
+        candidates=candidates,
+        model_context=context,
+        status="feasible",
+        warnings=[],
+        diagnostics=[],
+    )
+    assert len(result.rule_statuses) == 1
+    assert result.rule_statuses[0].rule_type == "specialty_choose_group"
+    assert result.rule_statuses[0].status == "not_applicable"
+
+
+def test_reason_codes_include_logical_specialty_reasons_when_assigned_to_core() -> None:
+    candidates = [_instance("ci_logic", "046195")]
+    context = FinishModelContext(
+        x_vars={"ci_logic": "x_ci_logic"},
+        alloc_vars={("ci_logic", "core"): "alloc_ci_logic_core"},
+        constraints=[
+            FinishModelConstraint(
+                type="specialty_mandatory",
+                details={
+                    "specialty_id": "ai",
+                    "course_id": "046195",
+                    "x_vars": ["x_ci_logic"],
+                    "min_selected": 1,
+                },
+            ),
+            FinishModelConstraint(
+                type="specialty_choose_group",
+                details={
+                    "specialty_id": "ai",
+                    "group_courses": ["046195", "046200"],
+                    "x_vars": ["x_ci_logic"],
+                    "required_count": 1,
+                },
+            ),
+        ],
+    )
+    result = extract_finish_result(
+        candidates=candidates,
+        model_context=context,
+        status="feasible",
+        warnings=[],
+        diagnostics=[],
+    )
+    assert len(result.bucket_assignments) == 1
+    reason_codes = set(result.bucket_assignments[0].reason_codes)
+    assert "assigned_to_core" in reason_codes
+    assert "satisfies_specialty_mandatory_rule" in reason_codes
+    assert "satisfies_choose_group" in reason_codes

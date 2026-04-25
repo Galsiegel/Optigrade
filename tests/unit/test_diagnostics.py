@@ -61,3 +61,36 @@ def test_diagnostics_reports_bucket_credit_gap() -> None:
     assert feasible is False
     assert any(d.type == "bucket_credit_minimum" for d in diagnostics)
     assert any(d.related_bucket_ids == ["sports"] for d in diagnostics)
+
+
+def test_diagnostics_reports_core_and_specialty_gaps_with_structure() -> None:
+    context = _context(
+        [
+            FinishModelConstraint(
+                type="core_count_minimum",
+                details={"alloc_vars": [], "required_core_count": 1},
+            ),
+            FinishModelConstraint(
+                type="specialty_visible_minimum",
+                details={"specialty_id": "ai", "alloc_vars": [], "minimum_total_courses": 2},
+            ),
+            FinishModelConstraint(
+                type="required_specialty_count",
+                details={"required_specialty_count": 1, "active_specialty_ids": []},
+            ),
+        ]
+    )
+    feasible, diagnostics = evaluate_finish_feasibility(context)
+    assert feasible is False
+
+    by_type = {diag.type: diag for diag in diagnostics}
+    assert "core_count_minimum" in by_type
+    assert by_type["core_count_minimum"].related_bucket_ids == ["core"]
+    assert by_type["core_count_minimum"].severity == "error"
+
+    assert "specialty_visible_minimum" in by_type
+    assert by_type["specialty_visible_minimum"].related_bucket_ids == ["specialty:ai"]
+    assert by_type["specialty_visible_minimum"].message_en
+
+    assert "required_specialty_count" in by_type
+    assert by_type["required_specialty_count"].related_bucket_ids == ["specialty"]
