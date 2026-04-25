@@ -36,6 +36,7 @@ from .student import (
     StudentCourseInstance,
     StudentProfile,
 )
+from .transcript import ManualTagAuditRecord, ParsedTranscript, ParsedTranscriptCourse
 
 __all__ = [
     "CourseId",
@@ -67,4 +68,7 @@ __all__ = [
     "StudentCourseInstance",
     "ManualCourseTag",
     "StudentProfile",
+    "ParsedTranscriptCourse",
+    "ParsedTranscript",
+    "ManualTagAuditRecord",
 ]

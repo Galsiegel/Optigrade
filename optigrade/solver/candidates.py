@@ -5,7 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field, replace
 
 from optigrade.domain.catalog import DegreeCatalog
-from optigrade.domain.student import StudentCourseInstance, StudentProfile
+from optigrade.domain.course import CreditValue
+from optigrade.domain.student import (
+    CourseInstanceStatus,
+    StudentCourseInstance,
+    StudentProfile,
+)
 
 
 @dataclass(frozen=True)
@@ -40,6 +45,23 @@ def build_finish_candidates(
 
         seen_non_sports_course_ids.add(instance.course_id)
         candidates.append(instance)
+
+    for index, manual_tag in enumerate(student_profile.manual_tags):
+        credit_value = CreditValue.from_credits(manual_tag.credits)
+        manual_instance = StudentCourseInstance(
+            course_instance_id=f"manual_tag_{index}",
+            course_id=manual_tag.course_code,
+            term=None,
+            credits=credit_value.credits,
+            credit_units=credit_value.credit_units,
+            status=CourseInstanceStatus.UNKNOWN_STUDENT_TAGGED,
+            source="manual_tag",
+            verified=False,
+            eligible_bucket_ids=manual_tag.bucket_types,
+            comment=manual_tag.comment,
+        )
+        manual_instance = _with_catalog_eligible_buckets(manual_instance, degree_catalog)
+        candidates.append(manual_instance)
 
     return CandidateBuildResult(candidates=candidates, warnings=warnings)
 
