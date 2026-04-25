@@ -24,6 +24,10 @@ from .simulation import (
     FinishSimulationInput,
     FinishSimulationResult,
     FutureAvailabilityPool,
+    PlanningPlan,
+    PlanningSimulationInput,
+    PlanningSimulationResult,
+    PlanningSuggestedCourse,
 )
 from .student import (
     CourseInstanceStatus,
@@ -49,6 +53,10 @@ __all__ = [
     "FinishSimulationInput",
     "FinishSimulationResult",
     "FutureAvailabilityPool",
+    "PlanningSimulationInput",
+    "PlanningSuggestedCourse",
+    "PlanningPlan",
+    "PlanningSimulationResult",
     "VALID_BUCKET_IDS",
     "normalize_bucket_id",
     "parse_specialty_bucket_id",

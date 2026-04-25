@@ -75,3 +75,43 @@ class FutureAvailabilityPool:
         for semester_offerings in self.semesters.values():
             offerings.extend(semester_offerings)
         return offerings
+
+
+@dataclass(frozen=True)
+class PlanningSimulationInput:
+    student_profile: StudentProfile
+    degree_catalog: DegreeCatalog
+    future_availability_pool: FutureAvailabilityPool
+    selected_specialty_ids: set[str] | None
+    locked_course_offering_ids: set[str] = field(default_factory=set)
+    blocked_course_ids: set[str] = field(default_factory=set)
+    num_plans: int = 2
+
+
+@dataclass(frozen=True)
+class PlanningSuggestedCourse:
+    course_instance_id: str
+    course_id: str
+    term: str
+    credit_units: int
+    locked_by_student: bool = False
+
+
+@dataclass(frozen=True)
+class PlanningPlan:
+    rank: int
+    future_credit_units: int
+    future_course_count: int
+    suggested_courses: list[PlanningSuggestedCourse]
+    bucket_assignments: list[BucketAssignment]
+    rule_statuses: list[object] = field(default_factory=list)
+    generic_missing_requirements: list[str] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class PlanningSimulationResult:
+    status: Literal["optimal", "infeasible"]
+    plans: list[PlanningPlan] = field(default_factory=list)
+    diagnostics: list[Diagnostic] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
