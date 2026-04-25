@@ -1,0 +1,39 @@
+{
+  "academicYear": "2024/2025",
+  "programName": "Tiny Specialty",
+  "generalRules": {
+    "totalCredits": 15,
+    "mustChooseCoreGroups": 1,
+    "mustTakeSpecialities": 1,
+    "enrichment": 0,
+    "physicalEducation": 0
+  },
+  "mandatory": [
+    {"code": "SPEC100", "credits": 3}
+  ],
+  "core": [
+    {"code": "SPEC200", "credits": 3},
+    {"code": "SPEC201", "credits": 3}
+  ],
+  "facultyChoice": [],
+  "specialties": [
+    {
+      "trackId": "specialty_ai",
+      "nameEn": "AI",
+      "nameHe": "AI",
+      "requirements": {
+        "mandatoryCourses": ["SPEC200"],
+        "chooseOneOfGroups": [
+          ["SPEC300", "SPEC301"]
+        ],
+        "minimumTotalCourses": 2
+      },
+      "courses": [
+        {"code": "SPEC200", "credits": 3},
+        {"code": "SPEC300", "credits": 3},
+        {"code": "SPEC301", "credits": 3},
+        {"code": "SPEC302", "credits": 3}
+      ]
+    }
+  ]
+}

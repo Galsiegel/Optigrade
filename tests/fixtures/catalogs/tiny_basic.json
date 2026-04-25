@@ -1,0 +1,21 @@
+{
+  "academicYear": "2024/2025",
+  "programName": "Tiny Basic",
+  "generalRules": {
+    "totalCredits": 10,
+    "mustChooseCoreGroups": 1,
+    "mustTakeSpecialities": 0,
+    "enrichment": 0,
+    "physicalEducation": 1
+  },
+  "mandatory": [
+    {"code": "TINY100", "credits": 0},
+    {"code": "TINY101", "credits": 3}
+  ],
+  "core": [
+    {"code": "TINY200", "credits": 3},
+    {"code": "TINY201", "credits": 3}
+  ],
+  "facultyChoice": [],
+  "specialties": []
+}

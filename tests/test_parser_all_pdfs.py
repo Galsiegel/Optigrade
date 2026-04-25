@@ -1,7 +1,5 @@
 """
-Test the parser on all PDFs in data/dummy_exampleJSON/grades/
-and validate against the degree JSON.
-The degree JSON isnt currently available
+Manual parser smoke script (not a pytest suite).
 
 Usage:
     python tests/test_parser_all_pdfs.py
@@ -15,7 +13,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from tools.parse_transcript import parse_transcript_pdf
+from student_loader.parse_transcript import parse_transcript_pdf
 
 GRADES_DIR = Path("data/dummy_exampleJSON/grades")
 DEGREE_PATH = Path("data/dummy_exampleJSON/dummy_degree.json")
@@ -53,7 +51,7 @@ def classify_wildcard(cid, degree_ids):
     return None
 
 
-def test_single_pdf(pdf_path, degree_ids):
+def analyze_single_pdf(pdf_path, degree_ids):
     """Parse a single PDF and return a result dict."""
     result = {
         "file": pdf_path.name,
@@ -237,7 +235,7 @@ def main():
 
     all_results = []
     for pdf_path in pdf_files:
-        r = test_single_pdf(pdf_path, degree_ids)
+        r = analyze_single_pdf(pdf_path, degree_ids)
         print_result(r)
         all_results.append(r)
 

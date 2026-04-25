@@ -1,0 +1,34 @@
+{
+  "student_profile": {
+    "student_name": "Gal Tester",
+    "student_id": "55555",
+    "degree_name": "Computer and Software Engineering",
+    "faculty_name": "Engineering",
+    "accumulated_credits": 8.0,
+    "required_credits": 159.5,
+    "gpa": 90.0,
+    "courses": [
+      {
+        "course_id": "044101",
+        "name": "Intro",
+        "credits": 3.0,
+        "grade": "92",
+        "semester": "2022-2023 Winter"
+      },
+      {
+        "course_id": "394800",
+        "name": "Sports",
+        "credits": 1.0,
+        "grade": "Pass",
+        "semester": "2022-2023 Winter"
+      },
+      {
+        "course_id": "324500",
+        "name": "MALAG",
+        "credits": null,
+        "grade": "Exemption without points",
+        "semester": "2023-2024 Spring"
+      }
+    ]
+  }
+}

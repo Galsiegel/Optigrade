@@ -1,0 +1,14 @@
+{
+  "status": "feasible",
+  "summary": {
+    "total_selected_credit_units": 12,
+    "total_selected_courses": 2
+  },
+  "expected_bucket_assignments": {
+    "core": ["046195"],
+    "specialty:ai": ["046237"]
+  },
+  "expected_manual_unverified_courses": ["046237"],
+  "expected_unused_courses": [],
+  "expected_diagnostics": []
+}

@@ -1,0 +1,17 @@
+{
+  "academicYear": "2024/2025",
+  "programName": "Tiny Sports Duplicates",
+  "generalRules": {
+    "totalCredits": 6,
+    "mustChooseCoreGroups": 0,
+    "mustTakeSpecialities": 0,
+    "enrichment": 0,
+    "physicalEducation": 2
+  },
+  "mandatory": [
+    {"code": "SPORT100", "credits": 2}
+  ],
+  "core": [],
+  "facultyChoice": [],
+  "specialties": []
+}

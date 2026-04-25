@@ -1,0 +1,24 @@
+{
+  "faculty_name": "Engineering",
+  "degree_name": "CS",
+  "must": {
+    "name": "Mandatory",
+    "allowed_course_ids": ["044101", "044252"]
+  },
+  "core": {
+    "name": "Core",
+    "allowed_course_ids": ["046195"]
+  },
+  "specialties": [
+    {
+      "name": "AI",
+      "allowed_course_ids": ["046200", "046201"],
+      "mandatory_knowledge_ids": ["046200"]
+    },
+    {
+      "name": "Systems",
+      "allowed_course_ids": ["046210"],
+      "mandatory_knowledge_ids": []
+    }
+  ]
+}
