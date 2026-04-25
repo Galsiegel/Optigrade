@@ -117,4 +117,60 @@ def build_finish_model(
         )
     )
 
+    for specialty_id, specialty in sorted(degree_catalog.specialties.items()):
+        specialty_alloc_vars = [
+            alloc_var
+            for (instance_id, bucket_id), alloc_var in sorted(alloc_vars.items())
+            if bucket_id == f"specialty:{specialty_id}"
+            and str(candidate_by_instance_id[instance_id].course_id)
+            in specialty.eligible_course_ids
+        ]
+        constraints.append(
+            FinishModelConstraint(
+                type="specialty_visible_minimum",
+                details={
+                    "specialty_id": specialty_id,
+                    "alloc_vars": specialty_alloc_vars,
+                    "minimum_total_courses": specialty.minimum_total_courses,
+                },
+            )
+        )
+
+        for mandatory_course_id in specialty.mandatory_courses:
+            mandatory_x_vars = [
+                x_vars[candidate.course_instance_id]
+                for candidate in candidates
+                if str(candidate.course_id) == mandatory_course_id
+            ]
+            constraints.append(
+                FinishModelConstraint(
+                    type="specialty_mandatory",
+                    details={
+                        "specialty_id": specialty_id,
+                        "course_id": mandatory_course_id,
+                        "x_vars": mandatory_x_vars,
+                        "min_selected": 1,
+                    },
+                )
+            )
+
+        for group_index, choose_group in enumerate(specialty.choose_groups):
+            group_x_vars = [
+                x_vars[candidate.course_instance_id]
+                for candidate in candidates
+                if str(candidate.course_id) in choose_group.courses
+            ]
+            constraints.append(
+                FinishModelConstraint(
+                    type="specialty_choose_group",
+                    details={
+                        "specialty_id": specialty_id,
+                        "group_index": group_index,
+                        "group_courses": list(choose_group.courses),
+                        "x_vars": group_x_vars,
+                        "required_count": choose_group.required_count,
+                    },
+                )
+            )
+
     return FinishModelContext(x_vars=x_vars, alloc_vars=alloc_vars, constraints=constraints)
