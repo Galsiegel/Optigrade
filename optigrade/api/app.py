@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
 
 from fastapi import FastAPI, HTTPException
 
@@ -19,8 +18,17 @@ from optigrade.api.schemas import (
 )
 from optigrade.domain.simulation import FinishSimulationInput, PlanningSimulationInput
 from optigrade.loaders.availability_loader import load_availability_pool_from_dict
-from optigrade.loaders.catalog_loader import load_catalog_from_dict
-from optigrade.loaders.student_loader import load_student_profile_from_dict
+from optigrade.repositories.base import (
+    AvailabilityPoolRepository,
+    DegreeCatalogRepository,
+    StudentProfileRepository,
+)
+from optigrade.repositories.local_json import (
+    JsonFileRepository,
+    LocalJsonAvailabilityPoolRepository,
+    LocalJsonDegreeCatalogRepository,
+    LocalJsonStudentProfileRepository,
+)
 from optigrade.services.manual_tag_service import (
     InMemoryManualTagAuditRepository,
     ManualTagAuditRepository,
@@ -31,29 +39,18 @@ from optigrade.solver.finish_solver import solve_finish_simulation
 from optigrade.solver.planning_solver import solve_planning_simulation
 
 
-class JsonFileRepository:
-    def __init__(self, root_dir: Path) -> None:
-        self.root_dir = root_dir
-
-    def load(self, key: str) -> dict[str, Any] | None:
-        path = self.root_dir / f"{key}.json"
-        if not path.exists():
-            return None
-        return __import__("json").loads(path.read_text(encoding="utf-8"))
-
-
 def create_app(
     *,
-    students_repo: JsonFileRepository | None = None,
-    catalogs_repo: JsonFileRepository | None = None,
-    availability_repo: JsonFileRepository | None = None,
+    students_repo: StudentProfileRepository | JsonFileRepository | None = None,
+    catalogs_repo: DegreeCatalogRepository | JsonFileRepository | None = None,
+    availability_repo: AvailabilityPoolRepository | JsonFileRepository | None = None,
     audit_repository: ManualTagAuditRepository | None = None,
 ) -> FastAPI:
     app = FastAPI(title="OptiGrade API", version="0.1.0")
     base_data = Path("data")
-    app.state.students_repo = students_repo or JsonFileRepository(base_data / "students")
-    app.state.catalogs_repo = catalogs_repo or JsonFileRepository(base_data / "catalogs")
-    app.state.availability_repo = availability_repo or JsonFileRepository(base_data / "availability")
+    app.state.students_repo = _resolve_students_repo(students_repo, base_data)
+    app.state.catalogs_repo = _resolve_catalogs_repo(catalogs_repo, base_data)
+    app.state.availability_repo = _resolve_availability_repo(availability_repo, base_data)
     app.state.audit_repository = audit_repository or InMemoryManualTagAuditRepository()
 
     @app.post("/transcripts/parse", response_model=TranscriptParseResponse)
@@ -79,10 +76,9 @@ def create_app(
 
     @app.post("/manual-tags", response_model=ManualTagResponse)
     def add_manual_tag(request: ManualTagRequest) -> ManualTagResponse:
-        student_payload = app.state.students_repo.load(request.student_profile_id)
-        if student_payload is None:
+        profile = app.state.students_repo.get(request.student_profile_id)
+        if profile is None:
             raise HTTPException(status_code=404, detail="student profile not found")
-        profile = load_student_profile_from_dict(student_payload)
         updated_profile = apply_manual_tag(
             profile,
             course_code=request.course_code,
@@ -93,6 +89,7 @@ def create_app(
             degree_id=request.degree_id,
             catalog_year=request.catalog_year,
         )
+        app.state.students_repo.save(updated_profile)
         return ManualTagResponse(
             student_profile_id=request.student_profile_id,
             total_manual_tags=len(updated_profile.manual_tags),
@@ -140,10 +137,27 @@ def create_app(
     @app.post("/simulations/plan-degree", response_model=PlanningSimulationResponse)
     def plan_simulation(request: PlanningSimulationRequest) -> PlanningSimulationResponse:
         profile = _load_student_profile_or_404(app, request.student_profile_id)
-        catalog_payload = app.state.catalogs_repo.load(f"{request.degree_id}_{request.catalog_year}")
-        if catalog_payload is None:
+        catalog = app.state.catalogs_repo.get(request.degree_id, request.catalog_year)
+        if catalog is None:
             raise HTTPException(status_code=404, detail="catalog not found")
-        availability_payload = app.state.availability_repo.load(request.degree_id) or {"semesters": {}}
+        availability_pool = app.state.availability_repo.get(request.degree_id)
+        if availability_pool is None:
+            availability_payload = {"semesters": {}}
+        else:
+            availability_payload = {
+                "semesters": {
+                    semester: [
+                        {
+                            "code": offering.course_id,
+                            "credits": float(offering.credits),
+                            "nameEn": offering.name_en,
+                            "nameHe": offering.name_he,
+                        }
+                        for offering in offerings
+                    ]
+                    for semester, offerings in availability_pool.semesters.items()
+                }
+            }
         if request.future_semesters:
             semesters = availability_payload.get("semesters", {})
             availability_payload = {
@@ -154,7 +168,7 @@ def create_app(
         result = solve_planning_simulation(
             PlanningSimulationInput(
                 student_profile=profile,
-                degree_catalog=load_catalog_from_dict(catalog_payload, degree_id=request.degree_id),
+                degree_catalog=catalog,
                 future_availability_pool=load_availability_pool_from_dict(availability_payload),
                 selected_specialty_ids=set(request.selected_specialties) or None,
                 locked_course_offering_ids=set(request.locked_course_offering_ids),
@@ -185,10 +199,10 @@ def create_app(
 
 
 def _load_student_profile_or_404(app: FastAPI, student_profile_id: str):
-    student_payload = app.state.students_repo.load(student_profile_id)
-    if student_payload is None:
+    profile = app.state.students_repo.get(student_profile_id)
+    if profile is None:
         raise HTTPException(status_code=404, detail="student profile not found")
-    return load_student_profile_from_dict(student_payload)
+    return profile
 
 
 def _load_catalog_candidates_or_404(
@@ -204,13 +218,46 @@ def _load_catalog_candidates_or_404(
         years = list(range(student_start_year, selected_catalog_year + 1))
     candidates = []
     for year in years:
-        payload = app.state.catalogs_repo.load(f"{degree_id}_{year}")
-        if payload is None:
+        catalog = app.state.catalogs_repo.get(degree_id, year)
+        if catalog is None:
             continue
-        candidates.append((year, load_catalog_from_dict(payload, degree_id=degree_id)))
+        candidates.append((year, catalog))
     if not candidates:
         raise HTTPException(status_code=404, detail="catalog not found")
     return candidates
+
+
+def _resolve_students_repo(
+    repo: StudentProfileRepository | JsonFileRepository | None,
+    base_data: Path,
+) -> StudentProfileRepository:
+    if repo is None:
+        return LocalJsonStudentProfileRepository(base_data / "students")
+    if isinstance(repo, JsonFileRepository):
+        return LocalJsonStudentProfileRepository(repo.root_dir)
+    return repo
+
+
+def _resolve_catalogs_repo(
+    repo: DegreeCatalogRepository | JsonFileRepository | None,
+    base_data: Path,
+) -> DegreeCatalogRepository:
+    if repo is None:
+        return LocalJsonDegreeCatalogRepository(base_data / "catalogs")
+    if isinstance(repo, JsonFileRepository):
+        return LocalJsonDegreeCatalogRepository(repo.root_dir)
+    return repo
+
+
+def _resolve_availability_repo(
+    repo: AvailabilityPoolRepository | JsonFileRepository | None,
+    base_data: Path,
+) -> AvailabilityPoolRepository:
+    if repo is None:
+        return LocalJsonAvailabilityPoolRepository(base_data / "availability")
+    if isinstance(repo, JsonFileRepository):
+        return LocalJsonAvailabilityPoolRepository(repo.root_dir)
+    return repo
 
 
 def _finish_response(result, catalog_year_used: int, valid_catalog_years: list[int]) -> FinishSimulationResponse:
