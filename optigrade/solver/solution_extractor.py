@@ -8,6 +8,7 @@ from optigrade.domain.simulation import (
     CreditSummary,
     Diagnostic,
     FinishSimulationResult,
+    RuleStatus,
 )
 from optigrade.domain.student import StudentCourseInstance
 from optigrade.solver.model_builder import FinishModelContext
@@ -33,6 +34,11 @@ def extract_finish_result(
         for instance in candidates
         if instance.course_instance_id in effective_selected_ids
     )
+    selected_course_ids = {
+        str(instance.course_id)
+        for instance in candidates
+        if instance.course_instance_id in effective_selected_ids
+    }
 
     bucket_assignments: list[BucketAssignment] = []
     assigned_instance_ids: set[str] = set()
@@ -46,11 +52,19 @@ def extract_finish_result(
         )
         if candidate_buckets:
             assigned_instance_ids.add(instance.course_instance_id)
+            chosen_bucket = candidate_buckets[0]
+            reason_codes = _build_assignment_reason_codes(
+                instance=instance,
+                bucket_id=chosen_bucket,
+                selected_course_ids=selected_course_ids,
+                model_context=model_context,
+            )
             bucket_assignments.append(
                 BucketAssignment(
                     course_instance_id=instance.course_instance_id,
                     course_id=str(instance.course_id),
-                    bucket_id=candidate_buckets[0],
+                    bucket_id=chosen_bucket,
+                    reason_codes=reason_codes,
                 )
             )
 
@@ -68,6 +82,7 @@ def extract_finish_result(
                 course_instance_id=matching.course_instance_id,
                 course_id=str(matching.course_id),
                 verified=matching.verified,
+                reason_codes=["extra_unused"],
             )
         )
 
@@ -76,10 +91,12 @@ def extract_finish_result(
             course_instance_id=instance.course_instance_id,
             course_id=str(instance.course_id),
             verified=instance.verified,
+            reason_codes=["manual_unverified"],
         )
         for instance in candidates
         if not instance.verified and instance.course_instance_id in effective_selected_ids
     ]
+    rule_statuses = _build_rule_statuses(model_context)
 
     return FinishSimulationResult(
         status=status,
@@ -88,8 +105,103 @@ def extract_finish_result(
             total_selected_courses=len(effective_selected_ids),
         ),
         bucket_assignments=bucket_assignments,
+        rule_statuses=rule_statuses,
         extra_unused_courses=extra_unused_courses,
         manual_unverified_courses=manual_unverified_courses,
         warnings=warnings,
         diagnostics=diagnostics,
     )
+
+
+def _build_assignment_reason_codes(
+    *,
+    instance: StudentCourseInstance,
+    bucket_id: str,
+    selected_course_ids: set[str],
+    model_context: FinishModelContext,
+) -> list[str]:
+    reason_codes: set[str] = {"counts_toward_total_credits"}
+    if instance.source == "transcript":
+        reason_codes.add("completed_from_transcript")
+    if not instance.verified:
+        reason_codes.add("manual_unverified")
+
+    bucket_reason_map = {
+        "mandatory": "assigned_to_mandatory",
+        "core": "assigned_to_core",
+        "faculty_choice": "assigned_to_faculty_choice",
+        "enrichment": "assigned_to_enrichment",
+        "sports": "assigned_to_sports",
+        "malag": "assigned_to_malag",
+    }
+    if bucket_id.startswith("specialty:"):
+        reason_codes.add("assigned_to_active_specialty")
+    mapped = bucket_reason_map.get(bucket_id)
+    if mapped is not None:
+        reason_codes.add(mapped)
+
+    instance_course_id = str(instance.course_id)
+    for constraint in model_context.constraints:
+        if constraint.type == "specialty_mandatory":
+            course_id = str(constraint.details.get("course_id", ""))
+            if course_id == instance_course_id:
+                reason_codes.add("satisfies_specialty_mandatory_rule")
+        elif constraint.type == "specialty_choose_group":
+            required_count = int(constraint.details.get("required_count", 0))
+            group_courses = {str(course_id) for course_id in constraint.details.get("group_courses", [])}
+            if required_count > 0 and instance_course_id in group_courses and group_courses.intersection(selected_course_ids):
+                reason_codes.add("satisfies_choose_group")
+
+    return sorted(reason_codes)
+
+
+def _build_rule_statuses(model_context: FinishModelContext) -> list[RuleStatus]:
+    statuses: list[RuleStatus] = []
+    for index, constraint in enumerate(model_context.constraints):
+        constraint_type = constraint.type
+        details = constraint.details
+
+        if constraint_type in {"mandatory_completion", "specialty_mandatory"}:
+            required = int(details.get("min_selected", 1))
+            actual = len(details.get("x_vars", []))
+            status = "satisfied" if actual >= required else "unsatisfied"
+        elif constraint_type == "specialty_choose_group":
+            required = int(details.get("required_count", 0))
+            actual = len(details.get("x_vars", []))
+            if required == 0:
+                status = "not_applicable"
+            else:
+                status = "satisfied" if actual >= required else "unsatisfied"
+        elif constraint_type in {"core_count_minimum", "specialty_visible_minimum"}:
+            if constraint_type == "core_count_minimum":
+                required = int(details.get("required_core_count", 0))
+            else:
+                required = int(details.get("minimum_total_courses", 0))
+            actual = len(details.get("alloc_vars", []))
+            status = "satisfied" if actual >= required else "unsatisfied"
+        elif constraint_type == "total_credit_minimum":
+            required = int(details.get("required_total_credit_units", 0))
+            actual = sum(int(term["credit_units"]) for term in details.get("terms", []))
+            status = "satisfied" if actual >= required else "unsatisfied"
+        elif constraint_type == "bucket_credit_minimum":
+            required = int(details.get("required_credit_units", 0))
+            actual = sum(int(term["credit_units"]) for term in details.get("terms", []))
+            status = "satisfied" if actual >= required else "unsatisfied"
+        elif constraint_type == "required_specialty_count":
+            required = int(details.get("required_specialty_count", 0))
+            actual = len(details.get("active_specialty_ids", []))
+            status = "satisfied" if actual >= required else "unsatisfied"
+        else:
+            continue
+
+        statuses.append(
+            RuleStatus(
+                rule_id=f"{constraint_type}:{index}",
+                rule_type=constraint_type,
+                status=status,
+                required=required,
+                actual=actual,
+                message_en=f"{constraint_type} requirement status: {status}.",
+            )
+        )
+    return statuses

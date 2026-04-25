@@ -293,6 +293,13 @@ def test_specialty_mandatory_can_be_assigned_to_core() -> None:
     )
     assert result.status == "feasible"
     assert result.diagnostics == []
+    core_assignment = next(
+        assignment
+        for assignment in result.bucket_assignments
+        if assignment.course_id == "046203"
+    )
+    assert "assigned_to_core" in core_assignment.reason_codes
+    assert "satisfies_specialty_mandatory_rule" in core_assignment.reason_codes
 
 
 def test_specialty_visible_minimum_requires_specialty_bucket_assignment() -> None:
@@ -407,3 +414,34 @@ def test_choose_group_required_zero_is_optional() -> None:
         )
     )
     assert result.status == "feasible"
+
+
+def test_finish_solver_includes_rule_statuses() -> None:
+    profile = StudentProfile(
+        student_id="s_rule_status",
+        degree_start_year=2022,
+        completed_courses=[
+            _instance(instance_id="ci_rs_1", course_id="046195", eligible_bucket_ids={"core"}),
+        ],
+        manual_tags=[],
+    )
+    catalog = DegreeCatalog(
+        degree_id="tiny",
+        academic_year=2024,
+        program_name="tiny",
+        total_credit_units=6,
+        mandatory_course_ids={"046195"},
+        core_course_ids={"046195"},
+        required_core_count=1,
+        required_specialty_count=0,
+        specialties={},
+    )
+    result = solve_finish_simulation(
+        FinishSimulationInput(
+            student_profile=profile,
+            degree_catalog=catalog,
+            selected_specialty_ids=None,
+        )
+    )
+    assert result.status == "feasible"
+    assert any(status.rule_type == "mandatory_completion" for status in result.rule_statuses)

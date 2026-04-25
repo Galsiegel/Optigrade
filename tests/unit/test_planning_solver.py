@@ -74,6 +74,7 @@ def test_planning_minimizes_future_credits_then_course_count() -> None:
     assert result.plans[0].future_credit_units == 6
     assert result.plans[0].future_course_count == 1
     assert [course.course_id for course in result.plans[0].suggested_courses] == ["046200"]
+    assert result.plans[0].rule_statuses
     assert result.plans[1].future_credit_units == 6
     assert result.plans[1].future_course_count == 2
     assert {course.course_id for course in result.plans[1].suggested_courses} == {"046201", "046202"}

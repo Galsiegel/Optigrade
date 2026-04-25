@@ -222,7 +222,7 @@ def _evaluate_selection(
         future_course_count=len(suggested_courses),
         suggested_courses=suggested_courses,
         bucket_assignments=finish_result.bucket_assignments,
-        rule_statuses=[],
+        rule_statuses=finish_result.rule_statuses,
         generic_missing_requirements=[],
         warnings=[],
     )

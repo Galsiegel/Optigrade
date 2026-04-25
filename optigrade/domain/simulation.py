@@ -29,6 +29,7 @@ class BucketAssignment:
     course_instance_id: str
     course_id: str
     bucket_id: str
+    reason_codes: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -36,6 +37,18 @@ class CourseResult:
     course_instance_id: str
     course_id: str
     verified: bool
+    reason_codes: list[str] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class RuleStatus:
+    rule_id: str
+    rule_type: str
+    status: Literal["satisfied", "unsatisfied", "not_applicable"]
+    required: int | float | str | None
+    actual: int | float | str | None
+    message_en: str
+    message_he: str | None = None
 
 
 @dataclass(frozen=True)
@@ -53,6 +66,7 @@ class FinishSimulationResult:
     status: str
     summary: CreditSummary
     bucket_assignments: list[BucketAssignment]
+    rule_statuses: list[RuleStatus]
     extra_unused_courses: list[CourseResult]
     manual_unverified_courses: list[CourseResult]
     warnings: list[str] = field(default_factory=list)
@@ -104,7 +118,7 @@ class PlanningPlan:
     future_course_count: int
     suggested_courses: list[PlanningSuggestedCourse]
     bucket_assignments: list[BucketAssignment]
-    rule_statuses: list[object] = field(default_factory=list)
+    rule_statuses: list[RuleStatus] = field(default_factory=list)
     generic_missing_requirements: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 
