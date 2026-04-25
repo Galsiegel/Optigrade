@@ -9,6 +9,8 @@ CourseBank = dict[tuple[str, str], CourseOffering]
 
 def validate_course_bank(course_bank: CourseBank) -> None:
     for (course_id, term), offering in course_bank.items():
+        if not isinstance(term, str) or not term.strip():
+            raise ValueError("course bank term key must be a non-empty string")
         validate_course_id(course_id)
         if offering.course_id != course_id:
             raise ValueError("course bank key and offering course_id mismatch")
