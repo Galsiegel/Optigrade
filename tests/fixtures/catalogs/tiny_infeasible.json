@@ -1,0 +1,20 @@
+{
+  "academicYear": "2024/2025",
+  "programName": "Tiny Infeasible",
+  "generalRules": {
+    "totalCredits": 12,
+    "mustChooseCoreGroups": 1,
+    "mustTakeSpecialities": 0,
+    "enrichment": 0,
+    "physicalEducation": 0
+  },
+  "mandatory": [
+    {"code": "INF100", "credits": 3},
+    {"code": "INF101", "credits": 3}
+  ],
+  "core": [
+    {"code": "INF200", "credits": 3}
+  ],
+  "facultyChoice": [],
+  "specialties": []
+}

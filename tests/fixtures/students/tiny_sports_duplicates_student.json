@@ -1,0 +1,8 @@
+{
+  "student_id": "tiny_sports_1",
+  "courses": [
+    {"course_id": "3940800", "credits": 1.0, "grade": "95", "semester": "2024-2025 Winter"},
+    {"course_id": "3940800", "credits": 1.0, "grade": "96", "semester": "2024-2025 Spring"}
+  ],
+  "manual_tags": []
+}
