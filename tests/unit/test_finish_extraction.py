@@ -56,3 +56,25 @@ def test_finish_extraction_builds_bucket_assignments() -> None:
     )
     assert len(result.bucket_assignments) == 1
     assert result.bucket_assignments[0].bucket_id == "core"
+
+
+def test_finish_extraction_reports_extra_unused_courses() -> None:
+    candidates = [
+        _instance("ci_1", "046195"),
+        _instance("ci_2", "046267"),
+    ]
+    context = FinishModelContext(
+        x_vars={"ci_1": "x_ci_1", "ci_2": "x_ci_2"},
+        alloc_vars={("ci_1", "core"): "alloc_ci_1_core"},
+        constraints=[],
+    )
+    result = extract_finish_result(
+        candidates=candidates,
+        model_context=context,
+        status="feasible",
+        warnings=[],
+        diagnostics=[],
+        selected_instance_ids={"ci_1"},
+    )
+    assert len(result.extra_unused_courses) == 1
+    assert result.extra_unused_courses[0].course_instance_id == "ci_2"

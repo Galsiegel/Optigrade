@@ -107,6 +107,8 @@ def _to_term_id(raw_semester: Any) -> str:
     season = "spring"
     if "winter" in text:
         season = "winter"
+    elif "fall" in text:
+        season = "fall"
     elif "summer" in text:
         season = "summer"
     year = "".join(char for char in text[:4] if char.isdigit()) or "2023"

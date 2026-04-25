@@ -138,3 +138,86 @@ def test_finish_solver_infeasible_when_specialty_requirements_missing() -> None:
         diagnostic.type in {"specialty_mandatory", "specialty_choose_group", "specialty_visible_minimum"}
         for diagnostic in result.diagnostics
     )
+
+
+def test_finish_solver_selected_specialty_enforced() -> None:
+    profile = StudentProfile(
+        student_id="s4",
+        degree_start_year=2022,
+        completed_courses=[
+            _instance(instance_id="ci_5", course_id="046203", eligible_bucket_ids={"specialty:systems"}),
+            _instance(instance_id="ci_6", course_id="046237", eligible_bucket_ids={"specialty:systems"}),
+        ],
+        manual_tags=[],
+    )
+    catalog = DegreeCatalog(
+        degree_id="tiny",
+        academic_year=2024,
+        program_name="tiny",
+        total_credit_units=6,
+        mandatory_course_ids=set(),
+        core_course_ids=set(),
+        required_core_count=0,
+        required_specialty_count=1,
+        specialties={
+            "ai": SpecialtyRule(
+                specialty_id="ai",
+                name_en="AI",
+                name_he=None,
+                mandatory_courses=("046195",),
+                choose_groups=(ChooseGroupRule(courses=("046195", "046196"), required_count=1),),
+                minimum_total_courses=1,
+                eligible_course_ids={"046195", "046196"},
+            ),
+            "systems": SpecialtyRule(
+                specialty_id="systems",
+                name_en="Systems",
+                name_he=None,
+                mandatory_courses=("046203",),
+                choose_groups=(ChooseGroupRule(courses=("046203", "046237"), required_count=1),),
+                minimum_total_courses=1,
+                eligible_course_ids={"046203", "046237"},
+            ),
+        },
+    )
+    result = solve_finish_simulation(
+        FinishSimulationInput(
+            student_profile=profile,
+            degree_catalog=catalog,
+            selected_specialty_ids={"ai"},
+        )
+    )
+    assert result.status == "infeasible"
+    assert any(diagnostic.type == "specialty_mandatory" for diagnostic in result.diagnostics)
+
+
+def test_finish_solver_marks_extra_unused_courses() -> None:
+    profile = StudentProfile(
+        student_id="s5",
+        degree_start_year=2022,
+        completed_courses=[
+            _instance(instance_id="ci_7", course_id="046195", eligible_bucket_ids={"core"}),
+            _instance(instance_id="ci_8", course_id="046267", eligible_bucket_ids={"core"}),
+        ],
+        manual_tags=[],
+    )
+    catalog = DegreeCatalog(
+        degree_id="tiny",
+        academic_year=2024,
+        program_name="tiny",
+        total_credit_units=6,
+        mandatory_course_ids={"046195"},
+        core_course_ids={"046195", "046267"},
+        required_core_count=1,
+        required_specialty_count=0,
+        specialties={},
+    )
+    result = solve_finish_simulation(
+        FinishSimulationInput(
+            student_profile=profile,
+            degree_catalog=catalog,
+            selected_specialty_ids=None,
+        )
+    )
+    assert result.status == "feasible"
+    assert len(result.extra_unused_courses) == 1

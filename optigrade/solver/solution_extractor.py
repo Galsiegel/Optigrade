@@ -20,18 +20,32 @@ def extract_finish_result(
     status: str,
     warnings: list[str],
     diagnostics: list[Diagnostic],
+    selected_instance_ids: set[str] | None = None,
 ) -> FinishSimulationResult:
-    selected_instance_ids = {instance.course_instance_id for instance in candidates}
-    selected_credit_units = sum(instance.credit_units for instance in candidates)
+    candidate_by_instance_id = {
+        instance.course_instance_id: instance for instance in candidates
+    }
+    effective_selected_ids = selected_instance_ids or {
+        instance.course_instance_id for instance in candidates
+    }
+    selected_credit_units = sum(
+        instance.credit_units
+        for instance in candidates
+        if instance.course_instance_id in effective_selected_ids
+    )
 
     bucket_assignments: list[BucketAssignment] = []
+    assigned_instance_ids: set[str] = set()
     for instance in candidates:
+        if instance.course_instance_id not in effective_selected_ids:
+            continue
         candidate_buckets = sorted(
             bucket_id
             for (instance_id, bucket_id) in model_context.alloc_vars.keys()
             if instance_id == instance.course_instance_id
         )
         if candidate_buckets:
+            assigned_instance_ids.add(instance.course_instance_id)
             bucket_assignments.append(
                 BucketAssignment(
                     course_instance_id=instance.course_instance_id,
@@ -42,13 +56,12 @@ def extract_finish_result(
 
     extra_unused_courses: list[CourseResult] = []
     for instance_id, _x_var in model_context.x_vars.items():
-        if instance_id in selected_instance_ids:
+        if instance_id in assigned_instance_ids:
             continue
-        matching = next(
-            (instance for instance in candidates if instance.course_instance_id == instance_id),
-            None,
-        )
+        matching = candidate_by_instance_id.get(instance_id)
         if matching is None:
+            continue
+        if instance_id in effective_selected_ids:
             continue
         extra_unused_courses.append(
             CourseResult(
@@ -65,14 +78,14 @@ def extract_finish_result(
             verified=instance.verified,
         )
         for instance in candidates
-        if not instance.verified
+        if not instance.verified and instance.course_instance_id in effective_selected_ids
     ]
 
     return FinishSimulationResult(
         status=status,
         summary=CreditSummary(
             total_selected_credit_units=selected_credit_units,
-            total_selected_courses=len(candidates),
+            total_selected_courses=len(effective_selected_ids),
         ),
         bucket_assignments=bucket_assignments,
         extra_unused_courses=extra_unused_courses,

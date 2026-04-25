@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
+import string
 from typing import Dict, List, Optional, Set
 
 
@@ -21,8 +22,7 @@ from typing import Dict, List, Optional, Set
 class StudentCourse:
     """One course from the student transcript."""
     course_id: str                  # Standard Technion ID (e.g. "044101")
-    name: str                       # Course name from transcript
-    credits: Optional[float]        # Credit points (None for exemptions w/o points)
+    credits: Optional[float]        # Credit points (None for exemptions w/o points), this may override the master course (if it changed) but should be flagged somewhere
     grade: str                      # Numeric string, "Pass", "Exemption with points",
                                     #   or "Exemption without points"
     semester: str                   # e.g. "2022-2023 Spring"
@@ -55,7 +55,7 @@ class StudentCourse:
     def to_dict(self) -> dict:
         return {
             "course_id": self.course_id,
-            "name": self.name,
+            # "name": self.name, this will be an attribute elswhere
             "credits": self.credits,
             "grade": self.grade,
             "semester": self.semester,
@@ -84,8 +84,8 @@ class StudentProfile:
     Primary constructor: StudentProfile.from_transcript_pdf(path)
     """
     student_name: str = ""
-    student_id: str = "" # Save this encrypted?
-    degree_name: str = ""
+    student_id: str = "" # Save this encrypted? maybe not at all
+    degree_name: str = "" # this is critical for the degree rules
     faculty_name: str = ""
     accumulated_credits: float = 0.0
     required_credits: float = 0.0
@@ -151,6 +151,7 @@ class StudentProfile:
             gpa=d.get("gpa", 0.0),
             courses=[StudentCourse.from_dict(c) for c in d.get("courses", [])],
         )
+
 
     @classmethod
     def load_json(cls, path: str) -> StudentProfile:

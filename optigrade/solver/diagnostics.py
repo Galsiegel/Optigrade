@@ -85,5 +85,19 @@ def evaluate_finish_feasibility(model_context: FinishModelContext) -> tuple[bool
                         message_en="Insufficient total credits.",
                     )
                 )
+        elif constraint.type == "required_specialty_count":
+            required = int(constraint.details.get("required_specialty_count", 0))
+            actual = len(constraint.details.get("active_specialty_ids", []))
+            if actual < required:
+                feasible = False
+                diagnostics.append(
+                    Diagnostic(
+                        type="required_specialty_count",
+                        severity="error",
+                        related_course_ids=[],
+                        related_bucket_ids=["specialty"],
+                        message_en="Required specialty count is not satisfiable.",
+                    )
+                )
 
     return feasible, diagnostics

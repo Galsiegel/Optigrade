@@ -74,3 +74,15 @@ def test_student_loader_path_and_manual_tags(tmp_path: Path) -> None:
     assert profile.student_id == "s2"
     assert len(profile.manual_tags) == 1
     assert profile.manual_tags[0].course_code == "999001"
+
+
+def test_student_loader_parses_fall_semester_term_id() -> None:
+    profile = load_student_profile_from_dict(
+        {
+            "student_id": "s3",
+            "courses": [
+                {"course_id": "044103", "credits": 3.0, "grade": "91", "semester": "2022-2023 Fall"}
+            ],
+        }
+    )
+    assert profile.completed_courses[0].term == "2022_fall"

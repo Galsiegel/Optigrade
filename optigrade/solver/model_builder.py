@@ -24,6 +24,7 @@ class FinishModelContext:
 def build_finish_model(
     candidates: list[StudentCourseInstance],
     degree_catalog: DegreeCatalog,
+    selected_specialty_ids: set[str] | None = None,
 ) -> FinishModelContext:
     x_vars: dict[str, str] = {}
     alloc_vars: dict[tuple[str, str], str] = {}
@@ -95,6 +96,13 @@ def build_finish_model(
             details={
                 "alloc_vars": core_alloc_vars,
                 "required_core_count": degree_catalog.required_core_count,
+                "course_instance_ids": [
+                    instance_id
+                    for (instance_id, bucket_id), _alloc_var in sorted(alloc_vars.items())
+                    if bucket_id == "core"
+                    and str(candidate_by_instance_id[instance_id].course_id)
+                    in degree_catalog.core_course_ids
+                ],
             },
         )
     )
@@ -117,7 +125,33 @@ def build_finish_model(
         )
     )
 
-    for specialty_id, specialty in sorted(degree_catalog.specialties.items()):
+    available_specialty_ids = set(degree_catalog.specialties.keys())
+    if selected_specialty_ids is None:
+        active_specialty_ids = sorted(available_specialty_ids)
+    else:
+        active_specialty_ids = sorted(selected_specialty_ids.intersection(available_specialty_ids))
+        constraints.append(
+            FinishModelConstraint(
+                type="selected_specialties_enforced",
+                details={
+                    "selected_specialty_ids": sorted(selected_specialty_ids),
+                    "active_specialty_ids": active_specialty_ids,
+                },
+            )
+        )
+
+    constraints.append(
+        FinishModelConstraint(
+            type="required_specialty_count",
+            details={
+                "required_specialty_count": degree_catalog.required_specialty_count,
+                "active_specialty_ids": active_specialty_ids,
+            },
+        )
+    )
+
+    for specialty_id in active_specialty_ids:
+        specialty = degree_catalog.specialties[specialty_id]
         specialty_alloc_vars = [
             alloc_var
             for (instance_id, bucket_id), alloc_var in sorted(alloc_vars.items())

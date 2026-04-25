@@ -5,11 +5,13 @@ Each program defines its own set of requirement buckets with course mappings.
 The same course can appear in different buckets for different programs.
 """
 
-from typing import Set, Optional, List, Union
+from typing import Set, Optional, List, Union, NewType
 from dataclasses import dataclass
 from enum import Enum
 import re
-
+# Create distinct types
+Course = NewType('Course', float)
+Points = NewType('Points', float)
 
 class BucketType(Enum):
     """Type of requirement bucket."""
@@ -48,8 +50,8 @@ class Program_bucket:
     allowed_course_ids: Set[str]
     mandatory_knowledge_ids: Optional[Union[Set[str], List[str]]] = None
     id: Optional[str] = None
-    min_courses_count: Optional[int] = None
-    min_points_count: Optional[int] = None
+    min_courses_count: Optional[Course] = None
+    min_points_count: Optional[Points] = None
     
     def __post_init__(self):
         """Initialize default values."""
