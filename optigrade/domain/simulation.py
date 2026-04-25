@@ -19,6 +19,47 @@ class FinishSimulationInput:
 
 
 @dataclass(frozen=True)
+class CreditSummary:
+    total_selected_credit_units: int
+    total_selected_courses: int
+
+
+@dataclass(frozen=True)
+class BucketAssignment:
+    course_instance_id: str
+    course_id: str
+    bucket_id: str
+
+
+@dataclass(frozen=True)
+class CourseResult:
+    course_instance_id: str
+    course_id: str
+    verified: bool
+
+
+@dataclass(frozen=True)
+class Diagnostic:
+    type: str
+    severity: str
+    related_course_ids: list[str]
+    related_bucket_ids: list[str]
+    message_en: str
+    message_he: str | None = None
+
+
+@dataclass(frozen=True)
+class FinishSimulationResult:
+    status: str
+    summary: CreditSummary
+    bucket_assignments: list[BucketAssignment]
+    extra_unused_courses: list[CourseResult]
+    manual_unverified_courses: list[CourseResult]
+    warnings: list[str] = field(default_factory=list)
+    diagnostics: list[Diagnostic] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
 class FutureAvailabilityPool:
     semesters: dict[str, list[CourseOffering]] = field(default_factory=dict)
 

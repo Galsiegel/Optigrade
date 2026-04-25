@@ -16,7 +16,15 @@ from .course import (
     validate_course_id,
 )
 from .rules import ChooseGroupRule, SpecialtyRule
-from .simulation import FinishSimulationInput, FutureAvailabilityPool
+from .simulation import (
+    BucketAssignment,
+    CourseResult,
+    CreditSummary,
+    Diagnostic,
+    FinishSimulationInput,
+    FinishSimulationResult,
+    FutureAvailabilityPool,
+)
 from .student import (
     CourseInstanceStatus,
     ManualCourseTag,
@@ -34,7 +42,12 @@ __all__ = [
     "DegreeCatalog",
     "ChooseGroupRule",
     "SpecialtyRule",
+    "CreditSummary",
+    "BucketAssignment",
+    "CourseResult",
+    "Diagnostic",
     "FinishSimulationInput",
+    "FinishSimulationResult",
     "FutureAvailabilityPool",
     "VALID_BUCKET_IDS",
     "normalize_bucket_id",

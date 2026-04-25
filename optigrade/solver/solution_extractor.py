@@ -2,41 +2,15 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-
+from optigrade.domain.simulation import (
+    BucketAssignment,
+    CourseResult,
+    CreditSummary,
+    Diagnostic,
+    FinishSimulationResult,
+)
 from optigrade.domain.student import StudentCourseInstance
 from optigrade.solver.model_builder import FinishModelContext
-
-
-@dataclass(frozen=True)
-class CreditSummary:
-    total_selected_credit_units: int
-    total_selected_courses: int
-
-
-@dataclass(frozen=True)
-class BucketAssignment:
-    course_instance_id: str
-    course_id: str
-    bucket_id: str
-
-
-@dataclass(frozen=True)
-class CourseResult:
-    course_instance_id: str
-    course_id: str
-    verified: bool
-
-
-@dataclass(frozen=True)
-class FinishSimulationResult:
-    status: str
-    summary: CreditSummary
-    bucket_assignments: list[BucketAssignment]
-    extra_unused_courses: list[CourseResult]
-    manual_unverified_courses: list[CourseResult]
-    warnings: list[str] = field(default_factory=list)
-    diagnostics: list[str] = field(default_factory=list)
 
 
 def extract_finish_result(
@@ -45,7 +19,7 @@ def extract_finish_result(
     model_context: FinishModelContext,
     status: str,
     warnings: list[str],
-    diagnostics: list[str],
+    diagnostics: list[Diagnostic],
 ) -> FinishSimulationResult:
     selected_instance_ids = {instance.course_instance_id for instance in candidates}
     selected_credit_units = sum(instance.credit_units for instance in candidates)

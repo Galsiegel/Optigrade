@@ -91,7 +91,7 @@ def test_finish_solver_infeasible_when_missing_mandatory() -> None:
         )
     )
     assert result.status == "infeasible"
-    assert any("Missing required course" in diagnostic for diagnostic in result.diagnostics)
+    assert any(diagnostic.type == "mandatory_completion" for diagnostic in result.diagnostics)
 
 
 def test_finish_solver_infeasible_when_specialty_requirements_missing() -> None:
@@ -134,4 +134,7 @@ def test_finish_solver_infeasible_when_specialty_requirements_missing() -> None:
         )
     )
     assert result.status == "infeasible"
-    assert any("Specialty" in diagnostic or "Missing required course" in diagnostic for diagnostic in result.diagnostics)
+    assert any(
+        diagnostic.type in {"specialty_mandatory", "specialty_choose_group", "specialty_visible_minimum"}
+        for diagnostic in result.diagnostics
+    )
