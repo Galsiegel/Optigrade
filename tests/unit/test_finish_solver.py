@@ -99,7 +99,7 @@ def test_finish_solver_infeasible_when_missing_core_count() -> None:
         student_id="s2_core",
         degree_start_year=2022,
         completed_courses=[
-            _instance(instance_id="ci_core_1", course_id="046195", eligible_bucket_ids={"enrichment"}),
+            _instance(instance_id="ci_core_1", course_id="046196", eligible_bucket_ids={"enrichment"}),
         ],
         manual_tags=[],
     )
@@ -322,7 +322,7 @@ def test_specialty_visible_minimum_requires_specialty_bucket_assignment() -> Non
                 mandatory_courses=(),
                 choose_groups=(),
                 minimum_total_courses=1,
-                eligible_course_ids={"046203", "046237"},
+                eligible_course_ids={"046999"},
             )
         },
     )
@@ -367,3 +367,43 @@ def test_finish_solver_marks_extra_unused_courses() -> None:
     )
     assert result.status == "feasible"
     assert len(result.extra_unused_courses) == 1
+
+
+def test_choose_group_required_zero_is_optional() -> None:
+    profile = StudentProfile(
+        student_id="s_group_zero",
+        degree_start_year=2022,
+        completed_courses=[
+            _instance(instance_id="ci_gz_1", course_id="046195", eligible_bucket_ids={"core"}),
+        ],
+        manual_tags=[],
+    )
+    catalog = DegreeCatalog(
+        degree_id="tiny",
+        academic_year=2024,
+        program_name="tiny",
+        total_credit_units=6,
+        mandatory_course_ids=set(),
+        core_course_ids={"046195"},
+        required_core_count=1,
+        required_specialty_count=1,
+        specialties={
+            "ai": SpecialtyRule(
+                specialty_id="ai",
+                name_en="AI",
+                name_he=None,
+                mandatory_courses=(),
+                choose_groups=(ChooseGroupRule(courses=("046237", "046238"), required_count=0),),
+                minimum_total_courses=0,
+                eligible_course_ids={"046237", "046238"},
+            )
+        },
+    )
+    result = solve_finish_simulation(
+        FinishSimulationInput(
+            student_profile=profile,
+            degree_catalog=catalog,
+            selected_specialty_ids={"ai"},
+        )
+    )
+    assert result.status == "feasible"

@@ -10,7 +10,10 @@ from optigrade.solver.solution_extractor import extract_finish_result
 
 
 def solve_finish_simulation(simulation_input: FinishSimulationInput) -> FinishSimulationResult:
-    candidate_result = build_finish_candidates(simulation_input.student_profile)
+    candidate_result = build_finish_candidates(
+        simulation_input.student_profile,
+        simulation_input.degree_catalog,
+    )
     model_context = build_finish_model(
         candidates=candidate_result.candidates,
         degree_catalog=simulation_input.degree_catalog,

@@ -124,6 +124,30 @@ def build_finish_model(
             },
         )
     )
+    for bucket_id, required_credit_units in (
+        ("enrichment", degree_catalog.enrichment_min_credit_units),
+        ("sports", degree_catalog.sports_min_credit_units),
+        ("malag", degree_catalog.malag_min_credit_units),
+    ):
+        alloc_terms = [
+            {
+                "alloc_var": alloc_var,
+                "credit_units": candidate_by_instance_id[instance_id].credit_units,
+                "course_instance_id": instance_id,
+            }
+            for (instance_id, alloc_bucket_id), alloc_var in sorted(alloc_vars.items())
+            if alloc_bucket_id == bucket_id
+        ]
+        constraints.append(
+            FinishModelConstraint(
+                type="bucket_credit_minimum",
+                details={
+                    "bucket_id": bucket_id,
+                    "terms": alloc_terms,
+                    "required_credit_units": required_credit_units,
+                },
+            )
+        )
 
     available_specialty_ids = set(degree_catalog.specialties.keys())
     if selected_specialty_ids is None:

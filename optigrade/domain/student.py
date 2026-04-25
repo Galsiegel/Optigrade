@@ -48,8 +48,6 @@ class StudentCourseInstance:
             normalized_term = normalize_term_id(self.term)
 
         normalized_bucket_ids = {normalize_bucket_id(bid) for bid in self.eligible_bucket_ids}
-        if not normalized_bucket_ids:
-            raise ValueError("eligible_bucket_ids cannot be empty")
 
         object.__setattr__(self, "course_id", validated_course_id)
         object.__setattr__(self, "term", normalized_term)

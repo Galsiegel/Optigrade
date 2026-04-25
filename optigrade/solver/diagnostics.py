@@ -85,6 +85,24 @@ def evaluate_finish_feasibility(model_context: FinishModelContext) -> tuple[bool
                         message_en="Insufficient total credits.",
                     )
                 )
+        elif constraint.type == "bucket_credit_minimum":
+            required_credit_units = int(constraint.details.get("required_credit_units", 0))
+            actual_credit_units = sum(
+                int(term["credit_units"])
+                for term in constraint.details.get("terms", [])
+            )
+            if actual_credit_units < required_credit_units:
+                feasible = False
+                bucket_id = str(constraint.details.get("bucket_id", ""))
+                diagnostics.append(
+                    Diagnostic(
+                        type="bucket_credit_minimum",
+                        severity="error",
+                        related_course_ids=[],
+                        related_bucket_ids=[bucket_id],
+                        message_en=f"Insufficient credits for bucket '{bucket_id}'.",
+                    )
+                )
         elif constraint.type == "required_specialty_count":
             required = int(constraint.details.get("required_specialty_count", 0))
             actual = len(constraint.details.get("active_specialty_ids", []))

@@ -39,6 +39,18 @@ def test_student_loader_non_sports_duplicates_count_once() -> None:
     assert profile.completed_courses[1].status == CourseInstanceStatus.DUPLICATE_IGNORED
 
 
+def test_student_loader_defers_non_sports_bucket_eligibility() -> None:
+    profile = load_student_profile_from_dict(
+        {
+            "student_id": "s_bucket_context",
+            "courses": [
+                {"course_id": "046195", "credits": 3.5, "grade": "90", "semester": "2023-2024 Winter"},
+            ],
+        }
+    )
+    assert profile.completed_courses[0].eligible_bucket_ids == set()
+
+
 def test_student_loader_sports_duplicates_are_preserved() -> None:
     profile = load_student_profile_from_dict(
         {

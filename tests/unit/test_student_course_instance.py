@@ -48,20 +48,16 @@ def test_manual_course_tag_validates_bucket_types() -> None:
     assert tag.bucket_types == {"enrichment", "sports"}
 
 
-def test_student_course_instance_requires_bucket_ids() -> None:
-    try:
-        StudentCourseInstance(
-            course_instance_id="ci-3",
-            course_id="044101",
-            term="2023_spring",
-            credits=Decimal("3.0"),
-            credit_units=6,
-            status=CourseInstanceStatus.RECOGNIZED_PASSED,
-            source="transcript",
-            verified=True,
-            eligible_bucket_ids=set(),
-        )
-    except ValueError:
-        pass
-    else:
-        raise AssertionError("Expected ValueError for empty eligible buckets")
+def test_student_course_instance_allows_context_deferred_bucket_ids() -> None:
+    instance = StudentCourseInstance(
+        course_instance_id="ci-3",
+        course_id="044101",
+        term="2023_spring",
+        credits=Decimal("3.0"),
+        credit_units=6,
+        status=CourseInstanceStatus.RECOGNIZED_PASSED,
+        source="transcript",
+        verified=True,
+        eligible_bucket_ids=set(),
+    )
+    assert instance.eligible_bucket_ids == set()

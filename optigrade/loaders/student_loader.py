@@ -55,7 +55,7 @@ def _build_course_instances(raw_courses: list[dict[str, Any]]) -> list[StudentCo
         elif not is_sports and status == CourseInstanceStatus.RECOGNIZED_PASSED:
             non_sports_seen.add(course_id)
 
-        eligible_buckets = {"sports"} if is_sports else {"enrichment"}
+        eligible_buckets = {"sports"} if is_sports else set()
         built.append(
             StudentCourseInstance(
                 course_instance_id=f"transcript_{index}",

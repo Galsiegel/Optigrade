@@ -35,6 +35,9 @@ def _catalog() -> DegreeCatalog:
         required_core_count=1,
         required_specialty_count=0,
         specialties={},
+        enrichment_min_credit_units=2,
+        sports_min_credit_units=2,
+        malag_min_credit_units=2,
     )
 
 
@@ -121,3 +124,14 @@ def test_model_builder_adds_mandatory_core_and_total_credit_constraints() -> Non
     total_credit_constraint = total_credit_constraints[0]
     assert total_credit_constraint.details["required_total_credit_units"] == 12
     assert len(total_credit_constraint.details["terms"]) == 2
+
+    bucket_credit_constraints = [
+        constraint for constraint in context.constraints if constraint.type == "bucket_credit_minimum"
+    ]
+    assert len(bucket_credit_constraints) == 3
+    by_bucket_id = {
+        str(constraint.details["bucket_id"]): constraint.details for constraint in bucket_credit_constraints
+    }
+    assert by_bucket_id["enrichment"]["required_credit_units"] == 2
+    assert by_bucket_id["sports"]["required_credit_units"] == 2
+    assert by_bucket_id["malag"]["required_credit_units"] == 2

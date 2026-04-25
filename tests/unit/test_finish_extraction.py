@@ -78,3 +78,25 @@ def test_finish_extraction_reports_extra_unused_courses() -> None:
     )
     assert len(result.extra_unused_courses) == 1
     assert result.extra_unused_courses[0].course_instance_id == "ci_2"
+
+
+def test_course_cannot_be_counted_twice_across_buckets() -> None:
+    candidates = [_instance("ci_dual", "046195")]
+    context = FinishModelContext(
+        x_vars={"ci_dual": "x_ci_dual"},
+        alloc_vars={
+            ("ci_dual", "core"): "alloc_ci_dual_core",
+            ("ci_dual", "enrichment"): "alloc_ci_dual_enrichment",
+        },
+        constraints=[],
+    )
+    result = extract_finish_result(
+        candidates=candidates,
+        model_context=context,
+        status="feasible",
+        warnings=[],
+        diagnostics=[],
+        selected_instance_ids={"ci_dual"},
+    )
+    assignments = [a for a in result.bucket_assignments if a.course_instance_id == "ci_dual"]
+    assert len(assignments) == 1

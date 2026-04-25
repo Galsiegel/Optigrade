@@ -42,3 +42,22 @@ def test_diagnostics_reports_total_credit_gap() -> None:
     assert feasible is False
     assert any(d.type == "total_credit_minimum" for d in diagnostics)
     assert all(isinstance(d, Diagnostic) for d in diagnostics)
+
+
+def test_diagnostics_reports_bucket_credit_gap() -> None:
+    context = _context(
+        [
+            FinishModelConstraint(
+                type="bucket_credit_minimum",
+                details={
+                    "bucket_id": "sports",
+                    "terms": [{"alloc_var": "alloc_1", "credit_units": 2, "course_instance_id": "ci_1"}],
+                    "required_credit_units": 4,
+                },
+            )
+        ]
+    )
+    feasible, diagnostics = evaluate_finish_feasibility(context)
+    assert feasible is False
+    assert any(d.type == "bucket_credit_minimum" for d in diagnostics)
+    assert any(d.related_bucket_ids == ["sports"] for d in diagnostics)
