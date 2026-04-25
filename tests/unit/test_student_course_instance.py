@@ -1,5 +1,7 @@
 from decimal import Decimal
 
+import pytest
+
 from optigrade.domain.student import (
     CourseInstanceStatus,
     ManualCourseTag,
@@ -61,3 +63,18 @@ def test_student_course_instance_allows_context_deferred_bucket_ids() -> None:
         eligible_bucket_ids=set(),
     )
     assert instance.eligible_bucket_ids == set()
+
+
+def test_student_course_instance_requires_pre_normalized_term_id() -> None:
+    with pytest.raises(ValueError, match="term must be normalized"):
+        StudentCourseInstance(
+            course_instance_id="ci-4",
+            course_id="044101",
+            term=" 2023_Spring ",
+            credits=Decimal("3.0"),
+            credit_units=6,
+            status=CourseInstanceStatus.RECOGNIZED_PASSED,
+            source="transcript",
+            verified=True,
+            eligible_bucket_ids={"core"},
+        )

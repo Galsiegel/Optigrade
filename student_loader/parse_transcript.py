@@ -18,9 +18,13 @@ Course ID Conversion:
     - For other faculties (Math/Physics/etc.): 7-digit ID = faculty(3) + course(4)
 """
 
+import json
 import re
+import time
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import List, Optional, Set, Tuple
+from uuid import uuid4
 
 import pdfplumber
 
@@ -105,10 +109,27 @@ def convert_pdf_course_id(pdf_id: str) -> str:
 
     if faculty[0] == "0":
         # EE-type faculties (044, 045, 046, etc.): 6-digit format
-        return faculty + course[1:]
+        converted = faculty + course[1:]
     else:
         # Math/Physics/CS/General faculties: 7-digit format
-        return faculty + course
+        converted = faculty + course
+
+    # #region agent log
+    if pdf_id in {"01140071", "01140075"}:
+        _debug_log(
+            run_id="repro-physics-id",
+            hypothesis_id="H1",
+            location="student_loader/parse_transcript.py:convert_pdf_course_id",
+            message="Converted physics candidate course id",
+            data={
+                "raw_pdf_id": pdf_id,
+                "faculty": faculty,
+                "course_segment": course,
+                "converted_course_id": converted,
+            },
+        )
+    # #endregion
+    return converted
 
 
 # ---------------------------------------------------------------------------
@@ -193,6 +214,23 @@ _META_PREFIXES = (
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+DEBUG_LOG_PATH = Path("debug-13679a.log")
+
+
+def _debug_log(*, run_id: str, hypothesis_id: str, location: str, message: str, data: dict) -> None:
+    payload = {
+        "sessionId": "13679a",
+        "runId": run_id,
+        "hypothesisId": hypothesis_id,
+        "location": location,
+        "message": message,
+        "data": data,
+        "timestamp": int(time.time() * 1000),
+    }
+    with DEBUG_LOG_PATH.open("a", encoding="utf-8") as file:
+        file.write(json.dumps(payload, ensure_ascii=True) + "\n")
+
 
 def _is_metadata(line: str) -> bool:
     s = line.strip()
@@ -287,12 +325,22 @@ def parse_transcript_pdf(pdf_path: str) -> TranscriptData:
       - Numeric grades, Pass, Exemption with/without points
       - Multiple pages, repeated headers/footers
     """
+    run_id = f"parse-{uuid4().hex[:8]}"
     with pdfplumber.open(pdf_path) as pdf:
         all_lines: List[str] = []
         for page in pdf.pages:
             text = page.extract_text()
             if text:
                 all_lines.extend(text.split("\n"))
+    # #region agent log
+    _debug_log(
+        run_id=run_id,
+        hypothesis_id="H2",
+        location="student_loader/parse_transcript.py:parse_transcript_pdf",
+        message="Loaded transcript lines",
+        data={"pdf_path": pdf_path, "line_count": len(all_lines)},
+    )
+    # #endregion
 
     # --- Parse header (first page, first ~10 lines) ---
     header = _parse_header(all_lines[:10])
@@ -346,6 +394,22 @@ def parse_transcript_pdf(pdf_path: str) -> TranscriptData:
                 i = j  # skip past the suffix line(s)
                 # Build CourseRecord and continue (don't increment i again)
                 course_id = convert_pdf_course_id(parsed["raw_id"])
+                # #region agent log
+                if parsed["raw_id"] in {"01140071", "01140075"}:
+                    _debug_log(
+                        run_id=run_id,
+                        hypothesis_id="H3",
+                        location="student_loader/parse_transcript.py:parse_transcript_pdf",
+                        message="Parsed multi-line physics candidate",
+                        data={
+                            "raw_pdf_id": parsed["raw_id"],
+                            "converted_course_id": course_id,
+                            "semester": parsed["semester"],
+                            "grade": str(parsed["grade"]),
+                            "name": parsed["name"],
+                        },
+                    )
+                # #endregion
                 courses.append(CourseRecord(
                     course_id=course_id,
                     raw_pdf_id=parsed["raw_id"],
@@ -358,6 +422,22 @@ def parse_transcript_pdf(pdf_path: str) -> TranscriptData:
 
             # Build CourseRecord for single-line case
             course_id = convert_pdf_course_id(parsed["raw_id"])
+            # #region agent log
+            if parsed["raw_id"] in {"01140071", "01140075"}:
+                _debug_log(
+                    run_id=run_id,
+                    hypothesis_id="H3",
+                    location="student_loader/parse_transcript.py:parse_transcript_pdf",
+                    message="Parsed single-line physics candidate",
+                    data={
+                        "raw_pdf_id": parsed["raw_id"],
+                        "converted_course_id": course_id,
+                        "semester": parsed["semester"],
+                        "grade": str(parsed["grade"]),
+                        "name": parsed["name"],
+                    },
+                )
+            # #endregion
             courses.append(CourseRecord(
                 course_id=course_id,
                 raw_pdf_id=parsed["raw_id"],
@@ -373,6 +453,25 @@ def parse_transcript_pdf(pdf_path: str) -> TranscriptData:
         pending_prefix.append(line)
         i += 1
 
+    # #region agent log
+    physics_records = [
+        {
+            "raw_pdf_id": course.raw_pdf_id,
+            "course_id": course.course_id,
+            "grade": course.grade,
+            "semester": course.semester,
+        }
+        for course in courses
+        if course.raw_pdf_id in {"01140071", "01140075"}
+    ]
+    _debug_log(
+        run_id=run_id,
+        hypothesis_id="H4",
+        location="student_loader/parse_transcript.py:parse_transcript_pdf",
+        message="Finished parse summary",
+        data={"course_count": len(courses), "physics_records": physics_records},
+    )
+    # #endregion
     return TranscriptData(
         student_name=header.get("student_name", ""),
         student_id=header.get("student_id", ""),
