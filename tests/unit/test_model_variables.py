@@ -29,10 +29,10 @@ def _catalog() -> DegreeCatalog:
         degree_id="tiny",
         academic_year=2024,
         program_name="tiny",
-        total_credit_units=6,
-        mandatory_course_ids=set(),
-        core_course_ids=set(),
-        required_core_count=0,
+        total_credit_units=12,
+        mandatory_course_ids={"046195"},
+        core_course_ids={"046195", "046267"},
+        required_core_count=1,
         required_specialty_count=0,
         specialties={},
     )
@@ -80,3 +80,44 @@ def test_model_builder_enforces_single_visible_bucket() -> None:
         "alloc_ci_3_core",
         "alloc_ci_3_enrichment",
     }
+
+
+def test_model_builder_adds_mandatory_core_and_total_credit_constraints() -> None:
+    candidates = [
+        _candidate(
+            course_instance_id="ci_10",
+            course_id="046195",
+            eligible_bucket_ids={"core"},
+        ),
+        _candidate(
+            course_instance_id="ci_11",
+            course_id="046267",
+            eligible_bucket_ids={"core"},
+        ),
+    ]
+    context = build_finish_model(candidates=candidates, degree_catalog=_catalog())
+
+    mandatory_constraints = [
+        constraint for constraint in context.constraints if constraint.type == "mandatory_completion"
+    ]
+    assert len(mandatory_constraints) == 1
+    mandatory_constraint = mandatory_constraints[0]
+    assert mandatory_constraint.details["course_id"] == "046195"
+    assert mandatory_constraint.details["x_vars"] == ["x_ci_10"]
+    assert mandatory_constraint.details["min_selected"] == 1
+
+    core_constraints = [
+        constraint for constraint in context.constraints if constraint.type == "core_count_minimum"
+    ]
+    assert len(core_constraints) == 1
+    core_constraint = core_constraints[0]
+    assert set(core_constraint.details["alloc_vars"]) == {"alloc_ci_10_core", "alloc_ci_11_core"}
+    assert core_constraint.details["required_core_count"] == 1
+
+    total_credit_constraints = [
+        constraint for constraint in context.constraints if constraint.type == "total_credit_minimum"
+    ]
+    assert len(total_credit_constraints) == 1
+    total_credit_constraint = total_credit_constraints[0]
+    assert total_credit_constraint.details["required_total_credit_units"] == 12
+    assert len(total_credit_constraint.details["terms"]) == 2
