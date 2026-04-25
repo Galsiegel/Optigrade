@@ -9,8 +9,8 @@ from typing import Set, Optional, List, Union, NewType
 from dataclasses import dataclass
 from enum import Enum
 import re
-# Create distinct types
-Course = NewType('Course', float)
+# Domain aliases: counts are integers, credit points may be fractional.
+CourseCount = NewType('CourseCount', int)
 Points = NewType('Points', float)
 
 class BucketType(Enum):
@@ -50,7 +50,7 @@ class Program_bucket:
     allowed_course_ids: Set[str]
     mandatory_knowledge_ids: Optional[Union[Set[str], List[str]]] = None
     id: Optional[str] = None
-    min_courses_count: Optional[Course] = None
+    min_courses_count: Optional[CourseCount] = None
     min_points_count: Optional[Points] = None
     
     def __post_init__(self):

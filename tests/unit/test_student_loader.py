@@ -86,3 +86,31 @@ def test_student_loader_parses_fall_semester_term_id() -> None:
         }
     )
     assert profile.completed_courses[0].term == "2022_fall"
+
+
+def test_student_loader_missing_semester_stays_none() -> None:
+    profile = load_student_profile_from_dict(
+        {
+            "student_id": "s4",
+            "courses": [
+                {"course_id": "044104", "credits": 3.0, "grade": "91", "semester": None}
+            ],
+        }
+    )
+    assert profile.completed_courses[0].term is None
+
+
+def test_student_loader_rejects_invalid_credit_increment() -> None:
+    try:
+        load_student_profile_from_dict(
+            {
+                "student_id": "s5",
+                "courses": [
+                    {"course_id": "044105", "credits": 3.25, "grade": "91", "semester": "2022-2023 Spring"}
+                ],
+            }
+        )
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("Expected ValueError for invalid .25 credit increment")

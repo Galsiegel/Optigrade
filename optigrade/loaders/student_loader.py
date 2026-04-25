@@ -5,7 +5,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Any
+from datetime import datetime, timezone
 
+from optigrade.domain.course import CreditValue
 from optigrade.domain.student import (
     CourseInstanceStatus,
     ManualCourseTag,
@@ -45,7 +47,7 @@ def _build_course_instances(raw_courses: list[dict[str, Any]]) -> list[StudentCo
     for index, course in enumerate(raw_courses):
         course_id = str(course.get("course_id", "")).strip()
         term = _to_term_id(course.get("semester"))
-        credits = 0 if course.get("credits") is None else course.get("credits")
+        credit_value = CreditValue.from_credits(0 if course.get("credits") is None else course.get("credits"))
         status = _grade_to_status(course.get("grade"))
         is_sports = course_id.startswith("394")
         if not is_sports and course_id in non_sports_seen:
@@ -59,8 +61,8 @@ def _build_course_instances(raw_courses: list[dict[str, Any]]) -> list[StudentCo
                 course_instance_id=f"transcript_{index}",
                 course_id=course_id,
                 term=term,
-                credits=credits,
-                credit_units=int(float(credits) * 2),
+                credits=credit_value.credits,
+                credit_units=credit_value.credit_units,
                 status=status,
                 source="transcript",
                 verified=True,
@@ -100,10 +102,12 @@ def _grade_to_status(grade: Any) -> CourseInstanceStatus:
     return CourseInstanceStatus.UNKNOWN_UNRESOLVED
 
 
-def _to_term_id(raw_semester: Any) -> str:
+def _to_term_id(raw_semester: Any) -> str | None:
     if raw_semester is None:
-        return "2023_spring"
+        return None
     text = str(raw_semester).strip().lower()
+    if not text:
+        return None
     season = "spring"
     if "winter" in text:
         season = "winter"
@@ -111,7 +115,9 @@ def _to_term_id(raw_semester: Any) -> str:
         season = "fall"
     elif "summer" in text:
         season = "summer"
-    year = "".join(char for char in text[:4] if char.isdigit()) or "2023"
+    year = "".join(char for char in text[:4] if char.isdigit())
+    if not year:
+        return None
     return f"{year}_{season}"
 
 
@@ -122,4 +128,4 @@ def _infer_degree_start_year(raw_courses: list[dict[str, Any]]) -> int:
         maybe_year = semester[:4]
         if maybe_year.isdigit():
             years.append(int(maybe_year))
-    return min(years) if years else 2023
+    return min(years) if years else datetime.now(timezone.utc).year

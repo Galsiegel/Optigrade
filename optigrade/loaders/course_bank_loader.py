@@ -26,8 +26,9 @@ def build_course_bank_from_catalogs(raw_catalogs: list[dict[str, Any]]) -> Cours
         term = _normalize_term_or_year(raw_catalog.get("academicYear"))
         for entry in _iter_course_entries(raw_catalog):
             course_id = validate_course_id(entry.get("code"))
-            credits = CreditValue.from_credits(entry.get("credits")).credits
-            credit_units = CreditValue.from_credits(credits).credit_units
+            credit_value = CreditValue.from_credits(entry.get("credits"))
+            credits = credit_value.credits
+            credit_units = credit_value.credit_units
             key = (course_id, term)
 
             if key in course_bank:
