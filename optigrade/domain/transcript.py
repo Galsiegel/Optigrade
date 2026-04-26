@@ -6,13 +6,13 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
 
-from .course import CreditValue, validate_course_id
+from .course import CourseId, CreditValue, validate_course_id
 from .student import CourseInstanceStatus
 
 
 @dataclass(frozen=True)
 class ParsedTranscriptCourse:
-    course_id: str
+    course_id: CourseId
     name: str | None
     term: str | None
     credits: Decimal | None
@@ -36,7 +36,7 @@ class ParsedTranscript:
 @dataclass(frozen=True)
 class ManualTagAuditRecord:
     student_id: str
-    course_code: str
+    course_code: CourseId
     credits: Decimal
     bucket_types: list[str]
     comment: str | None

@@ -67,7 +67,7 @@ def _validate_before_commit() -> int:
 def main() -> int:
     if len(sys.argv) < 2:
         print("milestone-guard: missing mode argument")
-        return 0
+        return 1
 
     mode = sys.argv[1]
     if mode == "after_shell":
@@ -76,7 +76,7 @@ def main() -> int:
         return _validate_before_commit()
 
     print(f"milestone-guard: unsupported mode '{mode}'")
-    return 0
+    return 1
 
 
 if __name__ == "__main__":
