@@ -449,6 +449,60 @@ def test_finish_solver_includes_rule_statuses() -> None:
     assert any(status.rule_type == "mandatory_completion" for status in result.rule_statuses)
 
 
+def test_finish_solver_reports_active_specialties_not_request_input() -> None:
+    profile = StudentProfile(
+        student_id="s_active_specialty",
+        degree_start_year=2022,
+        completed_courses=[
+            _instance(
+                instance_id="ci_as_1",
+                course_id="046203",
+                eligible_bucket_ids={"specialty:systems"},
+            ),
+        ],
+        manual_tags=[],
+    )
+    catalog = DegreeCatalog(
+        degree_id="tiny",
+        academic_year=2024,
+        program_name="tiny",
+        total_credit_units=6,
+        mandatory_course_ids=set(),
+        core_course_ids=set(),
+        required_core_count=0,
+        required_specialty_count=1,
+        specialties={
+            "ai": SpecialtyRule(
+                specialty_id="ai",
+                name_en="AI",
+                name_he=None,
+                mandatory_courses=("046195",),
+                choose_groups=(),
+                minimum_total_courses=0,
+                eligible_course_ids={"046195"},
+            ),
+            "systems": SpecialtyRule(
+                specialty_id="systems",
+                name_en="Systems",
+                name_he=None,
+                mandatory_courses=("046203",),
+                choose_groups=(),
+                minimum_total_courses=0,
+                eligible_course_ids={"046203"},
+            ),
+        },
+    )
+    result = solve_finish_simulation(
+        FinishSimulationInput(
+            student_profile=profile,
+            degree_catalog=catalog,
+            selected_specialty_ids=None,
+        )
+    )
+    assert result.status == "feasible"
+    assert result.selected_specialty_ids == ["systems"]
+
+
 def test_select_candidate_subset_honors_min_selected_for_mandatory_constraint() -> None:
     candidates = [
         _instance(instance_id="ci_m1", course_id="046195", eligible_bucket_ids={"mandatory"}, credits="2.0"),

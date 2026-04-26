@@ -118,11 +118,13 @@ def extract_finish_result(
         active_specialty_ids=active_specialty_ids or set(),
     )
 
+    effective_active_specialties = sorted(active_specialty_ids or set())
+
     return FinishSimulationResult(
         status=status,
         degree_id=degree_id,
         catalog_year=catalog_year,
-        selected_specialty_ids=sorted(selected_specialty_ids or set()),
+        selected_specialty_ids=effective_active_specialties,
         summary=CreditSummary(
             total_selected_credit_units=selected_credit_units,
             total_selected_courses=len(effective_selected_ids),
