@@ -5,7 +5,7 @@ from optigrade.loaders.catalog_loader import load_catalog_from_path
 from optigrade.loaders.student_loader import load_student_profile_from_path
 
 
-FIXTURES_DIR = Path(__file__).resolve().parent.parent / "fixtures"
+FIXTURES_DIR = Path(__file__).resolve().parent.parent / "fixtures_dummy"
 
 
 def test_all_tiny_catalog_fixtures_load() -> None:
