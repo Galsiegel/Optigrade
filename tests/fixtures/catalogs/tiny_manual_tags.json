@@ -1,0 +1,17 @@
+{
+  "academicYear": "2024/2025",
+  "programName": "Tiny Manual Tags",
+  "generalRules": {
+    "totalCredits": 8,
+    "mustChooseCoreGroups": 0,
+    "mustTakeSpecialities": 0,
+    "enrichment": 2,
+    "physicalEducation": 0
+  },
+  "mandatory": [
+    {"code": "MAN100", "credits": 3}
+  ],
+  "core": [],
+  "facultyChoice": [],
+  "specialties": []
+}

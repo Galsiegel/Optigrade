@@ -1,0 +1,53 @@
+{
+  "catalog": {
+    "degree_id": "tiny_finish",
+    "academic_year": 2024,
+    "program_name": "Tiny Finish",
+    "total_credit_units": 12,
+    "mandatory_course_ids": ["046195"],
+    "core_course_ids": ["046195"],
+    "required_core_count": 1,
+    "required_specialty_count": 1,
+    "specialties": {
+      "ai": {
+        "name_en": "AI",
+        "mandatory_courses": ["046195"],
+        "choose_groups": [
+          {
+            "courses": ["046237"],
+            "required_count": 1
+          }
+        ],
+        "minimum_total_courses": 1,
+        "eligible_course_ids": ["046195", "046237"]
+      }
+    }
+  },
+  "student_profile": {
+    "student_id": "s_fixture_finish",
+    "degree_start_year": 2022,
+    "completed_courses": [
+      {
+        "course_instance_id": "ci_core",
+        "course_id": "046195",
+        "term": "2024_spring",
+        "credits": "3.0",
+        "status": "recognized_passed",
+        "source": "transcript",
+        "verified": true,
+        "eligible_bucket_ids": ["core"]
+      },
+      {
+        "course_instance_id": "ci_ai",
+        "course_id": "046237",
+        "term": "2024_spring",
+        "credits": "3.0",
+        "status": "unknown_student_tagged",
+        "source": "manual_student_tag",
+        "verified": false,
+        "eligible_bucket_ids": ["specialty:ai"]
+      }
+    ]
+  },
+  "selected_specialty_ids": ["ai"]
+}
