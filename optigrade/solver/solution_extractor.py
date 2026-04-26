@@ -22,6 +22,7 @@ def extract_finish_result(
     warnings: list[str],
     diagnostics: list[Diagnostic],
     selected_instance_ids: set[str] | None = None,
+    selected_bucket_by_instance_id: dict[str, str] | None = None,
 ) -> FinishSimulationResult:
     candidate_by_instance_id = {
         instance.course_instance_id: instance for instance in candidates
@@ -42,17 +43,21 @@ def extract_finish_result(
 
     bucket_assignments: list[BucketAssignment] = []
     assigned_instance_ids: set[str] = set()
+    selected_bucket_by_instance_id = selected_bucket_by_instance_id or {}
     for instance in candidates:
         if instance.course_instance_id not in effective_selected_ids:
             continue
-        candidate_buckets = sorted(
-            bucket_id
-            for (instance_id, bucket_id) in model_context.alloc_vars.keys()
-            if instance_id == instance.course_instance_id
-        )
-        if candidate_buckets:
+        chosen_bucket = selected_bucket_by_instance_id.get(instance.course_instance_id)
+        if chosen_bucket is None:
+            candidate_buckets = sorted(
+                bucket_id
+                for (instance_id, bucket_id) in model_context.alloc_vars.keys()
+                if instance_id == instance.course_instance_id
+            )
+            if candidate_buckets:
+                chosen_bucket = candidate_buckets[0]
+        if chosen_bucket is not None:
             assigned_instance_ids.add(instance.course_instance_id)
-            chosen_bucket = candidate_buckets[0]
             reason_codes = _build_assignment_reason_codes(
                 instance=instance,
                 bucket_id=chosen_bucket,

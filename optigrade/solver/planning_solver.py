@@ -1,4 +1,4 @@
-"""Planning solver with top-N distinct future course sets."""
+"""Planning solver with OR-Tools top-N distinct future course sets."""
 
 from __future__ import annotations
 
@@ -17,6 +17,7 @@ from optigrade.domain.student import CourseInstanceStatus, StudentCourseInstance
 from optigrade.solver.candidates import build_finish_candidates
 from optigrade.solver.diagnostics import evaluate_finish_feasibility
 from optigrade.solver.model_builder import build_finish_model
+from optigrade.solver.ortools_core import solve_planning_cp_sat
 from optigrade.solver.solution_extractor import extract_finish_result
 
 
@@ -28,9 +29,6 @@ class _PlanningCandidates:
     warnings: list[str]
 
 
-_MAX_SUBSET_STATES = 200_000
-
-
 def planning_offering_id(offering: CourseOffering) -> str:
     availability_index = int(offering.metadata.get("availability_index", 0))
     return f"{offering.term}:{offering.course_id}:{availability_index}"
@@ -38,43 +36,55 @@ def planning_offering_id(offering: CourseOffering) -> str:
 
 def solve_planning_simulation(simulation_input: PlanningSimulationInput) -> PlanningSimulationResult:
     planning_candidates = _build_planning_candidates(simulation_input)
-
-    feasible_plans, search_warnings = _search_feasible_plans(
-        simulation_input=simulation_input,
-        planning_candidates=planning_candidates,
+    cp_sat_plans = solve_planning_cp_sat(
+        candidates=planning_candidates.candidates,
+        degree_catalog=simulation_input.degree_catalog,
+        selected_specialty_ids=simulation_input.selected_specialty_ids,
+        passed_instance_ids=planning_candidates.passed_ids,
+        future_instance_ids=set(planning_candidates.future_by_id.keys()),
+        locked_future_instance_ids=simulation_input.locked_course_offering_ids,
+        num_plans=simulation_input.num_plans,
     )
-
-    if not feasible_plans:
+    if not cp_sat_plans:
         diagnostics = _infeasible_diagnostics(simulation_input, planning_candidates)
         return PlanningSimulationResult(
             status="infeasible",
             plans=[],
             diagnostics=diagnostics,
-            warnings=[*planning_candidates.warnings, *search_warnings],
+            warnings=[*planning_candidates.warnings],
         )
 
     selected_plans: list[PlanningPlan] = []
-    seen_future_sets: set[frozenset[str]] = set()
-    for future_set, plan in feasible_plans:
-        if future_set in seen_future_sets:
-            continue
-        seen_future_sets.add(future_set)
+    for cp_sat_plan in cp_sat_plans:
+        finish_result = _extract_plan_finish_result(
+            simulation_input=simulation_input,
+            planning_candidates=planning_candidates,
+            selected_ids=cp_sat_plan.selected_instance_ids,
+            selected_bucket_by_instance_id=cp_sat_plan.selected_bucket_by_instance_id,
+        )
+        suggested_courses = [
+            PlanningSuggestedCourse(
+                course_instance_id=instance_id,
+                course_id=str(planning_candidates.future_by_id[instance_id].course_id),
+                term=str(planning_candidates.future_by_id[instance_id].term),
+                credit_units=planning_candidates.future_by_id[instance_id].credit_units,
+                locked_by_student=instance_id in simulation_input.locked_course_offering_ids,
+            )
+            for instance_id in sorted(cp_sat_plan.selected_future_ids)
+        ]
         selected_plans.append(
             PlanningPlan(
                 rank=len(selected_plans) + 1,
-                future_credit_units=plan.future_credit_units,
-                future_course_count=plan.future_course_count,
-                suggested_courses=plan.suggested_courses,
-                bucket_assignments=plan.bucket_assignments,
-                rule_statuses=plan.rule_statuses,
-                generic_missing_requirements=plan.generic_missing_requirements,
-                warnings=plan.warnings,
+                future_credit_units=cp_sat_plan.future_credit_units,
+                future_course_count=cp_sat_plan.future_course_count,
+                suggested_courses=suggested_courses,
+                bucket_assignments=finish_result.bucket_assignments,
+                rule_statuses=finish_result.rule_statuses,
+                generic_missing_requirements=[],
+                warnings=[],
             )
         )
-        if len(selected_plans) >= max(1, simulation_input.num_plans):
-            break
-
-    warnings = [*planning_candidates.warnings, *search_warnings]
+    warnings = [*planning_candidates.warnings]
     requested_count = max(1, simulation_input.num_plans)
     if len(selected_plans) < requested_count:
         warnings.append("No additional distinct feasible future plan found.")
@@ -85,44 +95,6 @@ def solve_planning_simulation(simulation_input: PlanningSimulationInput) -> Plan
         diagnostics=[],
         warnings=warnings,
     )
-
-
-def _search_feasible_plans(
-    *,
-    simulation_input: PlanningSimulationInput,
-    planning_candidates: _PlanningCandidates,
-) -> tuple[list[tuple[frozenset[str], PlanningPlan]], list[str]]:
-    warnings: list[str] = []
-    requested_count = max(1, simulation_input.num_plans)
-    feasible_plans: list[tuple[frozenset[str], PlanningPlan]] = []
-    for future_selection, truncated in _iter_future_subsets_best_first(
-        future_by_id=planning_candidates.future_by_id,
-        locked_ids=simulation_input.locked_course_offering_ids,
-        max_states=_MAX_SUBSET_STATES,
-    ):
-        if truncated:
-            warnings.append(
-                "Future subset search hit the state limit; returned best plans found so far."
-            )
-            break
-        selected_ids = planning_candidates.passed_ids.union(future_selection)
-        result = _evaluate_selection(simulation_input, planning_candidates, selected_ids, future_selection)
-        if result is None:
-            continue
-        feasible_plans.append((frozenset(future_selection), result))
-        if len(feasible_plans) >= requested_count:
-            # Search order is by objective. Once we found enough feasible plans, later
-            # subsets cannot improve ranking.
-            break
-
-    feasible_plans.sort(
-        key=lambda item: (
-            item[1].future_credit_units,
-            item[1].future_course_count,
-            [course.course_instance_id for course in item[1].suggested_courses],
-        )
-    )
-    return feasible_plans, warnings
 
 
 def _build_planning_candidates(simulation_input: PlanningSimulationInput) -> _PlanningCandidates:
@@ -185,6 +157,35 @@ def _build_planning_candidates(simulation_input: PlanningSimulationInput) -> _Pl
         passed_ids=passed_ids,
         future_by_id=future_by_id,
         warnings=warnings,
+    )
+
+
+def _extract_plan_finish_result(
+    *,
+    simulation_input: PlanningSimulationInput,
+    planning_candidates: _PlanningCandidates,
+    selected_ids: set[str],
+    selected_bucket_by_instance_id: dict[str, str],
+):
+    selected_candidates = [
+        candidate
+        for candidate in planning_candidates.candidates
+        if candidate.course_instance_id in selected_ids
+    ]
+    context = build_finish_model(
+        candidates=selected_candidates,
+        degree_catalog=simulation_input.degree_catalog,
+        selected_specialty_ids=simulation_input.selected_specialty_ids,
+    )
+    _feasible, diagnostics = evaluate_finish_feasibility(context)
+    return extract_finish_result(
+        candidates=selected_candidates,
+        model_context=context,
+        status="feasible",
+        warnings=[],
+        diagnostics=diagnostics,
+        selected_instance_ids={candidate.course_instance_id for candidate in selected_candidates},
+        selected_bucket_by_instance_id=selected_bucket_by_instance_id,
     )
 
 
@@ -256,57 +257,6 @@ def _enumerate_future_subsets_best_first(
             break
         subsets.append(subset)
     return subsets, truncated
-
-
-def _evaluate_selection(
-    simulation_input: PlanningSimulationInput,
-    planning_candidates: _PlanningCandidates,
-    selected_ids: set[str],
-    selected_future_ids: set[str],
-) -> PlanningPlan | None:
-    selected_candidates = [
-        candidate
-        for candidate in planning_candidates.candidates
-        if candidate.course_instance_id in selected_ids
-    ]
-    context = build_finish_model(
-        candidates=selected_candidates,
-        degree_catalog=simulation_input.degree_catalog,
-        selected_specialty_ids=simulation_input.selected_specialty_ids,
-    )
-    feasible, diagnostics = evaluate_finish_feasibility(context)
-    if not feasible:
-        return None
-
-    finish_result = extract_finish_result(
-        candidates=selected_candidates,
-        model_context=context,
-        status="feasible",
-        warnings=[],
-        diagnostics=diagnostics,
-        selected_instance_ids={candidate.course_instance_id for candidate in selected_candidates},
-    )
-
-    suggested_courses = [
-        PlanningSuggestedCourse(
-            course_instance_id=instance_id,
-            course_id=str(planning_candidates.future_by_id[instance_id].course_id),
-            term=str(planning_candidates.future_by_id[instance_id].term),
-            credit_units=planning_candidates.future_by_id[instance_id].credit_units,
-            locked_by_student=instance_id in simulation_input.locked_course_offering_ids,
-        )
-        for instance_id in sorted(selected_future_ids)
-    ]
-    return PlanningPlan(
-        rank=0,
-        future_credit_units=sum(course.credit_units for course in suggested_courses),
-        future_course_count=len(suggested_courses),
-        suggested_courses=suggested_courses,
-        bucket_assignments=finish_result.bucket_assignments,
-        rule_statuses=finish_result.rule_statuses,
-        generic_missing_requirements=[],
-        warnings=[],
-    )
 
 
 def _infeasible_diagnostics(

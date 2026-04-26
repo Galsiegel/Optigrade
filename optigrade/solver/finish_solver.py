@@ -6,6 +6,7 @@ from optigrade.domain.simulation import FinishSimulationInput, FinishSimulationR
 from optigrade.solver.candidates import build_finish_candidates
 from optigrade.solver.diagnostics import evaluate_finish_feasibility
 from optigrade.solver.model_builder import build_finish_model
+from optigrade.solver.ortools_core import solve_finish_cp_sat
 from optigrade.solver.solution_extractor import extract_finish_result
 
 
@@ -19,13 +20,18 @@ def solve_finish_simulation(simulation_input: FinishSimulationInput) -> FinishSi
         degree_catalog=simulation_input.degree_catalog,
         selected_specialty_ids=simulation_input.selected_specialty_ids,
     )
-    feasible, diagnostics = evaluate_finish_feasibility(model_context)
-    status = "feasible" if feasible else "infeasible"
-    selected_instance_ids = (
-        _select_candidate_subset(simulation_input, candidate_result.candidates, model_context)
-        if feasible
-        else {candidate.course_instance_id for candidate in candidate_result.candidates}
+    solve_result = solve_finish_cp_sat(
+        candidates=candidate_result.candidates,
+        degree_catalog=simulation_input.degree_catalog,
+        selected_specialty_ids=simulation_input.selected_specialty_ids,
     )
+    _feasible, diagnostics = evaluate_finish_feasibility(model_context)
+    if solve_result.feasible:
+        status = "feasible"
+        selected_instance_ids = solve_result.selected_instance_ids
+    else:
+        status = "infeasible"
+        selected_instance_ids = {candidate.course_instance_id for candidate in candidate_result.candidates}
     return extract_finish_result(
         candidates=candidate_result.candidates,
         model_context=model_context,
@@ -33,6 +39,9 @@ def solve_finish_simulation(simulation_input: FinishSimulationInput) -> FinishSi
         warnings=candidate_result.warnings,
         diagnostics=diagnostics,
         selected_instance_ids=selected_instance_ids,
+        selected_bucket_by_instance_id=(
+            solve_result.selected_bucket_by_instance_id if solve_result.feasible else None
+        ),
     )
 
 
