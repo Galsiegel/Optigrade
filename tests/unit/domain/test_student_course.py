@@ -1,54 +1,67 @@
 from __future__ import annotations
 
-from classes.student import StudentCourse
+from decimal import Decimal
+
+import pytest
+
+from optigrade.domain.student import CourseInstanceStatus, StudentCourseInstance
 
 
-def test_numeric_grade_helpers() -> None:
-    course = StudentCourse(
+def test_student_course_instance_validates_and_normalizes_fields() -> None:
+    instance = StudentCourseInstance(
+        course_instance_id="ci_044101_2023s",
         course_id="044101",
-        name="Intro",
-        credits=3.0,
-        grade="95",
-        semester="2022-2023 Winter",
+        term="2023_spring",
+        credits=Decimal("3.5"),
+        credit_units=7,
+        status=CourseInstanceStatus.RECOGNIZED_PASSED,
+        source="transcript",
+        verified=True,
+        eligible_bucket_ids={"core", "enrichment"},
     )
-    assert course.is_numeric_grade is True
-    assert course.numeric_grade == 95
-    assert course.is_pass is False
-    assert course.is_exemption is False
+    assert instance.course_id == "044101"
+    assert instance.term == "2023_spring"
+    assert instance.credit_units == 7
+    assert "core" in instance.eligible_bucket_ids
 
 
-def test_non_numeric_grade_helpers() -> None:
-    course = StudentCourse(
+def test_student_course_instance_rejects_mismatched_credit_units() -> None:
+    with pytest.raises(ValueError, match="credit_units must match scaled credits"):
+        StudentCourseInstance(
+            course_instance_id="ci_bad",
+            course_id="044101",
+            term="2023_spring",
+            credits=Decimal("3.5"),
+            credit_units=6,
+            status=CourseInstanceStatus.RECOGNIZED_PASSED,
+            source="transcript",
+            verified=True,
+            eligible_bucket_ids={"core"},
+        )
+
+
+def test_solver_eligibility_for_statuses() -> None:
+    passed = StudentCourseInstance(
+        course_instance_id="ci_passed",
+        course_id="044101",
+        term="2023_spring",
+        credits=Decimal("3.0"),
+        credit_units=6,
+        status=CourseInstanceStatus.RECOGNIZED_PASSED,
+        source="transcript",
+        verified=True,
+        eligible_bucket_ids={"core"},
+    )
+    failed = StudentCourseInstance(
+        course_instance_id="ci_failed",
         course_id="044102",
-        name="Pass Course",
-        credits=2.0,
-        grade="Pass",
-        semester="2022-2023 Spring",
+        term="2023_spring",
+        credits=Decimal("3.0"),
+        credit_units=6,
+        status=CourseInstanceStatus.RECOGNIZED_FAILED,
+        source="transcript",
+        verified=True,
+        eligible_bucket_ids={"core"},
     )
-    assert course.is_numeric_grade is False
-    assert course.numeric_grade is None
-    assert course.is_pass is True
-
-
-def test_exemption_without_points_has_zero_effective_credits() -> None:
-    course = StudentCourse(
-        course_id="044103",
-        name="Exempted",
-        credits=None,
-        grade="Exemption without points",
-        semester="2022-2023 Spring",
-    )
-    assert course.is_exemption is True
-    assert course.effective_credits == 0.0
-
-
-def test_course_dict_roundtrip() -> None:
-    original = StudentCourse(
-        course_id="044104",
-        name="Algorithms",
-        credits=3.5,
-        grade="87",
-        semester="2023-2024 Winter",
-    )
-    rebuilt = StudentCourse.from_dict(original.to_dict())
-    assert rebuilt == original
+    assert passed.is_solver_eligible is True
+    assert failed.is_solver_eligible is False

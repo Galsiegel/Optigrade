@@ -1,64 +1,46 @@
 from __future__ import annotations
 
-from classes.student import StudentCourse, StudentProfile
+from decimal import Decimal
+
+from optigrade.domain.student import CourseInstanceStatus, StudentCourseInstance, StudentProfile
 
 
-def _sample_profile() -> StudentProfile:
-    return StudentProfile(
-        student_name="Gal",
-        student_id="12345",
-        degree_name="Software Engineering",
-        faculty_name="Engineering",
-        accumulated_credits=9.5,
-        required_credits=159.5,
-        gpa=88.2,
-        courses=[
-            StudentCourse(
-                course_id="044101",
-                name="Intro",
-                credits=3.0,
-                grade="90",
-                semester="2022-2023 Winter",
-            ),
-            StudentCourse(
-                course_id="394800",
-                name="Sports A",
-                credits=1.0,
-                grade="Pass",
-                semester="2022-2023 Winter",
-            ),
-            StudentCourse(
-                course_id="394800",
-                name="Sports A",
-                credits=1.0,
-                grade="Pass",
-                semester="2023-2024 Winter",
-            ),
-        ],
+def _instance(course_instance_id: str, course_id: str, status: CourseInstanceStatus) -> StudentCourseInstance:
+    return StudentCourseInstance(
+        course_instance_id=course_instance_id,
+        course_id=course_id,
+        term="2023_spring",
+        credits=Decimal("3.0"),
+        credit_units=6,
+        status=status,
+        source="transcript",
+        verified=True,
+        eligible_bucket_ids={"core"},
     )
 
 
-def test_passed_course_ids_are_unique() -> None:
-    profile = _sample_profile()
-    assert profile.passed_course_ids == {"044101", "394800"}
+def test_solver_eligible_courses_filters_only_supported_statuses() -> None:
+    profile = StudentProfile(
+        student_id="12345",
+        degree_start_year=2022,
+        completed_courses=[
+            _instance("ci_1", "044101", CourseInstanceStatus.RECOGNIZED_PASSED),
+            _instance("ci_2", "044102", CourseInstanceStatus.RECOGNIZED_FAILED),
+            _instance("ci_3", "044103", CourseInstanceStatus.UNKNOWN_STUDENT_TAGGED),
+            _instance("ci_4", "044104", CourseInstanceStatus.UNKNOWN_UNRESOLVED),
+        ],
+        manual_tags=[],
+    )
+    eligible = profile.solver_eligible_courses()
+    assert [course.course_instance_id for course in eligible] == ["ci_1", "ci_3"]
 
 
-def test_course_credits_are_keyed_by_course_and_semester() -> None:
-    profile = _sample_profile()
-    assert profile.course_credits[("394800", "2022-2023 Winter")] == 1.0
-    assert profile.course_credits[("394800", "2023-2024 Winter")] == 1.0
-    assert len(profile.course_credits) == 3
-
-
-def test_get_course_returns_first_match_or_none() -> None:
-    profile = _sample_profile()
-    assert profile.get_course("044101") is not None
-    assert profile.get_course("999999") is None
-
-
-def test_profile_json_roundtrip(tmp_path) -> None:
-    profile = _sample_profile()
-    target = tmp_path / "student_profile.json"
-    profile.save_json(str(target))
-    loaded = StudentProfile.load_json(str(target))
-    assert loaded.to_dict() == profile.to_dict()
+def test_profile_keeps_student_identity_fields() -> None:
+    profile = StudentProfile(
+        student_id="24680",
+        degree_start_year=2021,
+        completed_courses=[],
+        manual_tags=[],
+    )
+    assert profile.student_id == "24680"
+    assert profile.degree_start_year == 2021

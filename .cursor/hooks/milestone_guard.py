@@ -46,7 +46,7 @@ def _mark_pytest_result() -> int:
         return 0
 
     print("milestone-guard: pytest did not pass; commit guard remains locked")
-    return 0
+    return 1
 
 
 def _validate_before_commit() -> int:
