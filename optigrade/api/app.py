@@ -132,7 +132,7 @@ def create_app(
                     strategy=request.catalog_search_strategy,
                 )
             )
-        return _finish_response(best_result, best_year, valid_years)
+        return _finish_response(best_result, valid_years)
 
     @app.post("/simulations/plan-degree", response_model=PlanningSimulationResponse)
     def plan_simulation(request: PlanningSimulationRequest) -> PlanningSimulationResponse:
@@ -260,9 +260,12 @@ def _resolve_availability_repo(
     return repo
 
 
-def _finish_response(result, catalog_year_used: int, valid_catalog_years: list[int]) -> FinishSimulationResponse:
+def _finish_response(result, valid_catalog_years: list[int]) -> FinishSimulationResponse:
     return FinishSimulationResponse(
         status=result.status,
+        degree_id=result.degree_id,
+        catalog_year=result.catalog_year,
+        selected_specialty_ids=result.selected_specialty_ids,
         summary=result.summary.__dict__,
         bucket_assignments=[assignment.__dict__ for assignment in result.bucket_assignments],
         rule_statuses=[rule.__dict__ for rule in result.rule_statuses],
@@ -270,6 +273,5 @@ def _finish_response(result, catalog_year_used: int, valid_catalog_years: list[i
         manual_unverified_courses=[course.__dict__ for course in result.manual_unverified_courses],
         warnings=result.warnings,
         diagnostics=[diagnostic.__dict__ for diagnostic in result.diagnostics],
-        catalog_year_used=catalog_year_used,
         valid_catalog_years=valid_catalog_years,
     )

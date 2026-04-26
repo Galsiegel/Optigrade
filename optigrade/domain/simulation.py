@@ -63,7 +63,10 @@ class Diagnostic:
 
 @dataclass(frozen=True)
 class FinishSimulationResult:
-    status: str
+    status: Literal["feasible", "infeasible"]
+    degree_id: str
+    catalog_year: int
+    selected_specialty_ids: list[str]
     summary: CreditSummary
     bucket_assignments: list[BucketAssignment]
     rule_statuses: list[RuleStatus]

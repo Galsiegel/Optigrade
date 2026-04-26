@@ -149,10 +149,9 @@ def build_finish_model(
             )
         )
 
-    available_specialty_ids = set(degree_catalog.specialties.keys())
-    if selected_specialty_ids is None:
-        active_specialty_ids = sorted(available_specialty_ids)
-    else:
+    available_specialty_ids = sorted(degree_catalog.specialties.keys())
+    selected_specialty_ids = set(selected_specialty_ids or set())
+    if selected_specialty_ids:
         active_specialty_ids = sorted(selected_specialty_ids.intersection(available_specialty_ids))
         constraints.append(
             FinishModelConstraint(
@@ -163,6 +162,8 @@ def build_finish_model(
                 },
             )
         )
+    else:
+        active_specialty_ids = []
 
     constraints.append(
         FinishModelConstraint(
@@ -170,11 +171,12 @@ def build_finish_model(
             details={
                 "required_specialty_count": degree_catalog.required_specialty_count,
                 "active_specialty_ids": active_specialty_ids,
+                "available_specialty_ids": available_specialty_ids,
             },
         )
     )
 
-    for specialty_id in active_specialty_ids:
+    for specialty_id in available_specialty_ids:
         specialty = degree_catalog.specialties[specialty_id]
         specialty_alloc_vars = [
             alloc_var

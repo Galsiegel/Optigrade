@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from optigrade.domain.simulation import (
     BucketAssignment,
     CourseResult,
@@ -18,18 +20,24 @@ def extract_finish_result(
     *,
     candidates: list[StudentCourseInstance],
     model_context: FinishModelContext,
-    status: str,
+    status: Literal["feasible", "infeasible"],
+    degree_id: str,
+    catalog_year: int,
+    selected_specialty_ids: set[str] | None,
     warnings: list[str],
     diagnostics: list[Diagnostic],
     selected_instance_ids: set[str] | None = None,
     selected_bucket_by_instance_id: dict[str, str] | None = None,
+    active_specialty_ids: set[str] | None = None,
 ) -> FinishSimulationResult:
     candidate_by_instance_id = {
         instance.course_instance_id: instance for instance in candidates
     }
-    effective_selected_ids = selected_instance_ids or {
-        instance.course_instance_id for instance in candidates
-    }
+    effective_selected_ids = (
+        {instance.course_instance_id for instance in candidates}
+        if selected_instance_ids is None
+        else set(selected_instance_ids)
+    )
     selected_credit_units = sum(
         instance.credit_units
         for instance in candidates
@@ -48,7 +56,7 @@ def extract_finish_result(
         if instance.course_instance_id not in effective_selected_ids:
             continue
         chosen_bucket = selected_bucket_by_instance_id.get(instance.course_instance_id)
-        if chosen_bucket is None:
+        if chosen_bucket is None and status == "feasible":
             candidate_buckets = sorted(
                 bucket_id
                 for (instance_id, bucket_id) in model_context.alloc_vars.keys()
@@ -74,37 +82,47 @@ def extract_finish_result(
             )
 
     extra_unused_courses: list[CourseResult] = []
-    for instance_id, _x_var in model_context.x_vars.items():
-        if instance_id in assigned_instance_ids:
-            continue
-        matching = candidate_by_instance_id.get(instance_id)
-        if matching is None:
-            continue
-        if instance_id in effective_selected_ids:
-            continue
-        extra_unused_courses.append(
-            CourseResult(
-                course_instance_id=matching.course_instance_id,
-                course_id=str(matching.course_id),
-                verified=matching.verified,
-                reason_codes=["extra_unused"],
+    manual_unverified_courses: list[CourseResult] = []
+    if status == "feasible":
+        for instance_id, _x_var in model_context.x_vars.items():
+            if instance_id in assigned_instance_ids:
+                continue
+            matching = candidate_by_instance_id.get(instance_id)
+            if matching is None:
+                continue
+            if instance_id in effective_selected_ids:
+                continue
+            extra_unused_courses.append(
+                CourseResult(
+                    course_instance_id=matching.course_instance_id,
+                    course_id=str(matching.course_id),
+                    verified=matching.verified,
+                    reason_codes=["extra_unused"],
+                )
             )
-        )
 
-    manual_unverified_courses = [
-        CourseResult(
-            course_instance_id=instance.course_instance_id,
-            course_id=str(instance.course_id),
-            verified=instance.verified,
-            reason_codes=["manual_unverified"],
-        )
-        for instance in candidates
-        if not instance.verified and instance.course_instance_id in effective_selected_ids
-    ]
-    rule_statuses = _build_rule_statuses(model_context)
+        manual_unverified_courses = [
+            CourseResult(
+                course_instance_id=instance.course_instance_id,
+                course_id=str(instance.course_id),
+                verified=instance.verified,
+                reason_codes=["manual_unverified"],
+            )
+            for instance in candidates
+            if not instance.verified and instance.course_instance_id in effective_selected_ids
+        ]
+    rule_statuses = _build_rule_statuses(
+        model_context,
+        selected_instance_ids=effective_selected_ids,
+        selected_bucket_by_instance_id=selected_bucket_by_instance_id,
+        active_specialty_ids=active_specialty_ids or set(),
+    )
 
     return FinishSimulationResult(
         status=status,
+        degree_id=degree_id,
+        catalog_year=catalog_year,
+        selected_specialty_ids=sorted(selected_specialty_ids or set()),
         summary=CreditSummary(
             total_selected_credit_units=selected_credit_units,
             total_selected_courses=len(effective_selected_ids),
@@ -160,19 +178,36 @@ def _build_assignment_reason_codes(
     return sorted(reason_codes)
 
 
-def _build_rule_statuses(model_context: FinishModelContext) -> list[RuleStatus]:
+def _build_rule_statuses(
+    model_context: FinishModelContext,
+    *,
+    selected_instance_ids: set[str],
+    selected_bucket_by_instance_id: dict[str, str],
+    active_specialty_ids: set[str],
+) -> list[RuleStatus]:
     statuses: list[RuleStatus] = []
+    selected_var_names = {
+        x_var_name
+        for instance_id, x_var_name in model_context.x_vars.items()
+        if instance_id in selected_instance_ids
+    }
+    selected_alloc_var_names = {
+        alloc_var_name
+        for (instance_id, bucket_id), alloc_var_name in model_context.alloc_vars.items()
+        if instance_id in selected_instance_ids
+        and selected_bucket_by_instance_id.get(instance_id) == bucket_id
+    }
     for index, constraint in enumerate(model_context.constraints):
         constraint_type = constraint.type
         details = constraint.details
 
         if constraint_type in {"mandatory_completion", "specialty_mandatory"}:
             required = int(details.get("min_selected", 1))
-            actual = len(details.get("x_vars", []))
+            actual = sum(1 for x_var in details.get("x_vars", []) if x_var in selected_var_names)
             status = "satisfied" if actual >= required else "unsatisfied"
         elif constraint_type == "specialty_choose_group":
             required = int(details.get("required_count", 0))
-            actual = len(details.get("x_vars", []))
+            actual = sum(1 for x_var in details.get("x_vars", []) if x_var in selected_var_names)
             if required == 0:
                 status = "not_applicable"
             else:
@@ -182,19 +217,27 @@ def _build_rule_statuses(model_context: FinishModelContext) -> list[RuleStatus]:
                 required = int(details.get("required_core_count", 0))
             else:
                 required = int(details.get("minimum_total_courses", 0))
-            actual = len(details.get("alloc_vars", []))
+            actual = sum(1 for alloc_var in details.get("alloc_vars", []) if alloc_var in selected_alloc_var_names)
             status = "satisfied" if actual >= required else "unsatisfied"
         elif constraint_type == "total_credit_minimum":
             required = int(details.get("required_total_credit_units", 0))
-            actual = sum(int(term["credit_units"]) for term in details.get("terms", []))
+            actual = sum(
+                int(term["credit_units"])
+                for term in details.get("terms", [])
+                if term.get("course_instance_id") in selected_instance_ids
+            )
             status = "satisfied" if actual >= required else "unsatisfied"
         elif constraint_type == "bucket_credit_minimum":
             required = int(details.get("required_credit_units", 0))
-            actual = sum(int(term["credit_units"]) for term in details.get("terms", []))
+            actual = sum(
+                int(term["credit_units"])
+                for term in details.get("terms", [])
+                if term.get("alloc_var") in selected_alloc_var_names
+            )
             status = "satisfied" if actual >= required else "unsatisfied"
         elif constraint_type == "required_specialty_count":
             required = int(details.get("required_specialty_count", 0))
-            actual = len(details.get("active_specialty_ids", []))
+            actual = len(active_specialty_ids)
             status = "satisfied" if actual >= required else "unsatisfied"
         else:
             continue

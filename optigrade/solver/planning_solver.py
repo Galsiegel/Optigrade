@@ -61,6 +61,7 @@ def solve_planning_simulation(simulation_input: PlanningSimulationInput) -> Plan
             planning_candidates=planning_candidates,
             selected_ids=cp_sat_plan.selected_instance_ids,
             selected_bucket_by_instance_id=cp_sat_plan.selected_bucket_by_instance_id,
+            active_specialty_ids=cp_sat_plan.active_specialty_ids,
         )
         suggested_courses = [
             PlanningSuggestedCourse(
@@ -166,6 +167,7 @@ def _extract_plan_finish_result(
     planning_candidates: _PlanningCandidates,
     selected_ids: set[str],
     selected_bucket_by_instance_id: dict[str, str],
+    active_specialty_ids: set[str],
 ):
     selected_candidates = [
         candidate
@@ -182,10 +184,14 @@ def _extract_plan_finish_result(
         candidates=selected_candidates,
         model_context=context,
         status="feasible",
+        degree_id=simulation_input.degree_catalog.degree_id,
+        catalog_year=simulation_input.degree_catalog.academic_year,
+        selected_specialty_ids=simulation_input.selected_specialty_ids,
         warnings=[],
         diagnostics=diagnostics,
         selected_instance_ids={candidate.course_instance_id for candidate in selected_candidates},
         selected_bucket_by_instance_id=selected_bucket_by_instance_id,
+        active_specialty_ids=active_specialty_ids,
     )
 
 

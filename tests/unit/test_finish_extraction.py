@@ -4,6 +4,9 @@ from optigrade.domain.student import CourseInstanceStatus, StudentCourseInstance
 from optigrade.solver.model_builder import FinishModelConstraint, FinishModelContext
 from optigrade.solver.solution_extractor import extract_finish_result
 
+DEFAULT_DEGREE_ID = "software_engineering"
+DEFAULT_CATALOG_YEAR = 2022
+
 
 def _instance(instance_id: str, course_id: str, verified: bool = True) -> StudentCourseInstance:
     return StudentCourseInstance(
@@ -33,6 +36,9 @@ def test_finish_extraction_marks_manual_unverified_courses() -> None:
         candidates=candidates,
         model_context=context,
         status="feasible",
+        degree_id=DEFAULT_DEGREE_ID,
+        catalog_year=DEFAULT_CATALOG_YEAR,
+        selected_specialty_ids=None,
         warnings=[],
         diagnostics=[],
     )
@@ -52,6 +58,9 @@ def test_finish_extraction_builds_bucket_assignments() -> None:
         candidates=candidates,
         model_context=context,
         status="feasible",
+        degree_id=DEFAULT_DEGREE_ID,
+        catalog_year=DEFAULT_CATALOG_YEAR,
+        selected_specialty_ids=None,
         warnings=[],
         diagnostics=[],
     )
@@ -75,6 +84,9 @@ def test_finish_extraction_reports_extra_unused_courses() -> None:
         candidates=candidates,
         model_context=context,
         status="feasible",
+        degree_id=DEFAULT_DEGREE_ID,
+        catalog_year=DEFAULT_CATALOG_YEAR,
+        selected_specialty_ids=None,
         warnings=[],
         diagnostics=[],
         selected_instance_ids={"ci_1"},
@@ -98,6 +110,9 @@ def test_course_cannot_be_counted_twice_across_buckets() -> None:
         candidates=candidates,
         model_context=context,
         status="feasible",
+        degree_id=DEFAULT_DEGREE_ID,
+        catalog_year=DEFAULT_CATALOG_YEAR,
+        selected_specialty_ids=None,
         warnings=[],
         diagnostics=[],
         selected_instance_ids={"ci_dual"},
@@ -122,6 +137,9 @@ def test_finish_extraction_builds_rule_statuses() -> None:
         candidates=candidates,
         model_context=context,
         status="feasible",
+        degree_id=DEFAULT_DEGREE_ID,
+        catalog_year=DEFAULT_CATALOG_YEAR,
+        selected_specialty_ids=None,
         warnings=[],
         diagnostics=[],
     )
@@ -151,6 +169,9 @@ def test_rule_status_choose_group_required_zero_is_not_applicable() -> None:
         candidates=candidates,
         model_context=context,
         status="feasible",
+        degree_id=DEFAULT_DEGREE_ID,
+        catalog_year=DEFAULT_CATALOG_YEAR,
+        selected_specialty_ids=None,
         warnings=[],
         diagnostics=[],
     )
@@ -189,6 +210,9 @@ def test_reason_codes_include_logical_specialty_reasons_when_assigned_to_core() 
         candidates=candidates,
         model_context=context,
         status="feasible",
+        degree_id=DEFAULT_DEGREE_ID,
+        catalog_year=DEFAULT_CATALOG_YEAR,
+        selected_specialty_ids=None,
         warnings=[],
         diagnostics=[],
     )

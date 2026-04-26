@@ -99,7 +99,7 @@ class CourseResultResponse(BaseModel):
 class RuleStatusResponse(BaseModel):
     rule_id: str
     rule_type: str
-    status: str
+    status: Literal["satisfied", "unsatisfied", "not_applicable"]
     required: int | float | str | None
     actual: int | float | str | None
     message_en: str
@@ -135,7 +135,10 @@ class PlanningPlanResponse(BaseModel):
 
 
 class FinishSimulationResponse(BaseModel):
-    status: str
+    status: Literal["feasible", "infeasible"]
+    degree_id: str
+    catalog_year: int
+    selected_specialty_ids: list[str] = Field(default_factory=list)
     summary: CreditSummaryResponse
     bucket_assignments: list[BucketAssignmentResponse] = Field(default_factory=list)
     rule_statuses: list[RuleStatusResponse] = Field(default_factory=list)
@@ -143,7 +146,6 @@ class FinishSimulationResponse(BaseModel):
     manual_unverified_courses: list[CourseResultResponse] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
     diagnostics: list[DiagnosticResponse] = Field(default_factory=list)
-    catalog_year_used: int
     valid_catalog_years: list[int] = Field(default_factory=list)
 
 

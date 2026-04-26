@@ -105,7 +105,11 @@ def evaluate_finish_feasibility(model_context: FinishModelContext) -> tuple[bool
                 )
         elif constraint.type == "required_specialty_count":
             required = int(constraint.details.get("required_specialty_count", 0))
-            actual = len(constraint.details.get("active_specialty_ids", []))
+            active_specialty_ids = list(constraint.details.get("active_specialty_ids", []))
+            if active_specialty_ids:
+                actual = len(active_specialty_ids)
+            else:
+                actual = len(constraint.details.get("available_specialty_ids", []))
             if actual < required:
                 feasible = False
                 diagnostics.append(

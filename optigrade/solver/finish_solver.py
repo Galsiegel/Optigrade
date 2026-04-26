@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from optigrade.domain.simulation import FinishSimulationInput, FinishSimulationResult
+from typing import Literal
+
+from optigrade.domain.simulation import Diagnostic, FinishSimulationInput, FinishSimulationResult
 from optigrade.solver.candidates import build_finish_candidates
 from optigrade.solver.diagnostics import evaluate_finish_feasibility
 from optigrade.solver.model_builder import build_finish_model
@@ -26,22 +28,37 @@ def solve_finish_simulation(simulation_input: FinishSimulationInput) -> FinishSi
         selected_specialty_ids=simulation_input.selected_specialty_ids,
     )
     _feasible, diagnostics = evaluate_finish_feasibility(model_context)
+    status: Literal["feasible", "infeasible"]
     if solve_result.feasible:
         status = "feasible"
         selected_instance_ids = solve_result.selected_instance_ids
     else:
         status = "infeasible"
-        selected_instance_ids = {candidate.course_instance_id for candidate in candidate_result.candidates}
+        selected_instance_ids = set()
+        if not diagnostics:
+            diagnostics = [
+                Diagnostic(
+                    type="cp_sat_infeasible",
+                    severity="error",
+                    related_course_ids=[],
+                    related_bucket_ids=[],
+                    message_en="Solver found no feasible assignment for the current constraints.",
+                )
+            ]
     return extract_finish_result(
         candidates=candidate_result.candidates,
         model_context=model_context,
         status=status,
+        degree_id=simulation_input.degree_catalog.degree_id,
+        catalog_year=simulation_input.degree_catalog.academic_year,
+        selected_specialty_ids=simulation_input.selected_specialty_ids,
         warnings=candidate_result.warnings,
         diagnostics=diagnostics,
         selected_instance_ids=selected_instance_ids,
         selected_bucket_by_instance_id=(
             solve_result.selected_bucket_by_instance_id if solve_result.feasible else None
         ),
+        active_specialty_ids=(solve_result.active_specialty_ids if solve_result.feasible else set()),
     )
 
 

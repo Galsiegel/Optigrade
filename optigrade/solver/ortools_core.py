@@ -15,6 +15,7 @@ class CpSatSolveResult:
     feasible: bool
     selected_instance_ids: set[str]
     selected_bucket_by_instance_id: dict[str, str]
+    active_specialty_ids: set[str]
     selected_future_ids: set[str]
     future_credit_units: int
     future_course_count: int
@@ -25,6 +26,7 @@ class _ModelBundle:
     model: cp_model.CpModel
     x_vars: dict[str, cp_model.IntVar]
     alloc_vars: dict[tuple[str, str], cp_model.IntVar]
+    specialty_active_vars: dict[str, cp_model.IntVar]
     candidate_by_id: dict[str, StudentCourseInstance]
     future_ids: set[str]
 
@@ -49,6 +51,7 @@ def solve_finish_cp_sat(
             feasible=False,
             selected_instance_ids=set(),
             selected_bucket_by_instance_id={},
+            active_specialty_ids=set(),
             selected_future_ids=set(),
             future_credit_units=0,
             future_course_count=0,
@@ -57,12 +60,18 @@ def solve_finish_cp_sat(
     selected_ids = {
         instance_id for instance_id, x_var in bundle.x_vars.items() if solver.Value(x_var) == 1
     }
+    active_specialty_ids = {
+        specialty_id
+        for specialty_id, specialty_var in bundle.specialty_active_vars.items()
+        if solver.Value(specialty_var) == 1
+    }
     selected_bucket_by_instance_id = _extract_bucket_assignments(bundle.alloc_vars, solver)
     selected_future_ids = selected_ids.intersection(bundle.future_ids)
     return CpSatSolveResult(
         feasible=True,
         selected_instance_ids=selected_ids,
         selected_bucket_by_instance_id=selected_bucket_by_instance_id,
+        active_specialty_ids=active_specialty_ids,
         selected_future_ids=selected_future_ids,
         future_credit_units=0,
         future_course_count=0,
@@ -98,6 +107,11 @@ def solve_planning_cp_sat(
         selected_ids = {
             instance_id for instance_id, x_var in bundle.x_vars.items() if solver.Value(x_var) == 1
         }
+        active_specialty_ids = {
+            specialty_id
+            for specialty_id, specialty_var in bundle.specialty_active_vars.items()
+            if solver.Value(specialty_var) == 1
+        }
         selected_bucket_by_instance_id = _extract_bucket_assignments(bundle.alloc_vars, solver)
         selected_future_ids = selected_ids.intersection(future_instance_ids)
         future_credit_units = sum(
@@ -109,6 +123,7 @@ def solve_planning_cp_sat(
                 feasible=True,
                 selected_instance_ids=selected_ids,
                 selected_bucket_by_instance_id=selected_bucket_by_instance_id,
+                active_specialty_ids=active_specialty_ids,
                 selected_future_ids=selected_future_ids,
                 future_credit_units=future_credit_units,
                 future_course_count=future_course_count,
@@ -131,6 +146,7 @@ def _build_model(
     model = cp_model.CpModel()
     x_vars: dict[str, cp_model.IntVar] = {}
     alloc_vars: dict[tuple[str, str], cp_model.IntVar] = {}
+    specialty_active_vars: dict[str, cp_model.IntVar] = {}
     candidate_by_id = {candidate.course_instance_id: candidate for candidate in candidates}
     future_ids = set(future_instance_ids or set())
 
@@ -190,24 +206,35 @@ def _build_model(
             >= required_credit_units
         )
 
-    available_specialty_ids = set(degree_catalog.specialties.keys())
-    if selected_specialty_ids is None:
-        active_specialty_ids = sorted(available_specialty_ids)
-    else:
-        active_specialty_ids = sorted(selected_specialty_ids.intersection(available_specialty_ids))
+    available_specialty_ids = sorted(degree_catalog.specialties.keys())
+    selected_specialty_ids = set(selected_specialty_ids or set())
+    for specialty_id in available_specialty_ids:
+        specialty_var = model.NewBoolVar(f"active_specialty_{specialty_id}")
+        specialty_active_vars[specialty_id] = specialty_var
+        if selected_specialty_ids:
+            if specialty_id in selected_specialty_ids:
+                model.Add(specialty_var == 1)
+            else:
+                model.Add(specialty_var == 0)
 
-    if len(active_specialty_ids) < degree_catalog.required_specialty_count:
+    if selected_specialty_ids and not selected_specialty_ids.intersection(available_specialty_ids):
         model.Add(0 >= 1)
 
-    for specialty_id in active_specialty_ids:
+    if specialty_active_vars:
+        model.Add(sum(specialty_active_vars.values()) == degree_catalog.required_specialty_count)
+    elif degree_catalog.required_specialty_count > 0:
+        model.Add(0 >= 1)
+
+    for specialty_id in available_specialty_ids:
         specialty = degree_catalog.specialties[specialty_id]
+        specialty_var = specialty_active_vars[specialty_id]
         specialty_alloc_vars = [
             alloc_var
             for (instance_id, bucket_id), alloc_var in alloc_vars.items()
             if bucket_id == f"specialty:{specialty_id}"
             and str(candidate_by_id[instance_id].course_id) in specialty.eligible_course_ids
         ]
-        model.Add(sum(specialty_alloc_vars) >= specialty.minimum_total_courses)
+        model.Add(sum(specialty_alloc_vars) >= specialty.minimum_total_courses * specialty_var)
 
         for mandatory_course_id in specialty.mandatory_courses:
             mandatory_x_vars = [
@@ -216,9 +243,9 @@ def _build_model(
                 if str(candidate.course_id) == mandatory_course_id
             ]
             if mandatory_x_vars:
-                model.Add(sum(mandatory_x_vars) >= 1)
+                model.Add(sum(mandatory_x_vars) >= specialty_var)
             else:
-                model.Add(0 >= 1)
+                model.Add(0 >= specialty_var)
 
         for choose_group in specialty.choose_groups:
             group_x_vars = [
@@ -229,14 +256,15 @@ def _build_model(
             if choose_group.required_count == 0:
                 continue
             if group_x_vars:
-                model.Add(sum(group_x_vars) >= choose_group.required_count)
+                model.Add(sum(group_x_vars) >= choose_group.required_count * specialty_var)
             else:
-                model.Add(0 >= choose_group.required_count)
+                model.Add(0 >= choose_group.required_count * specialty_var)
 
     return _ModelBundle(
         model=model,
         x_vars=x_vars,
         alloc_vars=alloc_vars,
+        specialty_active_vars=specialty_active_vars,
         candidate_by_id=candidate_by_id,
         future_ids=future_ids,
     )
