@@ -138,7 +138,7 @@ Example:
 Supported `catalog_search_strategy` values:
 
 - `selected_only`
-- `try_all_from_start_to_current`
+- `try_all_from_start_to_current`, meaning there may be several fitting catalogs.
 
 The second option should only be used when the user explicitly asks to try other catalogs.
 
@@ -163,7 +163,7 @@ Example:
 
 Blocked courses apply only to future suggestions. Already-passed courses remain available for finish-degree assignment.
 
-Locked courses are hard constraints. If a locked course cannot count toward the selected degree/curriculum, the backend should reject the request and explain the issue.
+Locked courses are hard constraints. If a locked course cannot count toward the selected degree/curriculum, the backend should reject the request and explain the issue, or count the course as "extra".
 
 ---
 
@@ -172,14 +172,6 @@ Locked courses are hard constraints. If a locked course cannot count toward the 
 ### 4.1 Course ID
 
 Course IDs are always strings.
-
-Examples:
-
-```text
-"044101"
-"046195"
-```
-
 They must never be represented as integers, because leading zeroes are meaningful.
 
 ---
@@ -268,14 +260,11 @@ faculty_choice
 enrichment
 sports
 malag
-project
-lab
 extra_unused
 ```
 
 Notes:
 
-- `free_choice` should not be used as a formal internal bucket. The correct internal bucket is `enrichment`.
 - The UI may display aliases if needed, but the backend should use normalized bucket names.
 - Specialties must be represented as specific buckets, not a generic `specialty` bucket.
 

@@ -3,9 +3,8 @@ Manual transcript parser harness for local PDF checks.
 
 This script is intentionally outside pytest collection because it depends on
 local PDF fixtures and legacy parser behavior.
+but this will be the base for the parser in website
 
-Usage:
-    python scripts/manual_parser_all_pdfs.py
 """
 
 import json
