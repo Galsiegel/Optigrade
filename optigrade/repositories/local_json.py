@@ -185,7 +185,7 @@ class LocalJsonCourseBankRepository(CourseBankRepository):
         if not self._file_path.exists():
             return {}
         payload = json.loads(self._file_path.read_text(encoding="utf-8"))
-        return build_course_bank_from_catalogs(payload).offerings
+        return build_course_bank_from_catalogs(payload)
 
     def save_all(self, offerings: dict[tuple[str, str], CourseOffering]) -> None:
         payload = []

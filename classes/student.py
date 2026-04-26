@@ -65,7 +65,6 @@ class StudentCourse:
     def from_dict(cls, d: dict) -> StudentCourse:
         return cls(
             course_id=d["course_id"],
-            name=d.get("name", ""),
             credits=d.get("credits"),
             grade=d.get("grade", ""),
             semester=d.get("semester", ""),

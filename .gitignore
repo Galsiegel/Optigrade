@@ -11,3 +11,4 @@ __pycache__/
 
 # Environment variables (if you use them)
 .env
+data/dummy_exampleJSON/grades
