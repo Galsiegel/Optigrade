@@ -856,16 +856,24 @@ course instance i is counted/selected in the simulation
 
 For finish-degree mode:
 
-- Passed courses are available to be counted.
-- Failed courses are ignored.
-- The solver may choose a subset of passed courses if the student has extra credits.
+- All valid passed courses are fixed as selected.
+- Valid manual-tagged passed courses are fixed as selected.
+- Failed, ignored, and unresolved courses are excluded.
+- The solver does not choose a subset of passed courses; it chooses their bucket assignment.
+- Passed courses that do not fit a real requirement bucket are returned as extra/unused/unassigned courses.
 
 For planning mode:
 
-- Passed courses are available/fixed as completed.
+- All valid passed courses are fixed as selected/completed.
 - Future candidate courses are decision variables.
 - Locked courses are fixed to selected.
 - Blocked courses are fixed to not selected.
+
+Important policy for selected passed courses:
+
+- A selected course satisfies bucket-specific rules only if it is assigned to that bucket via `alloc[i,b]`.
+- Courses assigned to extra buckets such as `extra_unused`/`extra_unassigned` do not satisfy core count, specialty visible minimum, sports, MALAG, project, or lab rules.
+- According to MVP policy, these extra courses may still contribute to total completed credits.
 
 ---
 

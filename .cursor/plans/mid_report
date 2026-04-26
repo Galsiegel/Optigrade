@@ -1,0 +1,127 @@
+Optigrade Backend Plan Consistency Report
+I reviewed .cursor/plans/optigrade_backend_implementation_plan_backend_first.md against the current repo and did not change any files.
+
+Validation Status
+python -m pytest tests/unit: 102 passed
+python -m pytest tests/scenarios: 2 passed
+python -m pytest: parser-collection failure is fixed (legacy PDF harness moved out of tests), but suite still fails for separate reasons (missing tiny fixture files + tests not yet adapted to updated extraction contract).
+Solver test imports also print a Windows fatal exception trace through ortools -> pandas -> pyarrow, even when tests ultimately pass. That should not be ignored for CI reliability.
+Major Inconsistencies
+1. Full Test Command Is Not Reliable (PARTIALLY FIXED 26/4/26)
+Implemented in scripts/manual_parser_all_pdfs.py:
+
+Legacy PDF harness was moved out of pytest discovery (`tests/test_parser_all_pdfs.py` -> `scripts/manual_parser_all_pdfs.py`).
+The stale `tools.parse_transcript` dependency no longer breaks test collection.
+This aligns with the plan boundary that transcript parsing should be serviced through optigrade.services.transcript_service.TranscriptParser, while PDF parsing remains an explicit manual/integration workflow.
+
+Remaining blockers for fully reliable `python -m pytest` are separate and pre-existing (e.g., missing tiny fixture files and other unrelated failing tests).
+*ignore step 2, it is a mistake 26/4/26*
+2. Planning Solver Forces All Passed Courses
+The plan says planning should treat passed courses as decision variables, because extra passed courses may remain unused and only future courses should be penalized.
+
+Current code forces all passed instances selected in planning:
+
+optigrade/solver/ortools_core.py
+solve_planning_cp_sat(...)
+forced_selected_instance_ids=passed_instance_ids.union(locked_future_instance_ids)
+This conflicts with Milestone 5.3 and can produce plans that are stricter or less accurate than intended.
+
+3. Specialty Selection Does Not Match Plan (FIXED 26/4/26)
+Implemented in optigrade/solver/ortools_core.py and aligned with the model intent:
+
+active_specialty[s] decision vars now exist in CP-SAT.
+sum(active_specialty) == required_specialty_count is enforced.
+If selected_specialty_ids is provided, selected specialties are forced active and non-selected are forced inactive.
+Specialty mandatory / choose-group / visible-min constraints are now gated by specialty activation.
+
+4. Rule Statuses Are Not Based on Solved Assignment (FIXED 26/4/26)
+Implemented in optigrade/solver/solution_extractor.py:
+
+RuleStatus.actual is now computed from the solved selection/allocation, not candidate counts.
+mandatory/choose-group actual uses selected x vars only.
+core/specialty visible actual uses selected alloc vars only.
+credit actual sums selected terms only.
+required_specialty_count actual is based on solved active specialties.
+
+5. Infeasible Results Can Be Misleading (FIXED 26/4/26)
+Implemented in optigrade/solver/finish_solver.py + optigrade/solver/solution_extractor.py:
+
+In infeasible finish runs, selected_instance_ids is now empty (not all candidates).
+Fallback bucket assignment inference is disabled for infeasible status.
+extra_unused_courses and manual_unverified_courses are emitted only for feasible results.
+
+6. Diagnostics Are Structural, Not Solver-Faithful (PARTIALLY FIXED 26/4/26)
+Implemented in optigrade/solver/finish_solver.py + optigrade/solver/diagnostics.py:
+
+If CP-SAT is infeasible and structural diagnostics are empty, a cp_sat_infeasible diagnostic is now emitted.
+required_specialty_count diagnostics now consider available specialties when no explicit active set is present.
+Structural diagnostics still exist (by design), but no longer silently return empty in CP-infeasible cases.
+7. Result Models Drift From Plan (FIXED 26/4/26)
+Implemented in optigrade/domain/simulation.py + optigrade/solver/solution_extractor.py + optigrade/solver/finish_solver.py + optigrade/solver/planning_solver.py + optigrade/api/schemas.py + optigrade/api/app.py:
+
+FinishSimulationResult now includes degree_id, catalog_year, and selected_specialty_ids.
+FinishSimulationResult.status is now typed as Literal["feasible", "infeasible"].
+FinishSimulationResponse now carries degree identity fields directly from the solver result model.
+RuleStatusResponse.status is now typed as Literal["satisfied", "unsatisfied", "not_applicable"].
+8. Project And Lab Rules Exist But Are Not Enforced
+DegreeCatalog has project_rules and lab_rules, and the plan says rule statuses should include project/lab rules if defined. The solver does not enforce them or report statuses for them.
+
+Relevant files:
+
+optigrade/domain/catalog.py
+optigrade/solver/ortools_core.py
+optigrade/solver/model_builder.py
+Medium Inconsistencies
+Domain / Loader Layer
+Mostly aligned, but gaps remain:
+
+catalog_validator does not validate specialty references against a course bank.
+catalog_validator does not validate bucket IDs.
+Some planned tests are missing by name or only covered indirectly.
+Duplicate non-sports handling appears as ignored course statuses, not as a clean StudentProfile warning API.
+Relevant files:
+
+optigrade/validation/catalog_validator.py
+optigrade/loaders/student_loader.py
+tests/unit/test_student_loader.py
+Fixtures
+All planned tiny catalog fixture files exist, but several milestone-specific scenarios are tested with programmatic catalogs rather than the JSON fixtures themselves. This weakens the original intention: tiny JSON fixtures should isolate solver behavior manually and end-to-end.
+
+Relevant files:
+
+tests/fixtures/catalogs/*.json
+tests/unit/test_finish_solver.py
+tests/unit/test_synthetic_fixtures.py
+API Contracts
+Core endpoints exist, but file layout and behavior drift:
+
+Plan expected api/main.py, routes_transcripts.py, routes_simulations.py; implementation uses api/app.py.
+/manual-tags exists but was not listed in Milestone 8 endpoint list.
+try_all_from_start_to_current does not aggregate closest-catalog diagnostics as planned.
+API transcript credits are serialized as float.
+Relevant files:
+
+optigrade/api/app.py
+optigrade/api/schemas.py
+Repositories / Persistence
+Repository abstractions and local JSON repositories exist, but API integration is incomplete:
+
+Simulation history repository is implemented but not wired into API simulations.
+Manual tag audit defaults to in-memory.
+Course bank repository exists but is not meaningfully used by API simulation flow.
+Relevant files:
+
+optigrade/repositories/base.py
+optigrade/repositories/local_json.py
+optigrade/api/app.py
+Missing Later Milestones
+These are not necessarily “wrong” if the project has not reached those milestones, but they are not complete relative to the plan:
+
+Milestone 9 export payload is missing: no export_service.py, no FinishExportPayload, no required disclaimer.
+Milestone 11 admin services are missing: no CourseBankService, DegreeCatalogService, AvailabilityPoolService, ManualTagReviewService, or ValidationService.
+Milestone 12 Firebase is not implemented.
+Milestone 13 advanced scheduling/prerequisites are not implemented.
+Overall Assessment
+The repo has made strong progress through domain models, loaders, unit tests, fixtures, API basics, and CP-SAT integration. The biggest architectural drift is in the solver/explainability layer: planning selection semantics, specialty activation, rule statuses, and infeasible extraction no longer fully match the original backend-first design.
+
+The most urgent inconsistency is not a missing feature but a trust issue: results can look explainable while being derived from candidate/model metadata rather than the actual solved assignment.
