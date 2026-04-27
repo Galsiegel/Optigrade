@@ -1,7 +1,13 @@
 /**
  * Hebrew calendar study-year helpers (academic / catalog labeling).
- * Catalog documents use `year` ≈ Hebrew year minus 3760 (e.g. 5780 → 2020).
+ *
+ * Firestore `catalogs.year` matches the Technion gh-pages JSON calendar year `YYYY`
+ * (UG `courses_{YYYY}{SS}.json` / SAP `courses_{YYYY}_{CCC}.json`), e.g. **2019 → תש״ף**,
+ * **2025 → תשפ״ו**. Hebrew year = that field + {@link CATALOG_HEBREW_YEAR_OFFSET}.
  */
+
+/** Hebrew study year = `catalogs.year` + this (5780 ↔ 2019, 5786 ↔ 2025). */
+export const CATALOG_HEBREW_YEAR_OFFSET = 3761;
 
 export const MIN_STUDY_HEBREW_YEAR = 5780; /** תש״ף */
 
@@ -51,16 +57,24 @@ export function formatHebrewStudyYearLabel(hebrewYear: number): string {
 }
 
 /**
- * Gregorian “catalog year” stored in Firestore `catalogs.year` for this Hebrew year.
- * Matches sample: 5780 / תש״ף → 2020.
+ * Value stored in Firestore `catalogs.year` for this Hebrew study year (Technion JSON `YYYY`).
+ * Example: 5780 / תש״ף → 2019.
  */
 export function gregorianYearForHebrewStudyYear(hebrewYear: number): number {
-  return hebrewYear - 3760;
+  return hebrewYear - CATALOG_HEBREW_YEAR_OFFSET;
 }
 
-/** UI: catalog / study year `year` → "(year-1-year)", e.g. 2020 → "(2019-2020)". */
+/** Hebrew study-year number from Firestore `catalogs.year`. */
+export function hebrewYearFromCatalogFirestoreYear(catalogYear: number): number {
+  return catalogYear + CATALOG_HEBREW_YEAR_OFFSET;
+}
+
+/**
+ * UI: Firestore `catalogs.year` / study-year anchor `year` (Technion JSON `YYYY`) → **(Y–Y+1)**.
+ * Example: 2019 (תש״ף) → `(2019-2020)`.
+ */
 export function formatAcademicYearSpan(year: number): string {
-  return `(${year - 1}-${year})`;
+  return `(${year}-${year + 1})`;
 }
 
 /**

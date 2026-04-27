@@ -24,5 +24,10 @@ service cloud.firestore {
     match /catalogs/{catalogId} {
       allow read: if request.auth != null;
     }
+
+    // Semester rows (per catalog) — used to know which Technion JSON dumps to merge for course lists.
+    match /semesters/{semesterId} {
+      allow read: if request.auth != null;
+    }
   }
 }

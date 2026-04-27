@@ -1,0 +1,1 @@
+"""Optigrade FastAPI application package."""

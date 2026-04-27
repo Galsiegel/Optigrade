@@ -1,4 +1,5 @@
 import { collection, getDocs, type Firestore } from "firebase/firestore";
+import { gregorianYearForHebrewStudyYear } from "@/lib/hebrewYear";
 
 export type CatalogRecord = {
   id: string;
@@ -31,11 +32,11 @@ export async function fetchCatalogRecords(db: Firestore): Promise<CatalogRecord[
   return rows;
 }
 
-/** Catalogs whose Firestore `year` is >= the user’s start year (same convention as Hebrew − 3760). */
+/** Catalogs whose Firestore `year` is >= the user’s start year (same convention as `gregorianYearForHebrewStudyYear`). */
 export function filterCatalogsFromStudyStart(
   catalogs: CatalogRecord[],
   startingHebrewYear: number
 ): CatalogRecord[] {
-  const minYear = startingHebrewYear - 3760;
+  const minYear = gregorianYearForHebrewStudyYear(startingHebrewYear);
   return catalogs.filter((c) => c.year >= minYear);
 }

@@ -1,0 +1,31 @@
+---
+description: When to read ARCH_LOG.md and PROJECT_CONTEXT.md; update log after features
+alwaysApply: true
+---
+
+# Project architecture context (monorepo)
+
+**Repository root** is the Optigrade folder that contains `frontend/` and `backend/`. Architecture markdown lives at the **root**: `ARCH_LOG.md`, `PROJECT_CONTEXT.md`.
+
+When editing under **`frontend/`**, paths inside that app are as in Next.js (`src/...`). When editing **`backend/api/`**, Python imports use the `api` package (run `uvicorn` from `backend/` per `ARCH_LOG.md`).
+
+## Read early (no need for @-mentions each chat)
+
+**Before** non-trivial work — new features, refactors that touch app structure, routing, Firebase, **`backend/api`** endpoints, or shared libs — use the read tool on:
+
+1. **`ARCH_LOG.md`** (repo root) — stack, frontend layout, **`backend/api/`** layout, env vars, agent agreements.
+2. **`PROJECT_CONTEXT.md`** (repo root) — high-level product/state notes.
+
+Skip a full read for tiny, localized edits (e.g. one string, a single style tweak) when architecture is unchanged.
+
+## After features
+
+When a feature is **done**, append or adjust **`ARCH_LOG.md`** at the repo root as described in `.cursorrules` (what changed, where, and why it matters for future work).
+
+## Frontend structure conventions
+
+- Keep route files (`src/app/**/page.tsx`) thin; avoid long "god files".
+- For multi-step or state-heavy flows, split UI by step into `steps/` components.
+- Share flow state/handlers via a local context provider + custom hooks (instead of deep prop drilling).
+- Move pure helpers/constants/styles to nearby `utils/` / `styles/` modules.
+- Apply this structure in new code and during refactors, not only onboarding.

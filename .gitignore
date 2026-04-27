@@ -5,9 +5,14 @@ __pycache__/
 # Virtual Environment
 .venv/
 
-# IDE (optional )
 .vscode/
 .idea/
 
-# Environment variables (if you use them)
 .env
+
+*-firebase-adminsdk-*.json
+serviceAccount*.json
+**/secrets/*.json
+
+.cursorrules
+ARCH_LOG.md

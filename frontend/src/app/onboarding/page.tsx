@@ -1,33 +1,48 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ThemeToggleButton } from "@/components/ThemeToggleButton";
 import { useAuth } from "@/contexts/AuthContext";
 import { firebaseDb } from "@/firebase/config";
 import { FirebaseError } from "firebase/app";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  startAt,
-  endAt,
-  type QueryDocumentSnapshot
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import {
   setOnboardingCompleted,
   setUserGrade,
+  setUserGradeWithSemester,
   deleteUserGrade,
   clearUserGrades,
+  replaceUserGrades,
   updateUserName,
   updateUserTrack,
   updateUserStudyAndCatalog,
   getDisplayName
 } from "@/lib/users";
+import { getApiBaseUrl, getApiBaseUrlSameOriginMisconfigMessage } from "@/lib/api";
+import {
+  gradesWithSemesterFromTranscriptPayload
+} from "@/lib/transcriptImport";
+import { technionJsonUrlFromTranscriptSemester, parseTranscriptSemesterEn } from "@/lib/transcriptSemester";
+import { fetchTechnionUgCoursesJson } from "@/lib/technionUgCourses";
+import { findTechnionCourseItem } from "@/lib/technionCourseResolve";
+import { fetchSemesterLabelsByIndexForCatalog } from "@/lib/semesters";
+import { textContainsHebrew, type CourseListItem } from "@/lib/courses";
+import {
+  expandCourseIdVariants,
+  normalizeCourseIdKey,
+  toSapEightDigitCourseIdForStorage
+} from "@/lib/courseNumberNormalize";
+import { useCourseSearch, type CourseSearchDataSource } from "@/hooks/useCourseSearch";
+import { useCatalogCourseList } from "@/hooks/useCatalogCourseList";
+import { CourseSuggestListbox } from "@/components/courses/CourseSuggestListbox";
+import {
+  OnboardingViewProvider,
+  type OnboardingViewContextValue
+} from "@/app/onboarding/context/OnboardingViewContext";
+import { NameStep } from "@/app/onboarding/steps/NameStep";
+import { FinishStep } from "@/app/onboarding/steps/FinishStep";
+import { TrackSelectionStep } from "@/app/onboarding/steps/TrackSelectionStep";
 import { buildStudyYearSelectOptions, formatAcademicYearSpan } from "@/lib/hebrewYear";
 import {
   fetchCatalogRecords,
@@ -46,13 +61,10 @@ import {
   Grid,
   IconButton,
   InputAdornment,
-  List,
-  ListItemButton,
-  ListItemText,
   Paper,
-  Popper,
   Stack,
   TextField,
+  Tooltip,
   Typography,
   keyframes
 } from "@mui/material";
@@ -64,6 +76,10 @@ import AssessmentRoundedIcon from "@mui/icons-material/AssessmentRounded";
 import FlagRoundedIcon from "@mui/icons-material/FlagRounded";
 import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(10px); }
@@ -108,71 +124,12 @@ const STEPPER_ICON_MS = 460;
 const STEPPER_ICON_EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
 const STEPPER_ICON_EASE_SPRING = "cubic-bezier(0.33, 1.2, 0.55, 1)";
 
-/** RTL: title (מספר+שם) | נק״ז | ציון (רק ערך — כמו בשורות הרשימה) | פעולות */
+/** RTL: title (מספר+שם) | נק״ז | ציון | פעולות */
 const GRADES_ROW_GRID =
-  "minmax(0, 1fr) minmax(4rem, auto) minmax(6.25rem, 6.25rem) minmax(0, 1fr)";
-
-type CourseDoc = {
-  name?: string;
-  title?: string;
-  number?: string | number;
-  code?: string | number;
-  courseNumber?: string | number;
-  points?: string | number;
-};
-
-type CourseListItem = {
-  courseId: string;
-  courseName: string;
-  courseNumber: string;
-  pointsLabel: string | null;
-};
-
-function catalogNumberFromDoc(data: CourseDoc | undefined, docId: string): string {
-  const raw = data?.number ?? data?.code ?? data?.courseNumber;
-  if (raw !== undefined && raw !== null && String(raw).trim() !== "") {
-    return String(raw).trim();
-  }
-  return docId;
-}
-
-function pointsLabelFromCourseDoc(data: CourseDoc | undefined): string | null {
-  if (!data) return null;
-  const raw = data.points;
-  if (raw === undefined || raw === null) return null;
-  const s = String(raw).trim();
-  if (s === "") return null;
-  return `${s} נק״ז`;
-}
-
-function mapCourseDoc(docSnap: QueryDocumentSnapshot): CourseListItem {
-  const data = docSnap.data() as CourseDoc;
-  return {
-    courseId: docSnap.id,
-    courseName: data?.name ?? data?.title ?? docSnap.id,
-    courseNumber: catalogNumberFromDoc(data, docSnap.id),
-    pointsLabel: pointsLabelFromCourseDoc(data)
-  };
-}
-
-function mergeCourseResults(primary: CourseListItem[], secondary: CourseListItem[]): CourseListItem[] {
-  const m = new Map<string, CourseListItem>();
-  for (const c of primary) m.set(c.courseId, c);
-  for (const c of secondary) {
-    if (!m.has(c.courseId)) m.set(c.courseId, c);
-  }
-  return Array.from(m.values());
-}
-
-function courseMatchesTerm(c: CourseListItem, term: string): boolean {
-  if (c.courseName.includes(term)) return true;
-  if (c.courseNumber.includes(term)) return true;
-  const compact = term.replace(/\s+/g, "");
-  const numCompact = c.courseNumber.replace(/\s+/g, "");
-  if (compact.length >= 2 && numCompact.includes(compact)) return true;
-  if (c.courseId.includes(term)) return true;
-  return false;
-}
+  "minmax(0, 1fr) minmax(3.5rem, auto) minmax(5.5rem, 5.5rem) auto";
+/** Add-row layout: give the search field more width than the table rows. */
+const ADD_GRADE_FORM_GRID =
+  "minmax(0, 1fr) minmax(3rem, auto) minmax(4.75rem, 4.75rem) auto";
 
 const GRADES_FILE_ACCEPT = "application/pdf,image/*" as const;
 
@@ -180,6 +137,10 @@ function isAcceptedGradesFile(file: File): boolean {
   if (file.type.startsWith("image/")) return true;
   if (file.type === "application/pdf") return true;
   return /\.pdf$/i.test(file.name);
+}
+
+function isPdfFile(file: File): boolean {
+  return file.type === "application/pdf" || /\.pdf$/i.test(file.name);
 }
 
 /** Stored in Firestore for pass/fail (עובר בינארי). */
@@ -227,25 +188,40 @@ function pointsWeightFromLabel(label: string | null): number | null {
   return Number.isFinite(w) && w > 0 ? w : null;
 }
 
+/** Display sum of נק״ז for summary lines (trim trailing zeros). */
+function formatTotalNakazLabel(total: number): string {
+  const rounded = Math.round(total * 100) / 100;
+  const s = rounded % 1 === 0 ? String(rounded) : String(rounded);
+  return `${s} נק״ז`;
+}
+
 const gradeNameCellSx = {
   minWidth: 0,
-  fontWeight: 800,
+  fontWeight: 700,
   textAlign: "right" as const,
-  whiteSpace: "nowrap" as const,
+  whiteSpace: "normal" as const,
+  lineHeight: 1.25,
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical" as const,
+  WebkitLineClamp: 2,
+  wordBreak: "break-word" as const,
   overflow: "hidden",
   textOverflow: "ellipsis"
 };
 
-const gradeCatalogCellSx = {
-  flexShrink: 0,
-  fontWeight: 600,
+const gradeCatalogLabelSx = {
+  alignSelf: "stretch" as const,
+  width: "100%",
+  fontWeight: 500,
+  fontSize: "0.74rem",
+  lineHeight: 1.1,
   fontVariantNumeric: "tabular-nums" as const,
   textAlign: "right" as const,
   whiteSpace: "nowrap" as const,
   overflow: "hidden",
   textOverflow: "ellipsis",
   color: "text.secondary" as const,
-  maxWidth: "7.5rem"
+  maxWidth: "100%"
 };
 
 const courseTitleRowSx = {
@@ -262,11 +238,11 @@ const gradePointsCellSx = {
   gridColumn: "2" as const,
   fontWeight: 600,
   fontVariantNumeric: "tabular-nums" as const,
-  textAlign: "center" as const,
+  textAlign: "right" as const,
   whiteSpace: "nowrap" as const,
   color: "text.secondary" as const,
   minWidth: 0,
-  justifySelf: "center",
+  justifySelf: "start",
   alignSelf: "center"
 };
 
@@ -276,81 +252,66 @@ type GradeRowItem = {
   courseNumber: string;
   coursePoints: string | null;
   grade: string;
+  /** From `semesters` + `catalogs.year` when transcript semester matches a Firestore semester index. */
+  semesterLabel: string | null;
+  /** Raw transcript line e.g. `2025-2026 Winter` — used to group and sort terms. */
+  transcriptSemesterEn: string | null;
 };
 
-function isGradesScrollDemoRow(courseId: string): boolean {
-  return courseId.startsWith("__scroll_demo_");
+type GradeSemesterGroup = {
+  key: string;
+  title: string;
+  order: { y: number; s: number };
+  rows: GradeRowItem[];
+};
+
+function buildGradeSemesterGroups(grades: GradeRowItem[]): GradeSemesterGroup[] {
+  const m = new Map<
+    string,
+    { key: string; rows: GradeRowItem[]; order: { y: number; s: number } }
+  >();
+  for (const row of grades) {
+    const sem = row.transcriptSemesterEn?.trim() || null;
+    const key = sem ?? "__none__";
+    if (!m.has(key)) {
+      const parsed = sem ? parseTranscriptSemesterEn(sem) : null;
+      const order = parsed
+        ? { y: parsed.jsonYear, s: parsed.semester0to2 }
+        : { y: 9_999, s: 9 };
+      m.set(key, { key, rows: [], order });
+    }
+    m.get(key)!.rows.push(row);
+  }
+  const list: GradeSemesterGroup[] = [];
+  for (const g of m.values()) {
+    const title =
+      g.rows.find((r) => r.semesterLabel)?.semesterLabel ??
+      (g.key === "__none__" ? "ללא סמסטר" : g.key);
+    list.push({ key: g.key, title, order: g.order, rows: g.rows });
+  }
+  list.sort((a, b) => a.order.y - b.order.y || a.order.s - b.order.s);
+  return list;
 }
 
-/** Example rows after real data so the grades list shows overflow scroll in the UI. */
-const GRADES_SCROLL_DUMMY_ROWS: GradeRowItem[] = [
-  {
-    courseId: "__scroll_demo_1",
-    courseNumber: "10403105",
-    courseName: "אלגברה לינארית 1",
-    coursePoints: "5.5 נק״ז",
-    grade: "87"
-  },
-  {
-    courseId: "__scroll_demo_2",
-    courseNumber: "02140073",
-    courseName: "מבוא לחשבון ולמשוואות דיפרנציאליות",
-    coursePoints: "5 נק״ז",
-    grade: "92"
-  },
-  {
-    courseId: "__scroll_demo_3",
-    courseNumber: "00440126",
-    courseName: "מבוא לאלקטרומגנטיות",
-    coursePoints: "4 נק״ז",
-    grade: "78"
-  },
-  {
-    courseId: "__scroll_demo_4",
-    courseNumber: "00561018",
-    courseName: "מבוא לרובוטיקה",
-    coursePoints: "3 נק״ז",
-    grade: "95"
-  },
-  {
-    courseId: "__scroll_demo_5",
-    courseNumber: "00970311",
-    courseName: "הסתברות וסטטיסטיקה",
-    coursePoints: "4 נק״ז",
-    grade: "84"
-  },
-  {
-    courseId: "__scroll_demo_6",
-    courseNumber: "03652137",
-    courseName: "מערכות הפעלה",
-    coursePoints: "4.5 נק״ז",
-    grade: "89"
-  },
-  {
-    courseId: "__scroll_demo_7",
-    courseNumber: "02360357",
-    courseName: "אלגוריתמים 1",
-    coursePoints: "5 נק״ז",
-    grade: "96"
-  },
-  {
-    courseId: "__scroll_demo_8",
-    courseNumber: "04620015",
-    courseName: "תקשורת מחשבים",
-    coursePoints: "3 נק״ז",
-    grade: "83"
-  }
-];
-
-/** One scroll for add row + list → same content width as the scrollbar (sticky add UI). */
-const GRADES_SECTION_SCROLL_MAX_HEIGHT = { xs: "min(54vh, 400px)", sm: "min(50vh, 460px)" };
+/** Keep grades list fluid/responsive inside layout (no forced viewport overflow). */
+const GRADES_LIST_VIEWPORT_BREAKOUT_SX = {
+  width: "100%",
+  maxWidth: "100%",
+  boxSizing: "border-box" as const
+};
 
 /** Ease-out: fast start, slows like a pump display settling. */
 function easeOutQuart(t: number): number {
   return 1 - (1 - t) ** 4;
 }
 
-function AnimatedWeightedAverageBlock({ target }: { target: number }) {
+function AnimatedWeightedAverageBlock({
+  target,
+  showDivider = true
+}: {
+  target: number;
+  showDivider?: boolean;
+}) {
   const [display, setDisplay] = useState(0);
   const displayRef = useRef(0);
   const rafRef = useRef<number | null>(null);
@@ -404,11 +365,15 @@ function AnimatedWeightedAverageBlock({ target }: { target: number }) {
     <Box
       sx={{
         textAlign: "center",
-        py: 1.25,
+        py: showDivider ? 1.25 : 0,
         px: 1,
-        borderBottom: "1px solid",
-        borderColor: "divider",
-        mb: 2
+        ...(showDivider
+          ? {
+              borderBottom: "1px solid",
+              borderColor: "divider",
+              mb: 2
+            }
+          : {})
       }}
     >
       <Typography
@@ -494,15 +459,15 @@ export default function OnboardingPage() {
   const [gradesMutating, setGradesMutating] = useState(false);
 
   const [addCourseSearch, setAddCourseSearch] = useState("");
-  const [addCourseResults, setAddCourseResults] = useState<CourseListItem[]>([]);
   const [addSelectedCourseId, setAddSelectedCourseId] = useState<string | null>(null);
   const [addSelectedCatalogNumber, setAddSelectedCatalogNumber] = useState<string>("");
   const [addSelectedPointsLabel, setAddSelectedPointsLabel] = useState<string | null>(null);
   const [addGrade, setAddGrade] = useState("");
   const [addGradePassBinary, setAddGradePassBinary] = useState(false);
-  const [coursesSearching, setCoursesSearching] = useState(false);
-  const [coursesSearchError, setCoursesSearchError] = useState<string | null>(null);
   const [addGradeExpanded, setAddGradeExpanded] = useState(false);
+  const [addTargetSemesterKey, setAddTargetSemesterKey] = useState<string | null>(null);
+  const [addSemesterCourses, setAddSemesterCourses] = useState<CourseListItem[]>([]);
+  const [addSemesterCoursesLoading, setAddSemesterCoursesLoading] = useState(false);
   const courseSearchAnchorRef = useRef<HTMLDivElement | null>(null);
   const trackStepCardInnerRef = useRef<HTMLDivElement | null>(null);
   const [trackStepCardHeight, setTrackStepCardHeight] = useState<number | null>(null);
@@ -519,43 +484,19 @@ export default function OnboardingPage() {
   } | null>(null);
   const [reuploadSheetDialogOpen, setReuploadSheetDialogOpen] = useState(false);
 
-  const closeAddGradeForm = () => {
-    setAddGradeExpanded(false);
-    setAddCourseSearch("");
-    setAddCourseResults([]);
-    setAddSelectedCourseId(null);
-    setAddSelectedCatalogNumber("");
-    setAddSelectedPointsLabel(null);
-    setAddGrade("");
-    setAddGradePassBinary(false);
-    setCoursesSearchError(null);
-    setCoursesSearching(false);
-  };
-
-  const courseSuggestPopperOpen =
-    addGradeExpanded &&
-    !addSelectedCourseId &&
-    !gradesMutating &&
-    addCourseSearch.trim().length >= 2 &&
-    (coursesSearching ||
-      addCourseResults.length > 0 ||
-      Boolean(coursesSearchError));
-
-  const openAddGradeForm = () => {
-    setEditingCourseId(null);
-    setEditingGrade("");
-    setEditingPassBinary(false);
-    setAddGradeExpanded(true);
-    setAddCourseSearch("");
-    setAddCourseResults([]);
-    setAddSelectedCourseId(null);
-    setAddSelectedCatalogNumber("");
-    setAddSelectedPointsLabel(null);
-    setAddGrade("");
-    setAddGradePassBinary(false);
-    setCoursesSearchError(null);
-    setCoursesSearching(false);
-  };
+  const persistedGradesByCourse = useMemo(
+    () => profile?.gradesWithSemester ?? {},
+    [profile?.gradesWithSemester]
+  );
+  const persistedGradeEntries = useMemo(() => {
+    const fromByCourse = Object.entries(persistedGradesByCourse);
+    if (fromByCourse.length > 0) {
+      return fromByCourse.map(([courseId, v]) => [courseId, v.grade, v.semester ?? null] as const);
+    }
+    return Object.entries(profile?.grades ?? {}).map(([courseId, grade]) => [courseId, String(grade), null] as const);
+  }, [persistedGradesByCourse, profile?.grades]);
+  const hasPersistedGrades = persistedGradeEntries.length > 0;
+  const gradesPresent = gradesUploaded || hasPersistedGrades;
 
   useEffect(() => {
     if (!profile) return;
@@ -585,9 +526,153 @@ export default function OnboardingPage() {
     setCurrentStep(normalized as 1 | 2 | 3 | 4);
   }, [stepRaw]);
 
+  useEffect(() => {
+    if (stage !== "track" || currentStep !== 3) return;
+    if (persistedGradeEntries.length > 0) {
+      setGradesUploaded(true);
+    }
+  }, [stage, currentStep, persistedGradeEntries.length]);
+
   const activeStepIndex = currentStep - 1;
 
   const studyYearSelectOptions = useMemo(() => buildStudyYearSelectOptions(new Date()), []);
+
+  const selectedCatalogMeta = useMemo(() => {
+    const id = selectedCatalogIdLocal.trim();
+    if (!id) return { id: null as string | null, year: null as number | null };
+    const row = allCatalogs.find((c) => c.id === id);
+    return { id, year: row?.year ?? null };
+  }, [allCatalogs, selectedCatalogIdLocal]);
+
+  const technionCoursesFetchEnabled =
+    gradesPresent &&
+    currentStep === 3 &&
+    selectedCatalogMeta.id != null &&
+    selectedCatalogMeta.year != null;
+
+  const {
+    courses: technionCatalogCourses,
+    loading: technionCatalogCoursesLoading,
+    error: technionCatalogCoursesError
+  } = useCatalogCourseList({
+    db: firebaseDb,
+    catalogId: technionCoursesFetchEnabled ? selectedCatalogMeta.id : null,
+    catalogYear: technionCoursesFetchEnabled ? selectedCatalogMeta.year : null,
+    enabled: technionCoursesFetchEnabled
+  });
+
+  const addTargetSemesterUrl = useMemo(() => {
+    if (!addTargetSemesterKey || addTargetSemesterKey === "__none__") return null;
+    return technionJsonUrlFromTranscriptSemester(addTargetSemesterKey);
+  }, [addTargetSemesterKey]);
+
+  useEffect(() => {
+    if (!addGradeExpanded) {
+      setAddSemesterCourses([]);
+      setAddSemesterCoursesLoading(false);
+      return;
+    }
+    if (!addTargetSemesterKey || addTargetSemesterKey === "__none__") {
+      setAddSemesterCourses(technionCatalogCourses ?? []);
+      setAddSemesterCoursesLoading(technionCatalogCoursesLoading);
+      return;
+    }
+    if (!addTargetSemesterUrl) {
+      setAddSemesterCourses([]);
+      setAddSemesterCoursesLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setAddSemesterCoursesLoading(true);
+    fetchTechnionUgCoursesJson(addTargetSemesterUrl)
+      .then((items) => {
+        if (!cancelled) setAddSemesterCourses(items);
+      })
+      .catch((e) => {
+        console.warn("add-course semester JSON:", addTargetSemesterUrl, e);
+        if (!cancelled) setAddSemesterCourses([]);
+      })
+      .finally(() => {
+        if (!cancelled) setAddSemesterCoursesLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    addGradeExpanded,
+    addTargetSemesterKey,
+    addTargetSemesterUrl,
+    technionCatalogCourses,
+    technionCatalogCoursesLoading
+  ]);
+
+  const courseSearchDataSource: CourseSearchDataSource = useMemo(
+    () => ({
+      type: "memory",
+      items: addSemesterCourses,
+      loading: addSemesterCoursesLoading
+    }),
+    [addSemesterCourses, addSemesterCoursesLoading]
+  );
+  const deferredAddCourseSearch = useDeferredValue(addCourseSearch);
+
+  const {
+    results: addCourseResults,
+    searching: coursesSearching,
+    error: coursesSearchError,
+    dismissSuggestions
+  } = useCourseSearch({
+    db: firebaseDb,
+    searchTerm: deferredAddCourseSearch,
+    enabled:
+      gradesPresent &&
+      currentStep === 3 &&
+      addGradeExpanded &&
+      addTargetSemesterKey != null &&
+      !addSelectedCourseId &&
+      !gradesMutating,
+    dataSource: courseSearchDataSource,
+    debounceMs: 180,
+    minChars: 2,
+    maxResults: 8
+  });
+
+  const closeAddGradeForm = () => {
+    setAddGradeExpanded(false);
+    setAddTargetSemesterKey(null);
+    setAddCourseSearch("");
+    setAddSelectedCourseId(null);
+    setAddSelectedCatalogNumber("");
+    setAddSelectedPointsLabel(null);
+    setAddGrade("");
+    setAddGradePassBinary(false);
+  };
+
+  const courseSuggestPopperOpen =
+    addGradeExpanded &&
+    addTargetSemesterKey != null &&
+    !addSelectedCourseId &&
+    !gradesMutating &&
+    addCourseSearch.trim().length >= 2 &&
+    (coursesSearching ||
+      addCourseResults.length > 0 ||
+      Boolean(coursesSearchError));
+
+  const openAddGradeForm = (semesterKey: string) => {
+    setEditingCourseId(null);
+    setEditingGrade("");
+    setEditingPassBinary(false);
+    setAddGradeExpanded(true);
+    setAddTargetSemesterKey(semesterKey);
+    setAddCourseSearch("");
+    setAddSelectedCourseId(null);
+    setAddSelectedCatalogNumber("");
+    setAddSelectedPointsLabel(null);
+    setAddGrade("");
+    setAddGradePassBinary(false);
+  };
 
   useEffect(() => {
     if (stage !== "track" || currentStep !== 2 || !user) return;
@@ -695,7 +780,8 @@ export default function OnboardingPage() {
     studyStartHebrewYearStr,
     filteredCatalogs.length,
     selectedCatalogIdLocal,
-    allCatalogs.length
+    allCatalogs.length,
+    gradesCourses.length
   ]);
 
   useEffect(() => {
@@ -720,43 +806,140 @@ export default function OnboardingPage() {
       setEditingGrade("");
       setGradesMutating(false);
       setAddCourseSearch("");
-      setAddCourseResults([]);
       setAddSelectedCourseId(null);
       setAddSelectedCatalogNumber("");
       setAddSelectedPointsLabel(null);
       setAddGrade("");
       setAddGradePassBinary(false);
-      setCoursesSearching(false);
-      setCoursesSearchError(null);
       setAddGradeExpanded(false);
+      setAddTargetSemesterKey(null);
+      setAddSemesterCourses([]);
+      setAddSemesterCoursesLoading(false);
       setEditingPassBinary(false);
     }
   }, [currentStep]);
 
-  const startGradesFileUpload = useCallback((file: File) => {
-    if (gradesDummyLoadingRef.current) return;
-    if (gradesUploaded) return;
-    if (!isAcceptedGradesFile(file)) {
-      setGradesUploadRejectMessage("נא להעלות קובץ PDF או תמונה.");
-      window.setTimeout(() => setGradesUploadRejectMessage(null), 4000);
-      return;
-    }
-    setGradesUploadRejectMessage(null);
-    gradesDummyLoadingRef.current = true;
-    setGradesDummyUploadLoading(true);
-    setGradesUploadFileName(file.name);
-    setGradesLoadError(null);
-    if (gradesDummyLoadTimerRef.current) clearTimeout(gradesDummyLoadTimerRef.current);
-    gradesDummyLoadTimerRef.current = window.setTimeout(() => {
-      gradesDummyLoadTimerRef.current = null;
-      gradesDummyLoadingRef.current = false;
-      setGradesUploaded(true);
-      setGradesDummyUploadLoading(false);
-    }, 2600);
-  }, [gradesUploaded]);
+  const startGradesFileUpload = useCallback(
+    (file: File) => {
+      if (gradesDummyLoadingRef.current) return;
+      if (gradesPresent) return;
+      if (!isAcceptedGradesFile(file)) {
+        setGradesUploadRejectMessage("נא להעלות קובץ PDF או תמונה.");
+        window.setTimeout(() => setGradesUploadRejectMessage(null), 4000);
+        return;
+      }
+      setGradesUploadRejectMessage(null);
+      setGradesLoadError(null);
+
+      if (isPdfFile(file)) {
+        const base = getApiBaseUrl();
+        if (!base) {
+          setGradesUploadRejectMessage(
+            "חסרה כתובת השרת. הוסיפו NEXT_PUBLIC_API_URL ב-.env.local (למשל http://localhost:8000)."
+          );
+          window.setTimeout(() => setGradesUploadRejectMessage(null), 8000);
+          return;
+        }
+        const originBug = getApiBaseUrlSameOriginMisconfigMessage(base);
+        if (originBug) {
+          setGradesUploadRejectMessage(originBug);
+          window.setTimeout(() => setGradesUploadRejectMessage(null), 12000);
+          return;
+        }
+        if (!user) {
+          setGradesUploadRejectMessage("יש להתחבר כדי להעלות גיליון ציונים.");
+          window.setTimeout(() => setGradesUploadRejectMessage(null), 5000);
+          return;
+        }
+
+        gradesDummyLoadingRef.current = true;
+        setGradesDummyUploadLoading(true);
+        setGradesUploadFileName(file.name);
+
+        void (async () => {
+          try {
+            const token = await user.getIdToken();
+            const body = new FormData();
+            body.append("file", file);
+            const res = await fetch(`${base}/api/v1/transcripts/parse-pdf`, {
+              method: "POST",
+              headers: { Authorization: `Bearer ${token}` },
+              body
+            });
+            const text = await res.text();
+            if (!res.ok) {
+              let msg = text || res.statusText;
+              try {
+                const parsed = JSON.parse(text) as { detail?: unknown };
+                if (typeof parsed.detail === "string") {
+                  msg = parsed.detail;
+                } else if (Array.isArray(parsed.detail)) {
+                  const first = parsed.detail[0] as { msg?: string } | undefined;
+                  if (first && typeof first.msg === "string") msg = first.msg;
+                }
+              } catch {
+                /* keep msg */
+              }
+              throw new Error(msg);
+            }
+            let payload: { courses?: unknown };
+            try {
+              payload = JSON.parse(text) as { courses?: unknown };
+            } catch {
+              throw new Error("תשובת השרת אינה JSON תקין.");
+            }
+            const coursesArr = Array.isArray(payload.courses) ? payload.courses : [];
+            // eslint-disable-next-line no-console
+            console.info("[Optigrade] POST /transcripts/parse-pdf (server response)", {
+              httpStatus: res.status,
+              ok: res.ok,
+              coursesInBody: coursesArr.length,
+              sampleCourseIds: coursesArr.slice(0, 5).map((row: unknown) => {
+                if (row && typeof row === "object" && "course_id" in row) {
+                  return String((row as { course_id?: unknown }).course_id ?? "");
+                }
+                return String(row);
+              })
+            });
+            const gradesObject = gradesWithSemesterFromTranscriptPayload(payload.courses);
+            if (Object.keys(gradesObject).length === 0) {
+              throw new Error("לא זוהו קורסים בקובץ. ודאו שזה גיליון ציונים רשמי באנגלית.");
+            }
+            await replaceUserGrades(firebaseDb, user.uid, gradesObject);
+            await refreshProfile();
+            gradesDummyLoadingRef.current = false;
+            setGradesUploaded(true);
+            setGradesDummyUploadLoading(false);
+          } catch (err) {
+            console.error("transcripts/parse-pdf:", err);
+            gradesDummyLoadingRef.current = false;
+            setGradesDummyUploadLoading(false);
+            setGradesUploadFileName(null);
+            setGradesUploadRejectMessage(
+              err instanceof Error ? err.message : "העלאת הגיליון נכשלה. נסו שוב."
+            );
+            window.setTimeout(() => setGradesUploadRejectMessage(null), 8000);
+          }
+        })();
+        return;
+      }
+
+      gradesDummyLoadingRef.current = true;
+      setGradesDummyUploadLoading(true);
+      setGradesUploadFileName(file.name);
+      if (gradesDummyLoadTimerRef.current) clearTimeout(gradesDummyLoadTimerRef.current);
+      gradesDummyLoadTimerRef.current = window.setTimeout(() => {
+        gradesDummyLoadTimerRef.current = null;
+        gradesDummyLoadingRef.current = false;
+        setGradesUploaded(true);
+        setGradesDummyUploadLoading(false);
+      }, 2600);
+    },
+    [gradesPresent, user, refreshProfile]
+  );
 
   useEffect(() => {
-    if (stage !== "track" || currentStep !== 3 || gradesUploaded) return;
+    if (stage !== "track" || currentStep !== 3 || gradesPresent) return;
 
     const hasFiles = (e: DragEvent) => e.dataTransfer?.types?.includes("Files") ?? false;
 
@@ -800,16 +983,35 @@ export default function OnboardingPage() {
       window.removeEventListener("drop", onDrop);
       gradesDragDepthRef.current = 0;
     };
-  }, [stage, currentStep, gradesUploaded, startGradesFileUpload]);
+  }, [stage, currentStep, gradesPresent, startGradesFileUpload]);
 
   useEffect(() => {
-    if (!gradesUploaded) return;
+    if (!gradesPresent) return;
     if (!profile) return;
 
-    const entries = Object.entries(profile.grades ?? {});
+    const entries = persistedGradeEntries;
     if (entries.length === 0) {
       setGradesCourses([]);
       return;
+    }
+
+    const technionReady =
+      technionCatalogCourses != null && !technionCatalogCoursesLoading;
+    const mergedList = technionReady ? technionCatalogCourses ?? [] : [];
+
+    const offeringMap = profile.transcriptOfferingByCourse ?? {};
+
+    // Wait for merged catalog JSON (all semesters); transcript-only fetch is a single semester.
+    const waitForTechnion =
+      gradesPresent &&
+      currentStep === 3 &&
+      selectedCatalogMeta.id != null &&
+      selectedCatalogMeta.year != null &&
+      technionCatalogCoursesLoading;
+
+    if (waitForTechnion) {
+      setGradesLoading(true);
+      return () => {};
     }
 
     let cancelled = false;
@@ -817,15 +1019,106 @@ export default function OnboardingPage() {
       setGradesLoading(true);
       setGradesLoadError(null);
 
+      const catalogIdForLabels = selectedCatalogMeta.id ?? profile?.catalog ?? null;
+      let semesterLabels = new Map<number, string>();
+      if (catalogIdForLabels) {
+        try {
+          semesterLabels = await fetchSemesterLabelsByIndexForCatalog(
+            firebaseDb,
+            catalogIdForLabels
+          );
+        } catch (e) {
+          console.warn("fetchSemesterLabelsByIndexForCatalog:", e);
+        }
+      }
+
+      function rowFromTechnionItem(ext: CourseListItem): {
+        courseName: string;
+        courseNumber: string;
+        coursePoints: string | null;
+      } {
+        return {
+          courseName: ext.courseName,
+          courseNumber: ext.courseNumber,
+          coursePoints: ext.pointsLabel
+        };
+      }
+
+      /** Prefer Hebrew `שם מקצוע` when Technion dumps use English (no Firestore `courses` — Technion only). */
+      function pickDisplayRow(
+        merged: CourseListItem | undefined,
+        semester: CourseListItem | undefined
+      ): { courseName: string; courseNumber: string; coursePoints: string | null } | null {
+        const candidates: { courseName: string; courseNumber: string; coursePoints: string | null }[] = [];
+        if (merged) candidates.push(rowFromTechnionItem(merged));
+        if (semester) candidates.push(rowFromTechnionItem(semester));
+        if (candidates.length === 0) return null;
+        const hebrew = candidates.find((c) => textContainsHebrew(c.courseName));
+        return hebrew ?? candidates[0];
+      }
+
       try {
         const results = await Promise.all(
-          entries.map(async ([courseId, grade]) => {
-            const snap = await getDoc(doc(firebaseDb, "courses", courseId));
-            const data = snap.data() as CourseDoc | undefined;
-            const courseName = data?.name ?? data?.title ?? courseId;
-            const courseNumber = catalogNumberFromDoc(data, courseId);
-            const coursePoints = pointsLabelFromCourseDoc(data);
-            return { courseId, courseName, courseNumber, coursePoints, grade: String(grade) };
+          entries.map(async ([courseId, grade, semesterFromEntry]): Promise<GradeRowItem> => {
+            const gradeStr = String(grade);
+            const nk = normalizeCourseIdKey(courseId);
+            const storageId = toSapEightDigitCourseIdForStorage(courseId);
+            const semEn =
+              semesterFromEntry ??
+              offeringMap[courseId] ??
+              offeringMap[nk] ??
+              offeringMap[storageId] ??
+              "";
+
+            let semesterLabel: string | null = null;
+            if (semEn) {
+              const parsedSem = parseTranscriptSemesterEn(semEn);
+              if (parsedSem) {
+                semesterLabel = semesterLabels.get(parsedSem.semester0to2) ?? null;
+              }
+            }
+
+            let semesterExt: CourseListItem | undefined;
+            if (semEn) {
+              const url = technionJsonUrlFromTranscriptSemester(semEn);
+              if (url) {
+                try {
+                  const items = await fetchTechnionUgCoursesJson(url);
+                  semesterExt = findTechnionCourseItem(items, courseId);
+                } catch (e) {
+                  console.warn("Technion JSON for transcript semester:", url, e);
+                }
+              }
+            }
+
+            const mergedExt =
+              mergedList.length > 0 ? findTechnionCourseItem(mergedList, courseId) : undefined;
+
+            const chosen = pickDisplayRow(mergedExt, semesterExt);
+            if (!chosen) {
+              // eslint-disable-next-line no-console
+              console.info("[Optigrade] grade row: no Technion name/credits match", {
+                courseId,
+                storageId,
+                semEn: semEn || null,
+                mergedListLen: mergedList.length,
+                hadMergedExt: Boolean(mergedExt),
+                hadSemesterExt: Boolean(semesterExt)
+              });
+            }
+            const displayNumber = toSapEightDigitCourseIdForStorage(
+              chosen?.courseNumber ?? courseId
+            );
+
+            return {
+              courseId,
+              courseName: chosen?.courseName ?? "—",
+              courseNumber: displayNumber,
+              coursePoints: chosen?.coursePoints ?? null,
+              grade: gradeStr,
+              semesterLabel,
+              transcriptSemesterEn: semEn || null
+            };
           })
         );
 
@@ -838,112 +1131,38 @@ export default function OnboardingPage() {
       }
     }
 
-    loadCourses();
+    void loadCourses();
     return () => {
       cancelled = true;
     };
-  }, [gradesUploaded, profile, profile?.grades]);
+  }, [
+    gradesPresent,
+    currentStep,
+    profile,
+    persistedGradeEntries,
+    profile?.transcriptOfferingByCourse,
+    profile?.catalog,
+    selectedCatalogMeta.id,
+    selectedCatalogMeta.year,
+    technionCatalogCourses,
+    technionCatalogCoursesLoading
+  ]);
 
-  useEffect(() => {
-    if (!gradesUploaded) return;
-    if (currentStep !== 3) return;
-    if (!addGradeExpanded) return;
-
-    const term = addCourseSearch.trim();
-    if (term.length < 2) {
-      setAddCourseResults([]);
-      setCoursesSearchError(null);
-      setCoursesSearching(false);
-      return;
+  const existingGradeCourseIds = useMemo(() => {
+    const s = new Set<string>();
+    for (const [k] of persistedGradeEntries) {
+      s.add(k);
+      s.add(normalizeCourseIdKey(k));
+      s.add(toSapEightDigitCourseIdForStorage(k));
+      for (const v of expandCourseIdVariants(k)) s.add(v);
     }
-
-    let cancelled = false;
-    const t = window.setTimeout(async () => {
-      try {
-        setCoursesSearching(true);
-        setCoursesSearchError(null);
-
-        const coursesRef = collection(firebaseDb, "courses");
-
-        let fromName: CourseListItem[] = [];
-        let fromNumber: CourseListItem[] = [];
-
-        try {
-          const nameSnap = await getDocs(
-            query(
-              coursesRef,
-              orderBy("name"),
-              startAt(term),
-              endAt(`${term}\uf8ff`),
-              limit(8)
-            )
-          );
-          fromName = nameSnap.docs.map(mapCourseDoc);
-        } catch (nameErr) {
-          console.error(nameErr);
-        }
-
-        try {
-          const numSnap = await getDocs(
-            query(
-              coursesRef,
-              orderBy("number"),
-              startAt(term),
-              endAt(`${term}\uf8ff`),
-              limit(8)
-            )
-          );
-          fromNumber = numSnap.docs.map(mapCourseDoc);
-        } catch (numErr) {
-          console.error(numErr);
-        }
-
-        let results = mergeCourseResults(fromName, fromNumber).slice(0, 8);
-
-        if (!cancelled && results.length === 0) {
-          const allSnap = await getDocs(coursesRef);
-          const all = allSnap.docs.map(mapCourseDoc);
-          results = all.filter((c) => courseMatchesTerm(c, term)).slice(0, 8);
-        }
-
-        if (!cancelled) setAddCourseResults(results);
-      } catch (err) {
-        console.error(err);
-        try {
-          const allSnap = await getDocs(collection(firebaseDb, "courses"));
-          const all = allSnap.docs.map(mapCourseDoc);
-          const filtered = all.filter((c) => courseMatchesTerm(c, term)).slice(0, 8);
-          if (!cancelled) setAddCourseResults(filtered);
-        } catch (fallbackErr) {
-          console.error(fallbackErr);
-          if (!cancelled) setCoursesSearchError("לא הצלחנו לחפש קורסים.");
-        }
-      } finally {
-        if (!cancelled) setCoursesSearching(false);
-      }
-    }, 350);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(t);
-    };
-  }, [addCourseSearch, addGradeExpanded, currentStep, gradesUploaded]);
-
-  const existingGradeCourseIds = useMemo(
-    () => new Set(Object.keys(profile?.grades ?? {})),
-    [profile?.grades]
-  );
-
-  const gradesRowsForList = useMemo((): GradeRowItem[] => {
-    if (gradesCourses.length === 0) return [];
-    return [...gradesCourses, ...GRADES_SCROLL_DUMMY_ROWS];
-  }, [gradesCourses]);
+    return s;
+  }, [persistedGradeEntries]);
 
   const gradesWeightedAverage = useMemo(() => {
     let sumW = 0;
     let sumGW = 0;
     for (const row of gradesCourses) {
-      if (isGradesScrollDemoRow(row.courseId)) continue;
       if (isPassFailGradeStored(row.grade)) continue;
       const g = parseNumericGrade0to100(row.grade);
       if (g === null) continue;
@@ -956,8 +1175,25 @@ export default function OnboardingPage() {
     return Math.round((sumGW / sumW) * 100) / 100;
   }, [gradesCourses]);
 
+  /** Sum נק״ז for every graded course that has points (includes עובר בינארי). */
+  const gradesTotalNakaz = useMemo(() => {
+    let sum = 0;
+    let counted = false;
+    for (const row of gradesCourses) {
+      const w = pointsWeightFromLabel(row.coursePoints);
+      if (w === null) continue;
+      counted = true;
+      sum += w;
+    }
+    return counted ? Math.round(sum * 100) / 100 : null;
+  }, [gradesCourses]);
+
+  const gradeSemesterGroups = useMemo(
+    () => buildGradeSemesterGroups(gradesCourses),
+    [gradesCourses]
+  );
+
   const handleEditGradeStart = (courseId: string, grade: string) => {
-    if (isGradesScrollDemoRow(courseId)) return;
     closeAddGradeForm();
     setEditingCourseId(courseId);
     const pass = isPassFailGradeStored(grade);
@@ -973,7 +1209,7 @@ export default function OnboardingPage() {
 
   const handleSaveEditedGrade = async () => {
     if (!user) return;
-    if (!editingCourseId || isGradesScrollDemoRow(editingCourseId)) return;
+    if (!editingCourseId) return;
 
     const valueToSave = editingPassBinary
       ? PASS_FAIL_GRADE_DB
@@ -985,7 +1221,14 @@ export default function OnboardingPage() {
 
     setGradesMutating(true);
     try {
-      await setUserGrade(firebaseDb, user.uid, editingCourseId, valueToSave);
+      const editingRow = gradesCourses.find((r) => r.courseId === editingCourseId);
+      await setUserGrade(
+        firebaseDb,
+        user.uid,
+        editingCourseId,
+        valueToSave,
+        editingRow?.transcriptSemesterEn ?? null
+      );
       await refreshProfile();
       handleEditGradeCancel();
     } catch (err) {
@@ -1000,7 +1243,6 @@ export default function OnboardingPage() {
   const confirmDeleteGrade = async () => {
     if (!user || !deleteGradeDialog) return;
     const { courseId } = deleteGradeDialog;
-    if (isGradesScrollDemoRow(courseId)) return;
     closeDeleteGradeDialog();
     setGradesMutating(true);
     try {
@@ -1030,14 +1272,15 @@ export default function OnboardingPage() {
       setEditingCourseId(null);
       setEditingGrade("");
       setAddCourseSearch("");
-      setAddCourseResults([]);
       setAddSelectedCourseId(null);
       setAddSelectedCatalogNumber("");
+      setAddSelectedPointsLabel(null);
       setAddGrade("");
       setAddGradePassBinary(false);
-      setCoursesSearching(false);
-      setCoursesSearchError(null);
       setAddGradeExpanded(false);
+      setAddTargetSemesterKey(null);
+      setAddSemesterCourses([]);
+      setAddSemesterCoursesLoading(false);
       setEditingPassBinary(false);
       setGradesUploadRejectMessage(null);
       gradesDragDepthRef.current = 0;
@@ -1060,8 +1303,6 @@ export default function OnboardingPage() {
     setAddSelectedCatalogNumber(catalogNumber);
     setAddSelectedPointsLabel(pointsLabel);
     setAddCourseSearch(courseName);
-    setAddCourseResults([]);
-    setCoursesSearchError(null);
   };
 
   const clearPickedCourse = () => {
@@ -1086,7 +1327,13 @@ export default function OnboardingPage() {
 
     setGradesMutating(true);
     try {
-      await setUserGrade(firebaseDb, user.uid, addSelectedCourseId, valueToSave);
+      await setUserGradeWithSemester(
+        firebaseDb,
+        user.uid,
+        toSapEightDigitCourseIdForStorage(addSelectedCourseId),
+        valueToSave,
+        addTargetSemesterKey === "__none__" ? null : addTargetSemesterKey
+      );
       await refreshProfile();
       closeAddGradeForm();
     } catch (err) {
@@ -1113,7 +1360,7 @@ export default function OnboardingPage() {
     return opt?.title ?? profile.track;
   }, [profile?.track, trackOptions]);
 
-  const handleSaveName = async (e: React.FormEvent) => {
+  async function handleSaveName(e: React.FormEvent) {
     e.preventDefault();
     if (!user) return;
     setError(null);
@@ -1135,7 +1382,7 @@ export default function OnboardingPage() {
     } finally {
       setNameSaving(false);
     }
-  };
+  }
 
   const handleSaveTrack = async () => {
     if (!user) return;
@@ -1189,6 +1436,41 @@ export default function OnboardingPage() {
     e.target.value = "";
     if (file) startGradesFileUpload(file);
   };
+
+  const onboardingViewContextValue = useMemo<OnboardingViewContextValue>(
+    () => ({
+      firstName,
+      lastName,
+      nameSaving,
+      error,
+      setFirstName,
+      setLastName,
+      setError,
+      handleSaveName,
+      profile,
+      summaryTrackLabel,
+      finishStepCatalogLoading,
+      finishStepCatalogSummary,
+      selectedTrack,
+      setSelectedTrack,
+      trackOptions,
+      trackSaving,
+      handleSaveTrack
+    }),
+    [
+      firstName,
+      lastName,
+      nameSaving,
+      error,
+      profile,
+      summaryTrackLabel,
+      finishStepCatalogLoading,
+      finishStepCatalogSummary,
+      selectedTrack,
+      trackOptions,
+      trackSaving
+    ]
+  );
 
   return (
     <Box
@@ -1245,6 +1527,7 @@ export default function OnboardingPage() {
             : { py: 6 }
         }
       >
+        <OnboardingViewProvider value={onboardingViewContextValue}>
         {stage === "track" && (
           <>
             <Box sx={{ width: "100%", pt: 1, pb: 1.25 }}>
@@ -1457,184 +1740,11 @@ export default function OnboardingPage() {
         )}
 
         {stage === "name" && (
-          <Box
-            component="form"
-            onSubmit={handleSaveName}
-            sx={{ animation: `${fadeIn} 0.6s ease-out`, textAlign: "center" }}
-          >
-            <Typography color="text.secondary" sx={{ mb: 4, maxWidth: 420, mx: "auto" }}>
-              לפני שנתחיל, יש לכתוב שם ושם משפחה כפי שרשומים בטכניון
-            </Typography>
-
-            <Box sx={{ display: "flex", gap: 2, mb: 3, flexDirection: { xs: "column", sm: "row" } }}>
-              <TextField
-                fullWidth
-                placeholder="שם פרטי"
-                value={firstName}
-                onChange={(e) => {
-                  setFirstName(e.target.value);
-                  setError(null);
-                }}
-                disabled={nameSaving}
-                autoFocus
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 3,
-                    fontSize: "1.125rem",
-                    "& fieldset": { borderWidth: 2 },
-                    "&:hover fieldset": { borderWidth: 2 }
-                  }
-                }}
-                inputProps={{ maxLength: 50, "aria-label": "שם פרטי" }}
-              />
-              <TextField
-                fullWidth
-                placeholder="שם משפחה"
-                value={lastName}
-                onChange={(e) => {
-                  setLastName(e.target.value);
-                  setError(null);
-                }}
-                disabled={nameSaving}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 3,
-                    fontSize: "1.125rem",
-                    "& fieldset": { borderWidth: 2 },
-                    "&:hover fieldset": { borderWidth: 2 }
-                  }
-                }}
-                inputProps={{ maxLength: 50, "aria-label": "שם משפחה" }}
-              />
-            </Box>
-
-            {error && (
-              <Typography color="error" variant="body2" sx={{ mb: 2, mt: -2 }}>
-                {error}
-              </Typography>
-            )}
-
-            <Button
-              type="submit"
-              variant="contained"
-              size="large"
-              disabled={nameSaving || !firstName.trim() || !lastName.trim()}
-              sx={{ px: 4, py: 1.5, fontSize: "1rem", fontWeight: 700, borderRadius: 3 }}
-            >
-              {nameSaving ? "שומר..." : "המשך"}
-            </Button>
-          </Box>
+          <NameStep />
         )}
 
         {stage === "track" && currentStep === 1 && (
-          <Box>
-            <Grid container spacing={2}>
-              {trackOptions.map((opt, idx) => {
-                const selected = selectedTrack === opt.id;
-                const icon =
-                  idx === 0 ? (
-                    <DirectionsRunRoundedIcon />
-                  ) : idx === 1 ? (
-                    <CategoryRoundedIcon />
-                  ) : idx === 2 ? (
-                    <AssessmentRoundedIcon />
-                  ) : (
-                    <FlagRoundedIcon />
-                  );
-
-                return (
-                  <Grid item xs={12} sm={6} md={4} key={opt.id} sx={{ display: "flex" }}>
-                    <Paper
-                      component="button"
-                      type="button"
-                      onClick={() => setSelectedTrack(opt.id)}
-                      elevation={0}
-                      aria-pressed={selected}
-                      sx={{
-                        width: "100%",
-                        height: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "stretch",
-                        p: 2.5,
-                        borderRadius: 3,
-                        border: "2px solid",
-                        borderColor: selected ? "primary.main" : "divider",
-                        bgcolor: selected ? "primary.light" : "background.paper",
-                        textAlign: "center",
-                        cursor: "pointer",
-                        transition: "transform 120ms ease, border-color 120ms ease"
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 56,
-                          height: 56,
-                          borderRadius: "50%",
-                          mx: "auto",
-                          mb: 1,
-                          flexShrink: 0,
-                          bgcolor: selected ? "primary.main" : "divider",
-                          color: selected ? "primary.contrastText" : "text.secondary",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center"
-                        }}
-                      >
-                        {icon}
-                      </Box>
-
-                      <Typography variant="h6" fontWeight={900} sx={{ flexShrink: 0 }}>
-                        {opt.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, flexShrink: 0 }}>
-                        {opt.description}
-                      </Typography>
-
-                      <Box
-                        sx={{
-                          mt: "auto",
-                          pt: 1,
-                          minHeight: 32,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          flexShrink: 0
-                        }}
-                        aria-hidden={!selected}
-                      >
-                        {selected ? <CheckCircleRoundedIcon color="primary" fontSize="small" /> : null}
-                      </Box>
-                    </Paper>
-                  </Grid>
-                );
-              })}
-            </Grid>
-
-            {error && (
-              <Typography color="error" variant="body2" sx={{ mt: 2, textAlign: "center" }}>
-                {error}
-              </Typography>
-            )}
-
-            <Stack
-              direction="row"
-              justifyContent="center"
-              sx={{ mt: 4, gap: 2, flexWrap: "wrap" }}
-            >
-              <Button variant="outlined" disabled>
-                אחורה
-              </Button>
-              <Button
-                variant="contained"
-                disabled={trackSaving || !selectedTrack}
-                onClick={handleSaveTrack}
-                sx={{ minWidth: 180 }}
-              >
-                {trackSaving ? "שומר..." : "המשך"}
-              </Button>
-            </Stack>
-          </Box>
+          <TrackSelectionStep />
         )}
 
         {stage === "track" && currentStep !== 1 && (
@@ -1647,12 +1757,13 @@ export default function OnboardingPage() {
                 border: "1px solid",
                 borderColor: theme.palette.divider,
                 bgcolor: "background.paper",
-                overflow: "hidden"
+                // Step 3 grades list is viewport-bleed + document scroll; hidden would clip and trap sticky.
+                overflow: currentStep === 3 ? "visible" : "hidden"
               })}
             >
               <Box
                 sx={{
-                  overflow: "hidden",
+                  overflow: currentStep === 3 ? "visible" : "hidden",
                   height: trackStepCardHeight == null ? "auto" : `${trackStepCardHeight}px`,
                   transition: `height ${TRACK_STEP_CARD_HEIGHT_MS}ms ${TRACK_STEP_CARD_HEIGHT_EASE}`,
                   "@media (prefers-reduced-motion: reduce)": {
@@ -1863,11 +1974,10 @@ export default function OnboardingPage() {
                   ) : currentStep === 3 ? (
                 <Box sx={{ mb: 3 }}>
                   <Typography color="text.secondary" sx={{ mb: 2.5, lineHeight: 1.6 }}>
-                    העלה את גיליון הציונים שלך. לעת עתה אנחנו לא מעבדים את הקובץ—ברגע שמעלים אותו
-                    מציגים את רשימת הציונים שכבר קיימת בפרופיל.
+                    העלו את גיליון הציונים שלכם.
                   </Typography>
 
-                  {!gradesUploaded ? (
+                  {!gradesPresent ? (
                     <>
                       <Box
                         component="label"
@@ -2014,10 +2124,74 @@ export default function OnboardingPage() {
                     </Typography>
                   ) : null}
 
-                  {gradesUploaded && (
+                  {gradesPresent && (
                     <Box sx={{ mt: 3 }}>
-                      {gradesWeightedAverage !== null ? (
-                        <AnimatedWeightedAverageBlock target={gradesWeightedAverage} />
+                      {gradesWeightedAverage !== null || gradesTotalNakaz !== null ? (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            justifyContent: "center",
+                            alignItems: "flex-start",
+                            gap: { xs: 2, sm: 4 },
+                            borderBottom: "1px solid",
+                            borderColor: "divider",
+                            mb: 2,
+                            py: 1.25,
+                            px: 1
+                          }}
+                        >
+                          {gradesWeightedAverage !== null ? (
+                            <AnimatedWeightedAverageBlock
+                              target={gradesWeightedAverage}
+                              showDivider={false}
+                            />
+                          ) : null}
+                          {gradesTotalNakaz !== null ? (
+                            <Box sx={{ textAlign: "center", px: 1, minWidth: "min(100%, 9rem)" }}>
+                              <Typography
+                                component="h3"
+                                variant="h6"
+                                sx={{
+                                  fontWeight: 700,
+                                  color: "text.secondary",
+                                  mb: 0.35,
+                                  lineHeight: 1.25,
+                                  fontSize: { xs: "0.9375rem", sm: "1rem" }
+                                }}
+                              >
+                                סה״כ נק״ז
+                              </Typography>
+                              <Typography
+                                component="div"
+                                sx={(theme) => ({
+                                  fontSize: { xs: "2.5rem", sm: "3rem" },
+                                  fontWeight: 900,
+                                  lineHeight: 1.05,
+                                  fontVariantNumeric: "tabular-nums",
+                                  letterSpacing: "-0.02em",
+                                  color: "text.primary",
+                                  textShadow: `0 1px 0 ${alpha(theme.palette.common.black, 0.04)}`
+                                })}
+                              >
+                                {formatTotalNakazLabel(gradesTotalNakaz)}
+                              </Typography>
+                            </Box>
+                          ) : null}
+                        </Box>
+                      ) : null}
+
+                      {technionCatalogCoursesError ? (
+                        <Typography
+                          color="error"
+                          variant="body2"
+                          sx={{ mb: 1.5 }}
+                          role="status"
+                          aria-live="polite"
+                        >
+                          {technionCatalogCoursesError}
+                        </Typography>
                       ) : null}
 
                       {gradesLoading ? (
@@ -2029,558 +2203,78 @@ export default function OnboardingPage() {
                           role="region"
                           aria-label="קורסים וציונים"
                           sx={{
-                            mt: gradesWeightedAverage !== null ? 0.5 : 2,
-                            maxHeight: GRADES_SECTION_SCROLL_MAX_HEIGHT,
-                            overflowY: "auto",
-                            overflowX: "hidden",
-                            WebkitOverflowScrolling: "touch",
+                            ...GRADES_LIST_VIEWPORT_BREAKOUT_SX,
+                            mt:
+                              gradesWeightedAverage !== null || gradesTotalNakaz !== null
+                                ? 0.5
+                                : 2,
                             display: "flex",
                             flexDirection: "column",
-                            gap: 1
+                            gap: 1,
+                            px: { xs: 2, sm: 2.5 },
+                            pb: 1.5
                           }}
                         >
-                          <Box
-                            sx={(theme) => ({
-                              position: "sticky",
-                              top: 0,
-                              zIndex: 2,
-                              bgcolor: theme.palette.background.paper
-                            })}
-                          >
-                            {!addGradeExpanded ? (
-                            <Box
-                              component="button"
-                              type="button"
-                              onClick={openAddGradeForm}
-                              disabled={gradesMutating}
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                gap: 1,
-                                py: 1.25,
-                                px: 2,
-                                minHeight: 52,
-                                borderRadius: 2,
-                                border: "1px solid",
-                                borderColor: "divider",
-                                bgcolor: "action.hover",
-                                width: "100%",
-                                cursor: gradesMutating ? "not-allowed" : "pointer",
-                                font: "inherit",
-                                color: "text.secondary",
-                                opacity: gradesMutating ? 0.6 : 1,
-                                transition: "background-color 120ms ease"
-                              }}
-                            >
-                              <Typography sx={{ fontWeight: 800, color: "text.primary" }}>
-                                + הוספת ציון לקורס
-                              </Typography>
-                            </Box>
-                          ) : (
-                            <Box
-                              sx={{
-                                py: 1.25,
-                                px: 2,
-                                borderRadius: 2,
-                                border: "1px solid",
-                                borderColor: "divider",
-                                bgcolor: "background.paper",
-                                textAlign: "right"
-                              }}
-                            >
-                              <Box
-                                sx={{
-                                  display: "grid",
-                                  gridTemplateColumns: GRADES_ROW_GRID,
-                                  columnGap: 1,
-                                  rowGap: 1,
-                                  alignItems: "center",
-                                  width: "100%",
-                                  minWidth: 0
-                                }}
-                              >
-                                <ClickAwayListener
-                                  onClickAway={() => {
-                                    if (addCourseResults.length > 0) setAddCourseResults([]);
-                                    if (coursesSearchError) setCoursesSearchError(null);
-                                  }}
-                                >
-                                  <Box
-                                    sx={{
-                                      gridColumn: "1",
-                                      width: "100%",
-                                      minWidth: 0,
-                                      alignSelf: "center"
-                                    }}
-                                  >
-                                    <Box
-                                      ref={courseSearchAnchorRef}
-                                      sx={{ position: "relative", width: "100%" }}
-                                    >
-                                      <TextField
-                                        label="שם או מספר קורס"
-                                        size="small"
-                                        value={addCourseSearch}
-                                        onChange={(e) => {
-                                          setAddCourseSearch(e.target.value);
-                                          setAddSelectedCourseId(null);
-                                          setAddSelectedCatalogNumber("");
-                                          setAddSelectedPointsLabel(null);
-                                        }}
-                                        fullWidth
-                                        disabled={gradesMutating}
-                                        dir="rtl"
-                                        inputProps={{
-                                          autoComplete: "off",
-                                          role: "combobox",
-                                          "aria-expanded": courseSuggestPopperOpen,
-                                          "aria-controls": "course-suggest-listbox"
-                                        }}
-                                        InputProps={{
-                                          readOnly: Boolean(addSelectedCourseId),
-                                          startAdornment: addSelectedCatalogNumber ? (
-                                            <InputAdornment
-                                              position="start"
-                                              sx={{
-                                                marginInlineEnd: 1,
-                                                maxWidth: "42%",
-                                                flexShrink: 0
-                                              }}
-                                            >
-                                              <Typography
-                                                component="span"
-                                                variant="body2"
-                                                color="text.secondary"
-                                                sx={{
-                                                  fontWeight: 700,
-                                                  fontVariantNumeric: "tabular-nums",
-                                                  whiteSpace: "nowrap",
-                                                  overflow: "hidden",
-                                                  textOverflow: "ellipsis",
-                                                  display: "block",
-                                                  maxWidth: "100%"
-                                                }}
-                                                title={addSelectedCatalogNumber}
-                                              >
-                                                {addSelectedCatalogNumber}
-                                              </Typography>
-                                            </InputAdornment>
-                                          ) : undefined,
-                                          endAdornment: addSelectedCourseId ? (
-                                            <InputAdornment position="end" sx={{ marginInlineStart: 0 }}>
-                                              <IconButton
-                                                size="small"
-                                                aria-label="בטל בחירת קורס"
-                                                edge="end"
-                                                onClick={(e) => {
-                                                  e.preventDefault();
-                                                  clearPickedCourse();
-                                                }}
-                                                disabled={gradesMutating}
-                                              >
-                                                <ClearRoundedIcon fontSize="small" />
-                                              </IconButton>
-                                            </InputAdornment>
-                                          ) : undefined
-                                        }}
-                                        sx={{
-                                          "& .MuiInputBase-input": {
-                                            textAlign: "right",
-                                            direction: "rtl"
-                                          },
-                                          "& .MuiInputAdornment-positionStart": {
-                                            alignSelf: "center"
-                                          }
-                                        }}
-                                      />
-                                      <Popper
-                                        open={courseSuggestPopperOpen}
-                                        anchorEl={courseSearchAnchorRef.current}
-                                        placement="bottom"
-                                        modifiers={[
-                                          { name: "offset", options: { offset: [0, 4] } },
-                                          {
-                                            name: "sameWidth",
-                                            enabled: true,
-                                            phase: "beforeWrite",
-                                            requires: ["computeStyles"],
-                                            fn: ({ state }) => {
-                                              const w = state.rects.reference.width;
-                                              if (Number.isFinite(w))
-                                                state.styles.popper.width = `${w}px`;
-                                            },
-                                            effect: ({ state }) => {
-                                              const el = state.elements.reference as HTMLElement;
-                                              const w = el?.offsetWidth;
-                                              if (w) state.elements.popper.style.width = `${w}px`;
-                                            }
-                                          }
-                                        ]}
-                                        sx={{ zIndex: (theme) => theme.zIndex.modal }}
-                                      >
-                                        <Paper
-                                          variant="outlined"
-                                          elevation={0}
-                                          id="course-suggest-listbox"
-                                          role="listbox"
-                                          sx={(theme) => ({
-                                            maxHeight: 220,
-                                            overflowY: "auto",
-                                            borderRadius: 2,
-                                            border: "1px solid",
-                                            ...(theme.palette.mode === "light"
-                                              ? {
-                                                  borderColor: "divider",
-                                                  bgcolor: theme.palette.background.paper,
-                                                  boxShadow: `0 4px 16px ${alpha(theme.palette.common.black, 0.07)}, 0 1px 3px ${alpha(theme.palette.common.black, 0.05)}`
-                                                }
-                                              : {
-                                                  // Page uses same color as `background.paper` — lift panel so it reads as a floating menu.
-                                                  bgcolor: "#1e293b",
-                                                  borderColor: alpha(theme.palette.common.white, 0.18),
-                                                  boxShadow: `0 0 0 1px ${alpha(theme.palette.common.white, 0.06)}, 0 12px 40px ${alpha("#000", 0.55)}, 0 0 24px ${alpha(theme.palette.primary.light, 0.08)}`
-                                                })
-                                          })}
-                                        >
-                                          <List
-                                            dense
-                                            disablePadding
-                                            component="div"
-                                            aria-label="תוצאות חיפוש קורס"
-                                            sx={{ direction: "rtl" }}
-                                          >
-                                            {coursesSearching ? (
-                                              <ListItemButton
-                                                disabled
-                                                role="option"
-                                                aria-busy="true"
-                                                sx={{
-                                                  py: 0.75,
-                                                  px: 1.5,
-                                                  "&.Mui-disabled": { opacity: 1 },
-                                                  borderBottom: "1px solid",
-                                                  borderColor: "divider"
-                                                }}
-                                              >
-                                                <ListItemText
-                                                  primary="מחפש קורסים..."
-                                                  primaryTypographyProps={{
-                                                    sx: {
-                                                      textAlign: "right",
-                                                      width: "100%",
-                                                      color: "text.secondary"
-                                                    }
-                                                  }}
-                                                />
-                                              </ListItemButton>
-                                            ) : (
-                                              <>
-                                                {coursesSearchError ? (
-                                                  <ListItemButton
-                                                    disabled
-                                                    role="option"
-                                                    sx={{
-                                                      py: 0.75,
-                                                      px: 1.5,
-                                                      "&.Mui-disabled": { opacity: 1 },
-                                                      borderBottom: "1px solid",
-                                                      borderColor: "divider"
-                                                    }}
-                                                  >
-                                                    <ListItemText
-                                                      primary={coursesSearchError}
-                                                      primaryTypographyProps={{
-                                                        sx: {
-                                                          textAlign: "right",
-                                                          width: "100%",
-                                                          color: "error.main"
-                                                        }
-                                                      }}
-                                                    />
-                                                  </ListItemButton>
-                                                ) : null}
-                                                {addCourseResults.map((c, index) => {
-                                                  const taken =
-                                                    existingGradeCourseIds.has(c.courseId);
-                                                  const isLast =
-                                                    index === addCourseResults.length - 1;
-                                                  return (
-                                                    <ListItemButton
-                                                      key={c.courseId}
-                                                      disabled={gradesMutating || taken}
-                                                      role="option"
-                                                      onClick={() => {
-                                                        if (taken) return;
-                                                        handlePickCourse(
-                                                          c.courseId,
-                                                          c.courseName,
-                                                          c.courseNumber,
-                                                          c.pointsLabel
-                                                        );
-                                                      }}
-                                                      sx={{
-                                                        py: 0.75,
-                                                        px: 1.5,
-                                                        alignItems: "flex-start",
-                                                        "&.Mui-disabled": { opacity: 0.55 },
-                                                        borderBottom: isLast
-                                                          ? "none"
-                                                          : "1px solid",
-                                                        borderColor: "divider"
-                                                      }}
-                                                    >
-                                                      <ListItemText
-                                                        disableTypography
-                                                        primary={
-                                                          <Box
-                                                            sx={{
-                                                              width: "100%",
-                                                              minWidth: 0,
-                                                              textAlign: "right"
-                                                            }}
-                                                          >
-                                                            <Box
-                                                              component="span"
-                                                              sx={{
-                                                                display: "flex",
-                                                                flexDirection: "row",
-                                                                alignItems: "center",
-                                                                gap: 1,
-                                                                width: "100%",
-                                                                minWidth: 0,
-                                                                justifyContent: "flex-start"
-                                                              }}
-                                                            >
-                                                              <Typography
-                                                                component="span"
-                                                                variant="subtitle1"
-                                                                sx={{
-                                                                  ...gradeCatalogCellSx,
-                                                                  maxWidth: "7rem",
-                                                                  fontSize: "1rem"
-                                                                }}
-                                                              >
-                                                                {c.courseNumber}
-                                                              </Typography>
-                                                              <Typography
-                                                                component="span"
-                                                                variant="subtitle1"
-                                                                sx={{
-                                                                  ...gradeNameCellSx,
-                                                                  flex: 1,
-                                                                  minWidth: 0,
-                                                                  fontSize: "1rem",
-                                                                  fontWeight: taken ? 600 : 700
-                                                                }}
-                                                                title={c.courseName}
-                                                              >
-                                                                {c.courseName}
-                                                              </Typography>
-                                                              {c.pointsLabel ? (
-                                                                <Typography
-                                                                  component="span"
-                                                                  variant="body2"
-                                                                  color="text.secondary"
-                                                                  sx={{
-                                                                    fontWeight: 700,
-                                                                    fontVariantNumeric: "tabular-nums",
-                                                                    flexShrink: 0,
-                                                                    whiteSpace: "nowrap"
-                                                                  }}
-                                                                >
-                                                                  {c.pointsLabel}
-                                                                </Typography>
-                                                              ) : null}
-                                                            </Box>
-                                                            {taken ? (
-                                                              <Typography
-                                                                variant="caption"
-                                                                color="text.secondary"
-                                                                sx={{
-                                                                  display: "block",
-                                                                  mt: 0.35,
-                                                                  width: "100%",
-                                                                  textAlign: "right",
-                                                                  fontSize: "0.6875rem",
-                                                                  fontWeight: 500,
-                                                                  lineHeight: 1.2
-                                                                }}
-                                                              >
-                                                                כבר ברשימה
-                                                              </Typography>
-                                                            ) : null}
-                                                          </Box>
-                                                        }
-                                                      />
-                                                    </ListItemButton>
-                                                  );
-                                                })}
-                                              </>
-                                            )}
-                                          </List>
-                                        </Paper>
-                                      </Popper>
-                                    </Box>
-                                  </Box>
-                                </ClickAwayListener>
-
-                                <Box
-                                  sx={{
-                                    gridColumn: "2",
-                                    justifySelf: "center",
-                                    alignSelf: "center",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    minHeight: 40,
-                                    minWidth: 0,
-                                    width: "100%"
-                                  }}
-                                >
-                                  {addSelectedCourseId && addSelectedPointsLabel ? (
-                                    <Typography
-                                      variant="body2"
-                                      color="text.secondary"
-                                      sx={{
-                                        fontWeight: 600,
-                                        fontVariantNumeric: "tabular-nums",
-                                        whiteSpace: "nowrap",
-                                        textAlign: "center"
-                                      }}
-                                    >
-                                      {addSelectedPointsLabel}
-                                    </Typography>
-                                  ) : addSelectedCourseId ? (
-                                    <Typography
-                                      variant="body2"
-                                      color="text.disabled"
-                                      sx={{ textAlign: "center" }}
-                                    >
-                                      —
-                                    </Typography>
-                                  ) : null}
-                                </Box>
-
-                                <Box
-                                  sx={{
-                                    gridColumn: "3",
-                                    justifySelf: "stretch",
-                                    alignSelf: "center",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    width: "100%",
-                                    minWidth: 0
-                                  }}
-                                >
-                                  {addGradePassBinary ? (
-                                    <Typography
-                                      variant="body1"
-                                      sx={{
-                                        fontWeight: 900,
-                                        textAlign: "center",
-                                        width: "100%",
-                                        py: 0.5,
-                                        color: "text.primary"
-                                      }}
-                                      aria-label="ציון"
-                                    >
-                                      עובר
-                                    </Typography>
-                                  ) : (
-                                    <TextField
-                                      label="ציון"
-                                      size="small"
-                                      value={addGrade}
-                                      onChange={(e) =>
-                                        setAddGrade((prev) =>
-                                          sanitizeGradeInputOnChange(e.target.value, prev)
-                                        )
-                                      }
-                                      dir="rtl"
-                                      sx={{
-                                        width: "100%",
-                                        maxWidth: "5.5rem",
-                                        mx: "auto",
-                                        "& .MuiInputBase-input": {
-                                          textAlign: "center",
-                                          direction: "rtl"
-                                        }
-                                      }}
-                                      disabled={gradesMutating || !addSelectedCourseId}
-                                      inputProps={{
-                                        inputMode: "decimal",
-                                        min: 0,
-                                        max: 100,
-                                        "aria-label": "ציון"
-                                      }}
-                                    />
-                                  )}
-                                </Box>
-                                <Box
-                                  sx={{
-                                    gridColumn: "4",
-                                    justifySelf: "end",
-                                    alignSelf: "center",
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    flexWrap: "wrap",
-                                    gap: 1.5,
-                                    alignItems: "center"
-                                  }}
-                                >
-                                  <Button
-                                    size="small"
-                                    variant={addGradePassBinary ? "contained" : "outlined"}
-                                    disabled={gradesMutating || !addSelectedCourseId}
-                                    sx={{ whiteSpace: "nowrap" }}
-                                    onClick={() => {
-                                      setAddGradePassBinary((p) => {
-                                        const next = !p;
-                                        if (next) setAddGrade("");
-                                        return next;
-                                      });
-                                    }}
-                                  >
-                                    עובר בינארי
-                                  </Button>
-                                  <Button
-                                    variant="contained"
-                                    size="small"
-                                    disabled={
-                                      gradesMutating ||
-                                      !addSelectedCourseId ||
-                                      (!addGradePassBinary &&
-                                        parseNumericGrade0to100(addGrade) === null)
-                                    }
-                                    onClick={handleAddCourseGrade}
-                                  >
-                                    הוסף
-                                  </Button>
-                                  <Button
-                                    variant="outlined"
-                                    size="small"
-                                    disabled={gradesMutating}
-                                    onClick={closeAddGradeForm}
-                                  >
-                                    ביטול
-                                  </Button>
-                                </Box>
-                              </Box>
-                            </Box>
-                          )}
-                          </Box>
 
                           {gradesCourses.length === 0 ? (
                             <Typography color="text.secondary" sx={{ py: 0.5 }}>
                               לא נמצאו ציונים להצגה כרגע.
                             </Typography>
                           ) : (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1, pb: 0.5 }}>
-                                {gradesRowsForList.map((item) => {
-                                  const isDemo = isGradesScrollDemoRow(item.courseId);
-                                  return (
+                            <Box
+                              sx={{
+                                display: "grid",
+                                gridTemplateColumns: {
+                                  xs: "minmax(0, 1fr)",
+                                  md: "repeat(2, minmax(0, 1fr))"
+                                },
+                                gap: { xs: 1, sm: 1.25 },
+                                pb: 0.5,
+                                alignItems: "start"
+                              }}
+                            >
+                              {gradeSemesterGroups.map((group, groupIdx) => (
+                                <Box
+                                  key={group.key}
+                                  sx={{
+                                    borderRadius: 2,
+                                    border: "1px solid",
+                                    borderColor: "divider",
+                                    bgcolor: "background.paper",
+                                    overflow: "hidden"
+                                  }}
+                                >
+                                  <Box
+                                    sx={(theme) => ({
+                                      px: 1.5,
+                                      py: 0.9,
+                                      borderBottom: "1px solid",
+                                      borderColor: "divider",
+                                      bgcolor: alpha(
+                                        theme.palette.primary.main,
+                                        theme.palette.mode === "dark" ? 0.14 : 0.07
+                                      )
+                                    })}
+                                  >
+                                    <Typography
+                                      component="h3"
+                                      variant="subtitle2"
+                                      fontWeight={800}
+                                      sx={{ textAlign: "right", m: 0 }}
+                                    >
+                                      {group.title}
+                                    </Typography>
+                                  </Box>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      gap: 0.5,
+                                      p: 0.75,
+                                      pt: 0.9
+                                    }}
+                                  >
+                                    {group.rows.map((item) => (
                                     <Box
                                       key={item.courseId}
                                       sx={{
@@ -2588,39 +2282,43 @@ export default function OnboardingPage() {
                                         gridTemplateColumns: GRADES_ROW_GRID,
                                         columnGap: 1,
                                         alignItems: "center",
-                                        py: 1.25,
-                                        px: 2,
-                                        minHeight: 52,
+                                        py: 0.85,
+                                        px: 1.25,
+                                        minHeight: 44,
                                         borderRadius: 2,
                                         border: "1px solid",
                                         borderColor: "divider",
-                                        bgcolor: "background.paper",
-                                        ...(isDemo
-                                          ? {
-                                              borderStyle: "dashed",
-                                              opacity: 0.92
-                                            }
-                                          : {})
+                                        bgcolor: (theme) =>
+                                          theme.palette.mode === "dark"
+                                            ? alpha(theme.palette.background.default, 0.5)
+                                            : alpha(theme.palette.grey[100], 0.9)
                                       }}
                                     >
-                                      <Box sx={courseTitleRowSx}>
+                                      <Box
+                                        sx={{
+                                          ...courseTitleRowSx,
+                                          flexDirection: "column",
+                                          alignItems: "stretch",
+                                          gap: 0.2
+                                        }}
+                                      >
                                         <Typography
                                           component="div"
-                                          sx={gradeCatalogCellSx}
+                                          sx={gradeCatalogLabelSx}
                                           title={item.courseNumber}
                                         >
                                           {item.courseNumber}
                                         </Typography>
                                         <Typography
                                           component="div"
-                                          sx={{ ...gradeNameCellSx, flex: 1, minWidth: 0 }}
+                                          sx={{ ...gradeNameCellSx, minWidth: 0 }}
                                           title={item.courseName}
                                         >
                                           {item.courseName}
                                         </Typography>
                                       </Box>
 
-                                      {editingCourseId === item.courseId && !isDemo ? (
+                                      {editingCourseId === item.courseId ? (
                                         <>
                                           <Typography
                                             component="div"
@@ -2724,7 +2422,7 @@ export default function OnboardingPage() {
                                                 });
                                               }}
                                             >
-                                              עובר בינארי
+                                              עובר
                                             </Button>
                                             <Button
                                               variant="contained"
@@ -2757,68 +2455,347 @@ export default function OnboardingPage() {
                                             component="div"
                                             sx={{
                                               fontWeight: 900,
-                                              textAlign: "center",
+                                              textAlign: "right",
                                               width: "100%",
-                                              gridColumn: "3"
+                                              gridColumn: "3",
+                                              justifySelf: "start"
                                             }}
                                           >
                                             {formatGradeForDisplay(item.grade)}
                                           </Typography>
-                                          {isDemo ? (
-                                            <Typography
-                                              variant="caption"
-                                              color="text.secondary"
-                                              sx={{
-                                                gridColumn: "4",
-                                                justifySelf: "end",
-                                                textAlign: "right",
-                                                whiteSpace: "nowrap"
-                                              }}
-                                            >
-                                              דוגמה
-                                            </Typography>
-                                          ) : (
-                                            <Stack
-                                              direction="row"
-                                              sx={{
-                                                gridColumn: "4",
-                                                justifySelf: "end",
-                                                flexWrap: "wrap",
-                                                alignItems: "center",
-                                                gap: 1.5
-                                              }}
-                                            >
-                                              <Button
-                                                variant="text"
-                                                size="small"
-                                                onClick={() =>
-                                                  handleEditGradeStart(item.courseId, item.grade)
-                                                }
-                                                disabled={gradesMutating}
-                                              >
-                                                ערוך
-                                              </Button>
-                                              <Button
-                                                variant="text"
-                                                size="small"
-                                                color="error"
-                                                onClick={() =>
-                                                  setDeleteGradeDialog({
-                                                    courseId: item.courseId,
-                                                    courseName: item.courseName
-                                                  })
-                                                }
-                                                disabled={gradesMutating}
-                                              >
-                                                מחק
-                                              </Button>
-                                            </Stack>
-                                          )}
+                                          <Stack
+                                            direction="row"
+                                            sx={{
+                                              gridColumn: "4",
+                                              justifySelf: "end",
+                                              alignItems: "center",
+                                              gap: 0.25
+                                            }}
+                                          >
+                                            <Tooltip title="ערוך">
+                                              <span>
+                                                <IconButton
+                                                  size="small"
+                                                  onClick={() =>
+                                                    handleEditGradeStart(item.courseId, item.grade)
+                                                  }
+                                                  disabled={gradesMutating}
+                                                  aria-label={`עריכת קורס ${item.courseName}`}
+                                                >
+                                                  <EditRoundedIcon fontSize="small" />
+                                                </IconButton>
+                                              </span>
+                                            </Tooltip>
+                                            <Tooltip title="מחק">
+                                              <span>
+                                                <IconButton
+                                                  size="small"
+                                                  color="error"
+                                                  onClick={() =>
+                                                    setDeleteGradeDialog({
+                                                      courseId: item.courseId,
+                                                      courseName: item.courseName
+                                                    })
+                                                  }
+                                                  disabled={gradesMutating}
+                                                  aria-label={`מחיקת קורס ${item.courseName}`}
+                                                >
+                                                  <DeleteOutlineRoundedIcon fontSize="small" />
+                                                </IconButton>
+                                              </span>
+                                            </Tooltip>
+                                          </Stack>
                                         </>
                                       )}
                                     </Box>
-                                  );
-                                })}
+                                    ))}
+                                  </Box>
+                                  {addGradeExpanded && addTargetSemesterKey === group.key ? (
+                                    <Box
+                                      sx={{
+                                        py: 1,
+                                        px: 1.25,
+                                        borderTop: "1px solid",
+                                        borderColor: "divider",
+                                        bgcolor: "background.default",
+                                        textAlign: "right"
+                                      }}
+                                    >
+                                      <Box
+                                        sx={{
+                                          display: "grid",
+                                          gridTemplateColumns: ADD_GRADE_FORM_GRID,
+                                          columnGap: 1,
+                                          rowGap: 1,
+                                          alignItems: "center",
+                                          width: "100%",
+                                          minWidth: 0
+                                        }}
+                                      >
+                                        <ClickAwayListener
+                                          onClickAway={() => {
+                                            dismissSuggestions();
+                                          }}
+                                        >
+                                          <Box
+                                            sx={{
+                                              gridColumn: "1",
+                                              width: "100%",
+                                              minWidth: 0,
+                                              alignSelf: "center"
+                                            }}
+                                          >
+                                            <Box
+                                              ref={courseSearchAnchorRef}
+                                              sx={{ position: "relative", width: "100%" }}
+                                            >
+                                              {addSelectedCatalogNumber ? (
+                                                <Typography
+                                                  component="div"
+                                                  variant="caption"
+                                                  color="text.secondary"
+                                                  sx={{
+                                                    mb: 0.35,
+                                                    pr: 0.25,
+                                                    fontWeight: 700,
+                                                    fontVariantNumeric: "tabular-nums",
+                                                    textAlign: "right",
+                                                    whiteSpace: "nowrap",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis"
+                                                  }}
+                                                  title={addSelectedCatalogNumber}
+                                                >
+                                                  {addSelectedCatalogNumber}
+                                                </Typography>
+                                              ) : null}
+                                              <TextField
+                                                label="שם או מספר קורס"
+                                                size="small"
+                                                value={addCourseSearch}
+                                                onChange={(e) => {
+                                                  setAddCourseSearch(e.target.value);
+                                                  setAddSelectedCourseId(null);
+                                                  setAddSelectedCatalogNumber("");
+                                                  setAddSelectedPointsLabel(null);
+                                                }}
+                                                fullWidth
+                                                disabled={gradesMutating}
+                                                dir="rtl"
+                                                inputProps={{
+                                                  autoComplete: "off",
+                                                  role: "combobox",
+                                                  "aria-expanded": courseSuggestPopperOpen,
+                                                  "aria-controls": `course-suggest-listbox-${groupIdx}`
+                                                }}
+                                                InputProps={{
+                                                  readOnly: Boolean(addSelectedCourseId),
+                                                  endAdornment: addSelectedCourseId ? (
+                                                    <InputAdornment position="end" sx={{ marginInlineStart: 0 }}>
+                                                      <IconButton
+                                                        size="small"
+                                                        aria-label="בטל בחירת קורס"
+                                                        edge="end"
+                                                        onClick={(e) => {
+                                                          e.preventDefault();
+                                                          clearPickedCourse();
+                                                        }}
+                                                        disabled={gradesMutating}
+                                                      >
+                                                        <ClearRoundedIcon fontSize="small" />
+                                                      </IconButton>
+                                                    </InputAdornment>
+                                                  ) : undefined
+                                                }}
+                                                sx={{
+                                                  "& .MuiInputBase-input": {
+                                                    textAlign: "right",
+                                                    direction: "rtl"
+                                                  }
+                                                }}
+                                              />
+                                              <CourseSuggestListbox
+                                                open={courseSuggestPopperOpen}
+                                                anchorEl={courseSearchAnchorRef.current}
+                                                listboxId={`course-suggest-listbox-${groupIdx}`}
+                                                results={addCourseResults}
+                                                searching={coursesSearching}
+                                                error={coursesSearchError}
+                                                onSelect={(c) =>
+                                                  handlePickCourse(
+                                                    c.courseId,
+                                                    c.courseName,
+                                                    c.courseNumber,
+                                                    c.pointsLabel
+                                                  )
+                                                }
+                                                disabledIds={existingGradeCourseIds}
+                                                listBusy={gradesMutating}
+                                              />
+                                            </Box>
+                                          </Box>
+                                        </ClickAwayListener>
+
+                                        <Box
+                                          sx={{
+                                            ...gradePointsCellSx,
+                                            alignSelf: "center",
+                                            mt: addSelectedCatalogNumber ? 1.7 : 0
+                                          }}
+                                        >
+                                          {addSelectedCourseId && addSelectedPointsLabel ? (
+                                            <Typography
+                                              variant="body2"
+                                              color="text.secondary"
+                                              sx={{
+                                                fontWeight: 600,
+                                                fontVariantNumeric: "tabular-nums",
+                                                whiteSpace: "nowrap",
+                                                textAlign: "right"
+                                              }}
+                                            >
+                                              {addSelectedPointsLabel}
+                                            </Typography>
+                                          ) : addSelectedCourseId ? (
+                                            <Typography variant="body2" color="text.disabled" sx={{ textAlign: "right" }}>
+                                              —
+                                            </Typography>
+                                          ) : null}
+                                        </Box>
+
+                                        <Box
+                                          sx={{
+                                            gridColumn: "3",
+                                            justifySelf: "stretch",
+                                            alignSelf: "center",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            width: "100%",
+                                            minWidth: 0,
+                                            mt: addSelectedCatalogNumber ? 1.7 : 0
+                                          }}
+                                        >
+                                          {addGradePassBinary ? (
+                                            <Typography
+                                              variant="body1"
+                                              sx={{
+                                                fontWeight: 900,
+                                                textAlign: "center",
+                                                width: "100%",
+                                                py: 0.5,
+                                                color: "text.primary"
+                                              }}
+                                              aria-label="ציון"
+                                            >
+                                              עובר
+                                            </Typography>
+                                          ) : (
+                                            <TextField
+                                              label="ציון"
+                                              size="small"
+                                              value={addGrade}
+                                              onChange={(e) =>
+                                                setAddGrade((prev) =>
+                                                  sanitizeGradeInputOnChange(e.target.value, prev)
+                                                )
+                                              }
+                                              dir="rtl"
+                                              sx={{
+                                                width: "100%",
+                                                maxWidth: "4.4rem",
+                                                mx: "auto",
+                                                "& .MuiInputBase-input": {
+                                                  textAlign: "center",
+                                                  direction: "rtl"
+                                                }
+                                              }}
+                                              disabled={gradesMutating || !addSelectedCourseId}
+                                              inputProps={{
+                                                inputMode: "decimal",
+                                                min: 0,
+                                                max: 100,
+                                                "aria-label": "ציון"
+                                              }}
+                                            />
+                                          )}
+                                        </Box>
+                                        <Box
+                                          sx={{
+                                            gridColumn: "4",
+                                            justifySelf: "end",
+                                            alignSelf: "center",
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            flexWrap: "wrap",
+                                            gap: 1,
+                                            alignItems: "center",
+                                            mt: addSelectedCatalogNumber ? 1.7 : 0
+                                          }}
+                                        >
+                                          <Button
+                                            size="small"
+                                            variant={addGradePassBinary ? "contained" : "outlined"}
+                                            disabled={gradesMutating || !addSelectedCourseId}
+                                            sx={{ whiteSpace: "nowrap", minWidth: 0, px: 1.1 }}
+                                            onClick={() => {
+                                              setAddGradePassBinary((p) => {
+                                                const next = !p;
+                                                if (next) setAddGrade("");
+                                                return next;
+                                              });
+                                            }}
+                                          >
+                                            עובר
+                                          </Button>
+                                          <Tooltip title="הוסף">
+                                            <span>
+                                              <IconButton
+                                                size="small"
+                                                color="primary"
+                                                disabled={
+                                                  gradesMutating ||
+                                                  !addSelectedCourseId ||
+                                                  (!addGradePassBinary &&
+                                                    parseNumericGrade0to100(addGrade) === null)
+                                                }
+                                                onClick={handleAddCourseGrade}
+                                                aria-label="הוספת קורס"
+                                              >
+                                                <AddRoundedIcon fontSize="small" />
+                                              </IconButton>
+                                            </span>
+                                          </Tooltip>
+                                          <Tooltip title="ביטול">
+                                            <span>
+                                              <IconButton
+                                                size="small"
+                                                disabled={gradesMutating}
+                                                onClick={closeAddGradeForm}
+                                                aria-label="ביטול הוספת קורס"
+                                              >
+                                                <CloseRoundedIcon fontSize="small" />
+                                              </IconButton>
+                                            </span>
+                                          </Tooltip>
+                                        </Box>
+                                      </Box>
+                                    </Box>
+                                  ) : (
+                                    <Box sx={{ px: 1, pb: 1, pt: 0.5 }}>
+                                      <Button
+                                        variant="outlined"
+                                        size="small"
+                                        fullWidth
+                                        onClick={() => openAddGradeForm(group.key)}
+                                        disabled={gradesMutating}
+                                      >
+                                        + הוספת ציון לסמסטר
+                                      </Button>
+                                    </Box>
+                                  )}
+                                </Box>
+                              ))}
                             </Box>
                           )}
                         </Box>
@@ -2827,69 +2804,7 @@ export default function OnboardingPage() {
                   )}
                 </Box>
               ) : (
-                <Box
-                  component="section"
-                  aria-labelledby="onboarding-finish-summary-heading"
-                  sx={{
-                    textAlign: "right",
-                    maxWidth: 560,
-                    mx: "auto",
-                    py: 1,
-                    px: { xs: 0, sm: 1 }
-                  }}
-                >
-                  <Typography
-                    id="onboarding-finish-summary-heading"
-                    variant="h5"
-                    component="h2"
-                    fontWeight={900}
-                    sx={{ mb: 3, letterSpacing: "-0.02em" }}
-                  >
-                    הסטודנט: {getDisplayName(profile) ?? "—"}
-                  </Typography>
-                  <Stack component="dl" spacing={2.5} sx={{ m: 0 }}>
-                    <Box>
-                      <Typography
-                        component="dt"
-                        variant="subtitle2"
-                        fontWeight={700}
-                        color="text.secondary"
-                        sx={{ mb: 0.5 }}
-                      >
-                        מסלול
-                      </Typography>
-                      <Typography component="dd" variant="body1" sx={{ m: 0, fontWeight: 600 }}>
-                        {summaryTrackLabel ?? "—"}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography
-                        component="dt"
-                        variant="subtitle2"
-                        fontWeight={700}
-                        color="text.secondary"
-                        sx={{ mb: 0.5 }}
-                      >
-                        קטלוג
-                      </Typography>
-                      <Box component="dd" sx={{ m: 0, minHeight: 28, display: "flex", alignItems: "center" }}>
-                        {finishStepCatalogLoading ? (
-                          <CircularProgress size={22} aria-label="טוען פרטי קטלוג" />
-                        ) : (
-                          <Typography
-                            component="span"
-                            variant="body1"
-                            fontWeight={600}
-                            dir="ltr"
-                            sx={{ fontVariantNumeric: "tabular-nums" }}
-                          >
-                            {finishStepCatalogSummary ?? "—"}
-                          </Typography>
-                        )}
-                      </Box>
-                    </Box>
-                  </Stack>
-                </Box>
+                <FinishStep />
               )}
                 </Box>
               </Box>
@@ -2949,6 +2864,7 @@ export default function OnboardingPage() {
             </Stack>
           </Box>
         )}
+        </OnboardingViewProvider>
       </Container>
 
       <Dialog
