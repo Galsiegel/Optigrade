@@ -5,7 +5,7 @@ import DirectionsRunRoundedIcon from "@mui/icons-material/DirectionsRunRounded";
 import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
 import AssessmentRoundedIcon from "@mui/icons-material/AssessmentRounded";
 import FlagRoundedIcon from "@mui/icons-material/FlagRounded";
-import { Box, Button, Grid, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Grid, Paper, Stack, Typography } from "@mui/material";
 import { useOnboardingViewContext } from "@/app/onboarding/context/OnboardingViewContext";
 
 export function TrackSelectionStep() {
@@ -13,10 +13,36 @@ export function TrackSelectionStep() {
     selectedTrack,
     setSelectedTrack,
     trackOptions,
+    tracksLoading,
+    tracksError,
     error,
     trackSaving,
     handleSaveTrack
   } = useOnboardingViewContext();
+
+  if (tracksLoading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", py: 6 }} role="status" aria-live="polite">
+        <CircularProgress aria-label="טוען מסלולים" />
+      </Box>
+    );
+  }
+
+  if (tracksError) {
+    return (
+      <Typography color="error" variant="body2" sx={{ textAlign: "center", py: 2 }} role="alert">
+        {tracksError}
+      </Typography>
+    );
+  }
+
+  if (trackOptions.length === 0) {
+    return (
+      <Typography color="text.secondary" variant="body2" sx={{ textAlign: "center", py: 2 }}>
+        אין מסלולים זמינים. הוסיפו מסמכים ל-collection בשם tracks ב-Firestore.
+      </Typography>
+    );
+  }
 
   return (
     <Box>

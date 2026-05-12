@@ -16,10 +16,12 @@ export function AppHeader() {
     isAdmin,
     viewAsRegularUser,
     setViewAsRegularUser,
-    resetOnboarding
+    resetOnboarding,
+    signOut
   } = useAuth();
   const router = useRouter();
   const [resetting, setResetting] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const actualIsAdmin = profile?.role === "admin";
 
   const handleResetOnboarding = async () => {
@@ -38,7 +40,19 @@ export function AppHeader() {
     const next = !viewAsRegularUser;
     setViewAsRegularUser(next);
     if (next) {
-      router.push("/");
+      router.push("/dashboard");
+    }
+  };
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    try {
+      await signOut();
+      router.replace("/login");
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSigningOut(false);
     }
   };
 
@@ -53,13 +67,13 @@ export function AppHeader() {
       <Toolbar sx={{ justifyContent: "space-between" }} component="nav" aria-label="קישורים ופעולות">
         <Typography
           component={Link}
-          href="/"
+          href="/dashboard"
           variant="h6"
           fontWeight={600}
           color="primary"
           sx={{ textDecoration: "none" }}
         >
-          גמרים
+         מערכת סגירת תואר
         </Typography>
         <Box display="flex" alignItems="center" gap={0.5}>
           {isDev && user && actualIsAdmin && (
@@ -84,6 +98,18 @@ export function AppHeader() {
               </Button>
             </>
           )}
+          {user ? (
+            <Button
+              size="small"
+              color="inherit"
+              onClick={() => void handleSignOut()}
+              disabled={signingOut}
+              aria-label="התנתקות מהחשבון"
+              sx={{ fontSize: "0.75rem", minWidth: "auto", px: 1 }}
+            >
+              {signingOut ? "מתנתק…" : "התנתקות"}
+            </Button>
+          ) : null}
           <ThemeToggleButton />
         </Box>
       </Toolbar>

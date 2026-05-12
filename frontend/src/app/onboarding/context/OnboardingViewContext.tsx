@@ -19,6 +19,8 @@ export type OnboardingViewContextValue = {
   selectedTrack: string | null;
   setSelectedTrack: (v: string | null) => void;
   trackOptions: { id: string; title: string; description: string }[];
+  tracksLoading: boolean;
+  tracksError: string | null;
   trackSaving: boolean;
   handleSaveTrack: () => Promise<void>;
 };

@@ -1,4 +1,7 @@
 import { technionCoursesJsonUrl } from "@/lib/technionUgCourses";
+import { formatHebrewStudyYearLabel, hebrewYearFromCatalogFirestoreYear } from "@/lib/hebrewYear";
+
+const SEASON_HEBREW = ["חורף", "אביב", "קיץ"] as const;
 
 /**
  * Transcript PDF lines use e.g. "2022-2023 Spring" (see `parse_transcript.py`).
@@ -18,6 +21,18 @@ export function parseTranscriptSemesterEn(
     season === "winter" ? 0 : season === "spring" ? 1 : season === "summer" ? 2 : -1;
   if (semester0to2 < 0) return null;
   return { jsonYear: y1, semester0to2 };
+}
+
+/**
+ * Hebrew card title for a transcript semester line (e.g. `2022-2023 Winter` → `חורף תשפ״ג`).
+ * Uses the **start** calendar year of the span + season — not the student catalog’s single anchor year.
+ */
+export function formatTranscriptSemesterHebrewLabel(transcriptSemesterEn: string): string | null {
+  const p = parseTranscriptSemesterEn(transcriptSemesterEn);
+  if (!p) return null;
+  const hy = hebrewYearFromCatalogFirestoreYear(p.jsonYear);
+  const suffix = formatHebrewStudyYearLabel(hy);
+  return `${SEASON_HEBREW[p.semester0to2]} ${suffix}`;
 }
 
 /** JSON URL for the Technion dump that matches this transcript semester line. */

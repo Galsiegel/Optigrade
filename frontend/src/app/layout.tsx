@@ -14,7 +14,7 @@ const heebo = Heebo({
 });
 
 export const metadata: Metadata = {
-  title: "גמרים",
+  title: "", 
   description: "לקוח גמרים עם Firebase"
 };
 

@@ -1,6 +1,12 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
     // Users can read their own profile
     // Users can create their own profile on first sign-in
     // Users can update their own profile; admins can update any user
@@ -20,6 +26,11 @@ service cloud.firestore {
       allow read: if request.auth != null;
     }
 
+    // Degree tracks (מסלולי לימוד) — list for onboarding and admin; client read only.
+    match /tracks/{trackId} {
+      allow read: if request.auth != null;
+    }
+
     // Catalog list for onboarding (Hebrew year + academic year); client read only.
     match /catalogs/{catalogId} {
       allow read: if request.auth != null;
@@ -28,6 +39,11 @@ service cloud.firestore {
     // Semester rows (per catalog) — used to know which Technion JSON dumps to merge for course lists.
     match /semesters/{semesterId} {
       allow read: if request.auth != null;
+    }
+
+    // Admin-authored track + catalog requirement definitions (גמרים planning data).
+    match /requirements/{requirementId} {
+      allow read, create, update, delete: if isAdmin();
     }
   }
 }

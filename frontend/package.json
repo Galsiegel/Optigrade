@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "firebase": "firebase",
+    "firebase:login": "firebase login",
     "deploy:rules": "firebase deploy --only firestore:rules"
   },
   "dependencies": {

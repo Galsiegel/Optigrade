@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [signingIn, setSigningIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const rawRedirect = searchParams.get("redirect") || "/";
+  const rawRedirect = searchParams.get("redirect") || "/dashboard";
   const redirectTo = rawRedirect.startsWith("/") ? rawRedirect : "/";
 
   useEffect(() => {
@@ -65,13 +65,10 @@ export default function LoginPage() {
     >
       <Stack spacing={4} alignItems="center" width="100%">
         <Typography variant="overline" color="primary" sx={{ letterSpacing: 2 }}>
-          גמרים
+          מערכת סגירת תואר
         </Typography>
         <Typography variant="h4" component="h1" sx={{ fontWeight: 600, textAlign: "center" }}>
           התחבר כדי להמשיך
-        </Typography>
-        <Typography variant="body1" color="text.secondary" textAlign="center">
-          השתמש בחשבון Google שלך כדי להיכנס לאפליקציה.
         </Typography>
         {error && (
           <Alert severity="error" onClose={() => setError(null)} sx={{ width: "100%", maxWidth: 360 }}>

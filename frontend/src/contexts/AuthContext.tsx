@@ -130,22 +130,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const actualIsAdmin = profile?.role === "admin";
   const effectiveIsAdmin = actualIsAdmin && !viewAsRegularUser;
-  const regularUserNeedsOnboarding =
+  const effectiveNeedsOnboarding =
     !!user &&
     !!profile &&
     (!profile.onboardingCompleted ||
       !profile.firstName?.trim() ||
       !profile.lastName?.trim() ||
       !profile.track?.trim());
-  const effectiveNeedsOnboarding = viewAsRegularUser && actualIsAdmin
-    ? regularUserNeedsOnboarding
-    : !!user &&
-      !!profile &&
-      profile.role !== "admin" &&
-      (!profile.onboardingCompleted ||
-        !profile.firstName?.trim() ||
-        !profile.lastName?.trim() ||
-        !profile.track?.trim());
 
   const value: AuthContextValue = {
     user,

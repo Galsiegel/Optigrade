@@ -121,5 +121,12 @@ export function filterCourseListInMemory(
 ): CourseListItem[] {
   const t = term.trim();
   if (t.length < 2) return [];
-  return items.filter((c) => courseMatchesTerm(c, t)).slice(0, maxResults);
+  const filtered = items.filter((c) => courseMatchesTerm(c, t));
+  filtered.sort((a, b) => {
+    const aStarts = a.courseName.startsWith(t);
+    const bStarts = b.courseName.startsWith(t);
+    if (aStarts !== bStarts) return aStarts ? -1 : 1;
+    return a.courseName.localeCompare(b.courseName, "he");
+  });
+  return filtered.slice(0, maxResults);
 }

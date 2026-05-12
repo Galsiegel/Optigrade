@@ -8,14 +8,14 @@ Update this file when goals, scope, or “where we are” change; keep it short 
 
 ## What we are building
 
-A **Hebrew-first**, **RTL** web app for **Electrical and Computer Engineering** students to **verify degree progress**: tracks (מסלול), catalog alignment, grades, and requirement-style compliance. **Google sign-in**, **onboarding**, then **home**; **admin** for privileged users.
+A **Hebrew-first**, **RTL** web app for **Electrical and Computer Engineering** students to **verify degree progress**: tracks (מסלול), catalog alignment, grades, and requirement-style compliance. **Google sign-in**, **onboarding**, then **`/dashboard`** (manage courses/grades; root **`/`** redirects there); **admin** for privileged users.
 
 ---
 
 ## Current focus (edit as you go)
 
-- **Now:** Monorepo **FastAPI** surface under `backend/api/` (`/api/v1` — health, `GET /me` with Firebase ID token, transcript PDF parse). Frontend has [`frontend/src/lib/api.ts`](frontend/src/lib/api.ts) (`NEXT_PUBLIC_API_URL`) and ongoing **onboarding** work; product slice is **wiring authenticated API calls and any transcript → profile/onboarding UX** where needed.
-- **Next:** Decide first user-visible API integration (e.g. profile fetch from backend vs Firestore-only, or transcript upload flow in onboarding), then extend types, error handling, and `ARCH_LOG.md` / Firestore rules if new reads are added.
+- **Now:** **Student dashboard** (`/dashboard`) — same course/grade UX as onboarding (shared **`UserCoursesGradesPanel`**). **Admin** (`/admin`): **דרישות מסלול** slice. **מסלולים** load from Firestore **`tracks`** (`src/lib/tracks.ts`) for onboarding + admin.
+- **Next:** “Send courses for approval” workflow from the dashboard; extend admin (edit/delete **`requirements`**, non-semester course lists) and/or surface requirement progress for students.
 
 ---
 
@@ -23,10 +23,11 @@ A **Hebrew-first**, **RTL** web app for **Electrical and Computer Engineering** 
 
 | Term | Meaning |
 |------|--------|
-| מסלול / track | Student’s degree track (stored on profile). |
+| מסלול / track | Student’s degree track (`users.track` = document id in Firestore **`tracks`**). |
 | קטלוג / catalog | Curriculum snapshot document in Firestore; chosen after study-start year. |
 | ציונים / grades | Per-course grades; pass/fail is a special sentinel in profile (see `ARCH_LOG.md`). |
 | גמרים | Degree-completion framing used in product copy. |
+| דרישות | Admin-defined **`requirements`** docs per track+catalog (optional semesters + course ids). |
 
 ---
 
@@ -46,3 +47,5 @@ A **Hebrew-first**, **RTL** web app for **Electrical and Computer Engineering** 
 | 2026-04-26 | Set Now/Next from repo state: FastAPI `backend/api/`, frontend `api.ts`, onboarding — orientation slice for planning. |
 | 2026-04-27 | Docs at **repo root**; **`frontend/…`** paths; **`ARCH_LOG.md`** covers **`backend/api/`**; removed **`DEVELOPMENT_HISTORY.md`** (onboarding distillate lives in **`ARCH_LOG.md`**). |
 | 2026-04-28 | Onboarding UX now treats persisted grades as source-of-truth on reload (no forced re-upload when profile already has grades). |
+| 2026-05-03 | Admin: **דרישות מסלול** UI + Firestore collection for course-requirement groups (מסלול + קטלוג). |
+| 2026-05-03 | **מסלולים** loaded from Firestore **`tracks`** (onboarding + admin); `trackOptions.ts` removed. |

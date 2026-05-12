@@ -4,24 +4,34 @@ import type { CourseListItem } from "@/lib/courses";
 import { fetchSemestersForCatalog } from "@/lib/semesters";
 import { fetchTechnionUgCoursesJson, technionCoursesJsonUrl } from "@/lib/technionUgCourses";
 
+/**
+ * - `mergeAllSemesters`: union of every Technion JSON for Firestore `semesters` rows.
+ * - `lastSemesterOnly`: one file — last row in 0→2 order from Firestore.
+ * - `pinnedSemester`: one file — fixed index **0 חורף / 1 אביב / 2 קיץ** for `catalogYear` (no `semesters` docs required).
+ */
+export type CatalogCourseListSource = "mergeAllSemesters" | "lastSemesterOnly" | "pinnedSemester";
+
 export type UseCatalogCourseListOptions = {
   db: Firestore | undefined | null;
   catalogId: string | null;
   catalogYear: number | null;
   /** When false, clears state (no fetch). */
   enabled: boolean;
+  source?: CatalogCourseListSource;
+  /** With `source: "pinnedSemester"`: **0** חורף, **1** אביב, **2** קיץ. Default **1** (אביב) — placeholder “אביב תשפ״ו” style list from one Technion dump. */
+  pinnedSemesterIndex?: number;
 };
 
 /**
- * Merges Technion gh-pages course JSON for every `semesters` row tied to the catalog
- * (UG fetcher for catalog year ≤2023, SAP fetcher for year ≥2024 — see `technionCoursesJsonUrl`).
- * Dedupes by `courseId`.
+ * Loads Technion gh-pages course JSON for a catalog year (and optional Firestore `semesters` rows).
  */
 export function useCatalogCourseList({
   db,
   catalogId,
   catalogYear,
-  enabled
+  enabled,
+  source = "mergeAllSemesters",
+  pinnedSemesterIndex = 1
 }: UseCatalogCourseListOptions) {
   const [courses, setCourses] = useState<CourseListItem[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -46,11 +56,76 @@ export function useCatalogCourseList({
       setError(null);
       setCourses(null);
       try {
+        if (source === "pinnedSemester") {
+          const idxRaw = pinnedSemesterIndex;
+          const idx = idxRaw === 0 || idxRaw === 1 || idxRaw === 2 ? idxRaw : 1;
+          const url = technionCoursesJsonUrl(yearVal, idx);
+          try {
+            const items = await fetchTechnionUgCoursesJson(url);
+            // eslint-disable-next-line no-console
+            console.info("[Optigrade] Technion catalog pinned-semester list", {
+              catalogId: catId,
+              catalogYear: yearVal,
+              semester: idx,
+              url,
+              count: items.length
+            });
+            if (!cancelled) {
+              if (items.length === 0) {
+                setCourses([]);
+                setError("לא נמצאו קורסים בקובץ הסמסטר שנבחר.");
+              } else {
+                setCourses(items);
+                setError(null);
+              }
+            }
+          } catch (e) {
+            console.warn("[Optigrade] Technion semester JSON failed:", url, e);
+            if (!cancelled) {
+              setCourses([]);
+              setError("לא הצלחנו לטעון את רשימת הקורסים מהמקור החיצוני.");
+            }
+          }
+          return;
+        }
+
         const semesters = await fetchSemestersForCatalog(fs, catId);
         if (semesters.length === 0) {
           if (!cancelled) {
             setCourses([]);
             setError("לא נמצאו סמסטרים לקטלוג זה. הוסיפו מסמכים ב־semesters ב־Firestore.");
+          }
+          return;
+        }
+
+        if (source === "lastSemesterOnly") {
+          const last = semesters[semesters.length - 1]!;
+          const url = technionCoursesJsonUrl(yearVal, last.semester);
+          try {
+            const items = await fetchTechnionUgCoursesJson(url);
+            // eslint-disable-next-line no-console
+            console.info("[Optigrade] Technion catalog single-semester list", {
+              catalogId: catId,
+              catalogYear: yearVal,
+              semester: last.semester,
+              url,
+              count: items.length
+            });
+            if (!cancelled) {
+              if (items.length === 0) {
+                setCourses([]);
+                setError("לא נמצאו קורסים בקובץ הסמסטר האחרון.");
+              } else {
+                setCourses(items);
+                setError(null);
+              }
+            }
+          } catch (e) {
+            console.warn("[Optigrade] Technion semester JSON failed:", url, e);
+            if (!cancelled) {
+              setCourses([]);
+              setError("לא הצלחנו לטעון את רשימת הקורסים מהמקור החיצוני.");
+            }
           }
           return;
         }
@@ -101,7 +176,7 @@ export function useCatalogCourseList({
     return () => {
       cancelled = true;
     };
-  }, [db, catalogId, catalogYear, enabled]);
+  }, [db, catalogId, catalogYear, enabled, source, pinnedSemesterIndex]);
 
   return { courses, loading, error };
 }

@@ -1,4 +1,13 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "requirements",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "track", "order": "ASCENDING" },
+        { "fieldPath": "catalog", "order": "ASCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }

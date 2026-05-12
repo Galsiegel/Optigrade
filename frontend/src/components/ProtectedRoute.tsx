@@ -27,7 +27,7 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
     if (user && needsOnboarding && !isOnboardingPath) {
       router.replace(`/onboarding?redirect=${encodeURIComponent(pathname ?? "/")}`);
     } else if (user && !needsOnboarding && isOnboardingPath) {
-      const redirect = new URLSearchParams(window.location.search).get("redirect") || "/";
+      const redirect = new URLSearchParams(window.location.search).get("redirect") || "/dashboard";
       router.replace(
         (redirect.startsWith("/") ? redirect : "/") as Parameters<typeof router.replace>[0]
       );
